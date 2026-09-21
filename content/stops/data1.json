@@ -1,0 +1,135 @@
+{
+  "id": "data1",
+  "line": 1,
+  "level": "beginner",
+  "shortTitle": "Getting and labeling data",
+  "title": "Getting good data: sources and labels",
+  "hook": "Where data comes from, who labels it, and how to check the labels are any good.",
+  "inPlainWords": "Models learn from examples, so the examples set the ceiling on quality. Data work is usually most of a project: finding data, labeling it, and checking it is fair, fresh and free of mistakes.",
+  "useCase": {
+    "title": "Label 10,000 support emails for a topic classifier",
+    "story": "ShopEase has 200,000 unlabeled emails and wants a topic label on 10,000 of them, to train and test a model. The budget is small, some topics are rare, and labelers will disagree on borderline emails."
+  },
+  "approaches": [
+    {
+      "name": "Reuse data you already have",
+      "what": "Use existing tags, logs and records.",
+      "greatWhen": "Tags already exist, for example from agents.",
+      "avoidWhen": "The tags were made for another purpose and are messy.",
+      "example": "Agents already tagged some tickets by topic."
+    },
+    {
+      "name": "Label in-house",
+      "what": "Your own experts do the labeling.",
+      "greatWhen": "Domain knowledge matters, or the data is sensitive.",
+      "avoidWhen": "Volume is large and time is short.",
+      "example": "Two support leads label 500 emails."
+    },
+    {
+      "name": "Crowd or vendor labeling",
+      "what": "Outside workers label at scale under your instructions.",
+      "greatWhen": "Volume is large and the task is simple.",
+      "avoidWhen": "The data is sensitive, or the task needs expert judgement.",
+      "example": "A labeling service tags 10,000 emails."
+    },
+    {
+      "name": "Model-assisted labeling",
+      "what": "A model suggests labels and people correct them.",
+      "greatWhen": "Volume is big and a rough model already exists.",
+      "avoidWhen": "People rubber-stamp wrong suggestions.",
+      "example": "A language model suggests a topic and a person confirms it."
+    },
+    {
+      "name": "Label the most useful examples first",
+      "what": "Label the examples the model is least sure about.",
+      "greatWhen": "Labeling is costly.",
+      "avoidWhen": "You have no model yet.",
+      "example": "Label the emails where the classifier is torn between two topics."
+    },
+    {
+      "name": "Synthetic data",
+      "what": "Generate realistic examples for rare cases.",
+      "greatWhen": "Rare topics, or privacy limits.",
+      "avoidWhen": "As the only source. Errors get baked in.",
+      "example": "Generate 100 fake \"chargeback dispute\" emails."
+    },
+    {
+      "name": "Quality checks and clear guidelines",
+      "what": "Write label rules, measure agreement between labelers, and audit samples.",
+      "greatWhen": "Always.",
+      "example": "Two people label the same 200 emails, and disagreements sharpen the rules."
+    }
+  ],
+  "challenge": {
+    "question": "You need 10,000 labeled emails on a small budget, and some topics are rare. What is the best plan?",
+    "options": [
+      {
+        "text": "Write clear label rules, pilot on 200 emails, let a model pre-label, have people correct, add extra examples for rare topics, and audit samples",
+        "verdict": "best",
+        "why": "It is cheap, consistent, and it protects the rare topics."
+      },
+      {
+        "text": "Let one intern label everything quickly",
+        "verdict": "poor",
+        "why": "With no rules, the same email gets different labels."
+      },
+      {
+        "text": "Buy the biggest dataset you can find and skip checking",
+        "verdict": "poor",
+        "why": "It probably does not match your emails or your topics."
+      },
+      {
+        "text": "Label only the easy, common topics",
+        "verdict": "ok",
+        "why": "Cheap, but the model will be blind to the rare topics."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Clear rules, a pilot, model help, and audits",
+    "example": "Guidelines say an email about a double charge and a late parcel gets both topics. A pilot exposes confusion between Billing and Returns, and the rules are tightened. A model pre-labels, people correct, and weekly audits keep quality steady. Rare topics get extra examples."
+  },
+  "worstCase": {
+    "title": "Fast, unchecked labels",
+    "example": "One person labels 10,000 emails in two days with no guidelines. Billing and Returns are used inconsistently. The model learns the confusion and scores well against its own bad labels, then fails on real emails."
+  },
+  "route": {
+    "travelling": "Email: \"Charged twice for one order, and my parcel is late\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Write label guidelines",
+            "goes": "Each topic gets a definition, examples, and a rule for emails with two topics."
+          },
+          {
+            "label": "Pilot on 200 emails",
+            "goes": "Two people label the same emails and compare."
+          },
+          {
+            "label": "Fix the rules",
+            "goes": "Disagreements show where the definitions are unclear.",
+            "goesWrong": "There is no pilot. Labelers invent their own rules, so the same email gets different labels."
+          },
+          {
+            "label": "Model pre-labels",
+            "goes": "A model suggests a topic for each email."
+          },
+          {
+            "label": "People correct",
+            "goes": "Reviewers fix the suggestions."
+          },
+          {
+            "label": "Audit a sample",
+            "goes": "A sample is re-checked every week."
+          },
+          {
+            "label": "Train and test",
+            "goes": "A clean, consistent set trains and tests the classifier."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "A model can only be as good as its examples. Write clear label rules, check agreement, and spend extra effort on rare cases."
+}

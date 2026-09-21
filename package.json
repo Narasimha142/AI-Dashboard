@@ -1,0 +1,13 @@
+{
+  "name": "ai-line",
+  "version": "1.0.0",
+  "description": "Learn AI, machine learning, deep learning, RAG and agents through one store's real problems.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "build": "node scripts/build.mjs",
+    "start": "python3 -m http.server 8000"
+  },
+  "engines": { "node": ">=18" }
+}

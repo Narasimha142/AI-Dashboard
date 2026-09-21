@@ -1,0 +1,132 @@
+{
+  "id": "lm3",
+  "line": 4,
+  "level": "advanced",
+  "shortTitle": "Context engineering",
+  "title": "Context engineering: what goes on the desk",
+  "hook": "Paste, retrieve, summarize, call tools, structure, and cache. Deciding what the model sees.",
+  "inPlainWords": "Everything the model knows about your task on a given call is what you put in its context. Context engineering is choosing what goes in, in what order, and what to leave out. It is often the biggest lever on quality, cost and speed.",
+  "useCase": {
+    "title": "Answer a hard, escalated case",
+    "story": "An escalated case has a 200-message history, the customer's profile, three policy documents, product manuals and live order data. The model can only take part of it, and answers get worse when the desk is cluttered."
+  },
+  "approaches": [
+    {
+      "name": "Paste everything",
+      "what": "Stuff all the material in.",
+      "greatWhen": "Small cases.",
+      "avoidWhen": "Large cases. It is slow, costly and distracting.",
+      "example": "All 200 messages plus every manual."
+    },
+    {
+      "name": "Retrieve only what is relevant",
+      "what": "Search for the parts this question needs (RAG).",
+      "greatWhen": "Large, changing knowledge.",
+      "avoidWhen": "Small or tightly connected material.",
+      "example": "Pull the two relevant policy paragraphs."
+    },
+    {
+      "name": "Summarize older material",
+      "what": "Compress history and keep recent detail.",
+      "greatWhen": "Long conversations.",
+      "avoidWhen": "Details matter, and summaries lose them.",
+      "example": "A summary of messages 1 to 180, plus the last 20 in full."
+    },
+    {
+      "name": "Use tools for live facts",
+      "what": "Ask the systems, not the model's memory.",
+      "greatWhen": "Live data.",
+      "avoidWhen": "Static text. Use retrieval for that.",
+      "example": "Order status via a tool."
+    },
+    {
+      "name": "Structure and order the context",
+      "what": "Use clear sections, with key instructions and the question placed prominently.",
+      "greatWhen": "Always.",
+      "avoidWhen": "A wall of text.",
+      "example": "Headings: Customer, History summary, Policy, Live data, Question."
+    },
+    {
+      "name": "Cache the stable parts",
+      "what": "Reuse the unchanging beginning of the prompt.",
+      "greatWhen": "Repeated instructions and documents.",
+      "avoidWhen": "Everything changes on each call.",
+      "example": "Reuse the system instructions across calls."
+    },
+    {
+      "name": "Separate instructions from data",
+      "what": "Mark outside text as data, not commands.",
+      "greatWhen": "Untrusted input.",
+      "avoidWhen": "Never skip it.",
+      "example": "Wrap the customer's email in a data section."
+    }
+  ],
+  "challenge": {
+    "question": "How should you assemble the context for the escalated case?",
+    "options": [
+      {
+        "text": "A structured prompt: instructions, a summary of old history plus recent messages in full, retrieved policy passages, live data from tools, and untrusted text marked as data",
+        "verdict": "best",
+        "why": "Each piece is chosen, ordered and labeled for the job."
+      },
+      {
+        "text": "Paste everything",
+        "verdict": "ok",
+        "why": "It might work, but it is slow, costly and noisy."
+      },
+      {
+        "text": "Only the last message",
+        "verdict": "poor",
+        "why": "It loses the history that explains the case."
+      },
+      {
+        "text": "Rely on the model remembering earlier chats",
+        "verdict": "poor",
+        "why": "It remembers nothing between calls."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Choose, order and label what the model sees",
+    "example": "The prompt has clear sections: instructions, a summary of messages 1 to 180, the last 20 in full, two retrieved policy paragraphs, live order data, and the customer's message marked as data. Answers are sharper, and the bill is lower."
+  },
+  "worstCase": {
+    "title": "A cluttered desk",
+    "example": "All 200 messages and three full manuals are pasted in. The model answers an old question from the middle of the thread, ignores the newest message, and the call takes ten times longer."
+  },
+  "route": {
+    "travelling": "Escalated case 90210",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Gather the sources",
+            "goes": "History, profile, policies, manuals, live data."
+          },
+          {
+            "label": "Choose what fits",
+            "goes": "Summarize old messages, retrieve two policy passages, fetch live order data.",
+            "goesWrong": "Everything is pasted in, filling the window with noise."
+          },
+          {
+            "label": "Order and label sections",
+            "goes": "Clear headings, with the question prominent."
+          },
+          {
+            "label": "Mark customer text as data",
+            "goes": "Outside text cannot act as commands."
+          },
+          {
+            "label": "Model answers",
+            "goes": "It works from a tidy, relevant desk."
+          },
+          {
+            "label": "Log what it saw",
+            "goes": "The exact context is saved for debugging."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "The quality of an answer depends on what is on the desk. Choose it, order it, label it, and log it."
+}

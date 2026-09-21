@@ -1,0 +1,125 @@
+{
+  "id": "lm4",
+  "line": 4,
+  "level": "intermediate",
+  "shortTitle": "Tokens, context and attention",
+  "title": "Inside the model: tokens, context and attention",
+  "hook": "How text is cut up, what fits on the desk, and why models trip on codes, counting and long inputs.",
+  "inPlainWords": "A model does not read letters or words. It reads tokens, which are small pieces of text. It can only look at a limited number of tokens at once, called the context window, and inside that window it uses attention to decide which earlier pieces matter for the next one. This explains many odd mistakes.",
+  "useCase": {
+    "title": "Why does the bot fumble codes, counts and long emails?",
+    "story": "The assistant misreads the code XR-2040-B, miscounts the letters in a name, loses track of the request inside a very long email chain, and answers differently when the same fact appears at the start or in the middle of a long prompt."
+  },
+  "approaches": [
+    {
+      "name": "Assume it reads like a person",
+      "what": "Treat the model as if it sees words and letters.",
+      "greatWhen": "Never.",
+      "avoidWhen": "Codes, exact counts and long inputs.",
+      "example": "Ask it to count the letters in a long name."
+    },
+    {
+      "name": "Send exact jobs to tools",
+      "what": "Let code do counting, math and exact matching.",
+      "greatWhen": "Codes, arithmetic, counts and dates.",
+      "avoidWhen": "Fuzzy judgement.",
+      "example": "Use a lookup tool for XR-2040-B."
+    },
+    {
+      "name": "Place key facts clearly",
+      "what": "Put instructions and key data in clear sections, and repeat the critical ones.",
+      "greatWhen": "Long prompts.",
+      "avoidWhen": "Believing position never matters.",
+      "example": "State the customer's request at the start and again at the end."
+    },
+    {
+      "name": "Shorten and select the input",
+      "what": "Send only the relevant parts.",
+      "greatWhen": "Long threads and documents.",
+      "avoidWhen": "You cut context the answer needs.",
+      "example": "Summarize old messages and keep the last five in full."
+    },
+    {
+      "name": "Chunk long inputs and combine",
+      "what": "Split the input, process each part, then merge.",
+      "greatWhen": "Inputs beyond the window.",
+      "avoidWhen": "Tasks that need the whole picture at once.",
+      "example": "Summarize each part of a 200-message thread, then merge."
+    },
+    {
+      "name": "Choose a model with a bigger window",
+      "what": "Pick a model with more room.",
+      "greatWhen": "Genuinely long inputs.",
+      "avoidWhen": "As a substitute for tidy input. Cost and accuracy can suffer.",
+      "example": "A long-context model for a full contract."
+    }
+  ],
+  "challenge": {
+    "question": "The bot mishandles product codes and a 200-message thread. What is the best fix?",
+    "options": [
+      {
+        "text": "Use tools for exact lookups, trim and summarize the thread, put key facts up front, and test with long-input cases",
+        "verdict": "best",
+        "why": "It works with how the model actually reads."
+      },
+      {
+        "text": "Tell the model to try harder",
+        "verdict": "poor",
+        "why": "Effort is not the limit. The way it reads is."
+      },
+      {
+        "text": "Paste everything and hope the window is big enough",
+        "verdict": "ok",
+        "why": "It may fit, but it is slow, costly and details get lost."
+      },
+      {
+        "text": "Retrain the model on product codes",
+        "verdict": "poor",
+        "why": "Expensive, and codes change all the time."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Give exact jobs to tools and keep the desk tidy",
+    "example": "The code XR-2040-B goes to a lookup tool. Old messages are summarized and the last five stay in full. The request is stated at the start of the prompt. Answers stay consistent and cost less."
+  },
+  "worstCase": {
+    "title": "Pasting everything and hoping",
+    "example": "The whole 200-message thread is pasted in. The real request sits in the middle and is ignored, and the model answers an older question. The code is misread as a similar one, and the customer gets the wrong charger."
+  },
+  "route": {
+    "travelling": "A 200-message thread ending \"Same problem, see XR-2040-B\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Long thread arrives",
+            "goes": "Two hundred messages and a product code."
+          },
+          {
+            "label": "Trim and summarize",
+            "goes": "Old messages are summarized. The last five stay in full.",
+            "goesWrong": "The whole thread is pasted in and the key request gets buried."
+          },
+          {
+            "label": "Exact things go to tools",
+            "goes": "The product code is looked up, not \"read\"."
+          },
+          {
+            "label": "Prompt with key facts first",
+            "goes": "The request and rules are placed at the start."
+          },
+          {
+            "label": "Model answers",
+            "goes": "It reads a small, tidy desk."
+          },
+          {
+            "label": "Check against the source",
+            "goes": "Codes and numbers are verified."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Models read tokens, not words, and only see what fits on the desk. Give exact jobs to tools and keep the desk tidy."
+}

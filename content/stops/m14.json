@@ -1,0 +1,114 @@
+{
+  "id": "m14",
+  "line": 7,
+  "level": "intermediate",
+  "shortTitle": "Testing and watching",
+  "title": "Testing before launch, watching after",
+  "hook": "Vibe check, golden questions, judge models, traces. How you know it is good and stays good.",
+  "useCase": {
+    "title": "The boss asks: \"How do we know the bot is good, and staying good?\"",
+    "story": "ShopEase launched the assistant with RAG and tools. Models, documents and customers keep changing."
+  },
+  "approaches": [
+    {
+      "name": "Vibe check",
+      "what": "Try a few chats and see how they feel.",
+      "greatWhen": "The very first prototype.",
+      "avoidWhen": "Any decision that matters.",
+      "example": "\"Seems fine.\""
+    },
+    {
+      "name": "Golden question set",
+      "what": "50 to 200 real questions with known good answers, re-run after every change.",
+      "greatWhen": "Always. It is the backbone.",
+      "example": "\"Return window for opened electronics?\" must say 14 days."
+    },
+    {
+      "name": "A model as judge",
+      "what": "Another model grades answers against the sources and your rules.",
+      "greatWhen": "Checking many answers, tone, and whether claims are supported.",
+      "avoidWhen": "As the only check. Judges have biases, so spot-check with people.",
+      "example": "\"Is every claim supported by the cited passage?\""
+    },
+    {
+      "name": "Separate search and answer scores",
+      "what": "Score the search (did we find the right passage?) apart from the writing (did we use it faithfully?).",
+      "greatWhen": "RAG and agents. It shows where things broke.",
+      "example": "The search score dropped after a new PDF import."
+    },
+    {
+      "name": "Live traces and feedback",
+      "what": "Log every step, collect thumbs up and down, review bad chats weekly.",
+      "greatWhen": "After launch.",
+      "example": "A dashboard: 4% thumbs-down, mostly on warranty questions."
+    }
+  ],
+  "challenge": {
+    "question": "Which combination catches problems before and after launch?",
+    "options": [
+      {
+        "text": "A vibe check on the demo",
+        "verdict": "poor",
+        "why": "It misses the cases that matter and cannot detect drift."
+      },
+      {
+        "text": "A golden set, separate search and answer scores, a judge model, and live traces",
+        "verdict": "best",
+        "why": "It catches problems before launch, pinpoints where they come from, and keeps watching afterwards."
+      },
+      {
+        "text": "Wait for customer complaints",
+        "verdict": "poor",
+        "why": "You find out late, from your angriest users."
+      },
+      {
+        "text": "Only a judge model",
+        "verdict": "ok",
+        "why": "Useful, but it needs a real question set and human spot-checks."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Test before every change, trace after launch",
+    "example": "A new PDF import lowers the search score from 92% to 71% overnight. The dashboard points at chunking, not the model. You fix it in an hour, before customers notice."
+  },
+  "worstCase": {
+    "title": "\"It looked fine in the demo\"",
+    "example": "There is no test set and no logs. The bot quotes an outdated warranty for weeks. You learn about it from a social media post, and cannot tell which change caused it."
+  },
+  "route": {
+    "travelling": "Golden question: \"Return window for opened electronics?\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Golden questions",
+            "goes": "150 real questions with correct answers."
+          },
+          {
+            "label": "Run the bot",
+            "goes": "Answers and retrieved passages are recorded for every question.",
+            "goesWrong": "There is no test set. Nobody runs anything after the update."
+          },
+          {
+            "label": "Score search and answers",
+            "goes": "The search score is 71%, down from 92%."
+          },
+          {
+            "label": "Dashboard and alert",
+            "goes": "The drop triggers an alert."
+          },
+          {
+            "label": "Fix and re-test",
+            "goes": "Chunking is fixed and the score returns to 92%."
+          },
+          {
+            "label": "Live traces and thumbs",
+            "goes": "Real chats keep feeding new test cases."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "You cannot improve what you do not measure, and models, documents and customers all change."
+}

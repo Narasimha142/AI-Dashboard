@@ -1,0 +1,129 @@
+{
+  "id": "ag2",
+  "line": 6,
+  "level": "advanced",
+  "shortTitle": "Agents that use screens and code",
+  "title": "Agents that use screens and write code",
+  "hook": "APIs first. Then screen control, code execution and coding assistants, each with its own risks.",
+  "inPlainWords": "When there is no API, an agent can click through a screen like a person. When a task is really a calculation, an agent can write and run code. Both are powerful, and both need a locked room: limited access, no secrets, and review.",
+  "useCase": {
+    "title": "Reconcile 300 refunds against a carrier's website",
+    "story": "A carrier's portal has no API. Each week someone types 300 tracking numbers to confirm delivery status, then builds a summary table by hand. It is dull, error-prone work."
+  },
+  "approaches": [
+    {
+      "name": "Ask for an API or data feed",
+      "what": "Get proper access to the data.",
+      "greatWhen": "Always the first try.",
+      "avoidWhen": "None exists.",
+      "example": "A nightly delivery status file."
+    },
+    {
+      "name": "Screen-control agent",
+      "what": "The agent reads and clicks through a website or app.",
+      "greatWhen": "There is no API and volume is low.",
+      "avoidWhen": "Pages change fast, or the account is sensitive.",
+      "example": "Type tracking numbers into the portal."
+    },
+    {
+      "name": "Code-writing and running agent",
+      "what": "The agent writes a script and runs it in a sandbox.",
+      "greatWhen": "Data work and calculations.",
+      "avoidWhen": "Running code with real access and no review.",
+      "example": "Build the weekly summary table with a script."
+    },
+    {
+      "name": "Coding assistant for engineers",
+      "what": "AI suggests code, and a developer reviews it.",
+      "greatWhen": "Building the integration.",
+      "avoidWhen": "Merging without review or tests.",
+      "example": "Draft a data collector, then a developer reviews it."
+    },
+    {
+      "name": "Recorded macros (RPA)",
+      "what": "Record and replay fixed steps.",
+      "greatWhen": "A stable screen and fixed steps.",
+      "avoidWhen": "Pages change often.",
+      "example": "A recorded click path."
+    },
+    {
+      "name": "Human in the loop",
+      "what": "A person approves before anything changes.",
+      "greatWhen": "Always for writes, payments and logins.",
+      "avoidWhen": "Read-only lookups.",
+      "example": "The agent proposes updates and a person approves."
+    }
+  ],
+  "challenge": {
+    "question": "The carrier has no API. What is the smartest design?",
+    "options": [
+      {
+        "text": "Ask for a data feed first. Otherwise use a sandboxed screen agent with a read-only account, limited credentials, logged actions, and human approval for any change",
+        "verdict": "best",
+        "why": "It is the least risky way to automate the job."
+      },
+      {
+        "text": "Give the agent your admin login and let it run",
+        "verdict": "poor",
+        "why": "One mistake or trick could change real accounts."
+      },
+      {
+        "text": "Keep typing by hand forever",
+        "verdict": "ok",
+        "why": "Safe, but slow and error-prone."
+      },
+      {
+        "text": "Have the agent guess delivery statuses from memory",
+        "verdict": "poor",
+        "why": "It has no way of knowing."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Data feed first, then a locked-down agent with logs",
+    "example": "The carrier confirms no feed exists. A screen agent runs in a locked browser with a read-only account, reads statuses, and a sandboxed script builds the summary table. Every action is logged, and a person approves any update to ShopEase records."
+  },
+  "worstCase": {
+    "title": "An agent with the keys to everything",
+    "example": "The agent uses a shared admin login on the live account. A misread button cancels 12 shipments, and there is no log of what it clicked."
+  },
+  "route": {
+    "travelling": "Refund 4411, tracking number TN-30417",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Weekly refund list",
+            "goes": "300 refunds need a delivery check."
+          },
+          {
+            "label": "Ask for a data feed",
+            "goes": "The carrier confirms none exists."
+          },
+          {
+            "label": "Sandboxed screen agent",
+            "goes": "It runs in a locked browser with a read-only account.",
+            "goesWrong": "The agent uses a shared admin login on the live account."
+          },
+          {
+            "label": "Extract statuses",
+            "goes": "Delivery statuses are read into a table."
+          },
+          {
+            "label": "Script builds the summary",
+            "goes": "Code runs in a sandbox with no secrets."
+          },
+          {
+            "label": "Human approves changes",
+            "goes": "A person confirms any update."
+          },
+          {
+            "label": "Log every action",
+            "goes": "Every click and script run is recorded."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Prefer real APIs. When you must use screens or code, lock the room: read-only access, no secrets, logs, and human approval for changes."
+}

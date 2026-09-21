@@ -1,0 +1,122 @@
+{
+  "id": "m2",
+  "line": 1,
+  "level": "beginner",
+  "shortTitle": "The ML pipeline",
+  "title": "The machine learning pipeline",
+  "hook": "Data, training, testing, running it live, and watching it. Predict returns from a table.",
+  "inPlainWords": "Most business AI is still rows and columns. The pipeline is the same every time: collect data, clean it, hold some back as an exam, train, test, run it live, and keep watching.",
+  "useCase": {
+    "title": "Predict which orders will be returned",
+    "story": "ShopEase has 30,000 past orders in a table: item, size, price, customer history, and whether it was returned. The warehouse wants a warning flag on risky orders."
+  },
+  "approaches": [
+    {
+      "name": "Gut-feel rules",
+      "what": "Experts write rules from experience.",
+      "greatWhen": "Day one, with no data cleanup.",
+      "avoidWhen": "Patterns are subtle or change with the season.",
+      "example": "Shoes above $100 that run small get flagged."
+    },
+    {
+      "name": "Classic ML on the table",
+      "what": "Tree-based models learn which columns matter from past rows.",
+      "greatWhen": "Rows-and-columns business data, which is the usual case.",
+      "avoidWhen": "The data is images, audio or long text.",
+      "example": "It learns that ordering three sizes of the same shoe often means a return."
+    },
+    {
+      "name": "AutoML tool",
+      "what": "A tool tries many models for you and ranks them.",
+      "greatWhen": "You want a fast first baseline with a small team.",
+      "avoidWhen": "You must explain and control every step.",
+      "example": "Upload the table and get ranked models within the hour."
+    },
+    {
+      "name": "Deep learning",
+      "what": "A neural network learns from the raw table.",
+      "greatWhen": "Very large data, images or text.",
+      "avoidWhen": "Small tables, where it is usually no better and much harder to explain.",
+      "example": "Forcing a neural network onto 30,000 rows."
+    },
+    {
+      "name": "Ask a language model per row",
+      "what": "Send each order to a language model and ask \"will it be returned?\"",
+      "greatWhen": "Almost never for this kind of task.",
+      "avoidWhen": "Number-heavy tables. It is slow, costly, and its confidence is not backed by your data.",
+      "example": "It says \"probably not\" and cannot show any evidence."
+    }
+  ],
+  "challenge": {
+    "question": "You have 30,000 rows in a spreadsheet and a yes/no answer for each. What is the best tool?",
+    "options": [
+      {
+        "text": "Classic ML on the table",
+        "verdict": "best",
+        "why": "Built for rows and columns. Quick, cheap and explainable."
+      },
+      {
+        "text": "Deep learning",
+        "verdict": "poor",
+        "why": "Not enough data to justify it, and it is harder to explain."
+      },
+      {
+        "text": "Ask a language model about each order",
+        "verdict": "poor",
+        "why": "Slow, costly, and it has never seen your return patterns."
+      },
+      {
+        "text": "Hand-written rules",
+        "verdict": "ok",
+        "why": "A good baseline to beat, but it will miss subtle patterns."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Classic ML, tested on orders it has never seen",
+    "example": "The model flags 1 in 5 orders as risky, and 6 in 10 of the flagged orders really come back. The team adds a size guide to those product pages and returns fall."
+  },
+  "worstCase": {
+    "title": "Peeking at the answer, and never checking again",
+    "example": "You leave in the column \"return reason\", which only exists after a return. The model scores 99% in testing and is useless live. Six months later new-season products arrive and nobody notices accuracy fading."
+  },
+  "route": {
+    "travelling": "Order 48213: running shoes, size 9, $120",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Past orders table",
+            "goes": "30,000 rows, each with the known answer: returned or not."
+          },
+          {
+            "label": "Clean and choose columns",
+            "goes": "Fix blanks and drop any column you would not know at order time.",
+            "goesWrong": "\"Return reason\" is left in. It is only known after the return."
+          },
+          {
+            "label": "Split: practice and exam",
+            "goes": "80% is used for learning. 20% is hidden as an exam."
+          },
+          {
+            "label": "Train the model",
+            "goes": "The model finds which patterns predict returns."
+          },
+          {
+            "label": "Sit the exam",
+            "goes": "Check it works on orders it has never seen."
+          },
+          {
+            "label": "Run it live",
+            "goes": "A new order goes in, a risk flag comes out, in milliseconds."
+          },
+          {
+            "label": "Watch and retrain",
+            "goes": "Check accuracy monthly and retrain each season."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Test on data the model has never seen, and keep watching it after launch. Both are where projects quietly fail."
+}

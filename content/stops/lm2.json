@@ -1,0 +1,125 @@
+{
+  "id": "lm2",
+  "line": 4,
+  "level": "advanced",
+  "shortTitle": "Choosing a model",
+  "title": "Choosing a model: benchmarks versus your own tests",
+  "hook": "Public leaderboards, your own test set, quality with speed and cost, and staying swappable.",
+  "inPlainWords": "Public benchmarks measure general skills on general tasks. Your job is specific. The right way to choose is to test candidate models on your own examples, weighing quality, speed and cost together, and to keep the ability to switch as new models appear.",
+  "useCase": {
+    "title": "Pick the model for ShopEase's support assistant",
+    "story": "Five models look strong on public leaderboards. The assistant must answer policy questions with citations in under three seconds, at a price that works for 100,000 tickets a day. New models appear every few months."
+  },
+  "approaches": [
+    {
+      "name": "Pick the top of a leaderboard",
+      "what": "Choose the highest-ranked model.",
+      "greatWhen": "Building a first shortlist.",
+      "avoidWhen": "As the final decision.",
+      "example": "Choose the number one model on a general benchmark."
+    },
+    {
+      "name": "Trust vendor claims and demos",
+      "what": "Rely on marketing material.",
+      "greatWhen": "Never on its own.",
+      "avoidWhen": "Any real decision.",
+      "example": "A polished demo."
+    },
+    {
+      "name": "Test on your own examples",
+      "what": "Run each candidate on your real questions and judge the answers.",
+      "greatWhen": "Always the deciding step.",
+      "avoidWhen": "The test set is tiny or unrepresentative.",
+      "example": "150 real tickets with approved answers."
+    },
+    {
+      "name": "Score quality, speed and cost together",
+      "what": "Compare the whole trade-off.",
+      "greatWhen": "Production choices.",
+      "avoidWhen": "You only look at quality.",
+      "example": "Model B is 2 points worse but five times cheaper."
+    },
+    {
+      "name": "Blind comparisons",
+      "what": "People or a judge model pick the better answer without knowing which model wrote it.",
+      "greatWhen": "Tone and helpfulness.",
+      "avoidWhen": "Judges have biases. Spot-check with people.",
+      "example": "Agents pick the better reply."
+    },
+    {
+      "name": "Stay portable",
+      "what": "Keep prompts and tests in your own code so swapping models is easy.",
+      "greatWhen": "Always. Models change often.",
+      "avoidWhen": "Building deep dependence on one model's quirks.",
+      "example": "A thin wrapper around the model call."
+    }
+  ],
+  "challenge": {
+    "question": "Five models look good on leaderboards. How do you choose?",
+    "options": [
+      {
+        "text": "Shortlist from benchmarks, test on your own questions for quality, speed and cost, and keep the model swappable",
+        "verdict": "best",
+        "why": "Your own tests decide, and you can change your mind later."
+      },
+      {
+        "text": "Pick number one on the leaderboard",
+        "verdict": "poor",
+        "why": "It was measured on someone else's tasks."
+      },
+      {
+        "text": "Pick the cheapest",
+        "verdict": "poor",
+        "why": "Quality may be too low for the job."
+      },
+      {
+        "text": "Test only on quality, ignoring cost and speed",
+        "verdict": "ok",
+        "why": "You may pick something too slow or too expensive to run."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Shortlist, test on your own data, weigh the whole trade-off",
+    "example": "Three models pass a 150-ticket test. Model B is two points behind on quality but five times cheaper and twice as fast, and it passes the citation check. ShopEase picks B, keeps model A as runner-up, and re-runs the test whenever a new model appears."
+  },
+  "worstCase": {
+    "title": "Choosing by leaderboard rank or demo",
+    "example": "The top-ranked model is chosen from a demo. It is slow, costs four times the budget, and it fails ShopEase's citation rule on one question in five. Switching is painful because prompts were tuned to its quirks."
+  },
+  "route": {
+    "travelling": "Candidate models A to E",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Shortlist from benchmarks",
+            "goes": "Five candidates look good on paper."
+          },
+          {
+            "label": "Build your own test set",
+            "goes": "150 real tickets with approved answers.",
+            "goesWrong": "The team picks the top leaderboard model and skips testing."
+          },
+          {
+            "label": "Run all candidates",
+            "goes": "Same questions, same rules."
+          },
+          {
+            "label": "Score quality, speed and cost",
+            "goes": "Compare the whole trade-off."
+          },
+          {
+            "label": "Choose, with a runner-up",
+            "goes": "One model goes live and one stands by."
+          },
+          {
+            "label": "Stay swappable",
+            "goes": "Re-test on new releases."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Public rankings make a shortlist. Your own tests make the decision, and staying swappable keeps it good."
+}

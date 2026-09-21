@@ -1,0 +1,114 @@
+{
+  "id": "m6",
+  "line": 4,
+  "level": "beginner",
+  "shortTitle": "Giving it knowledge",
+  "title": "Giving the model knowledge",
+  "hook": "Prompt, RAG, tools, or fine-tuning. Four different problems that get mixed up.",
+  "inPlainWords": "Four different gaps get confused. Missing instructions need a prompt. Missing facts need retrieval (RAG). Missing live data or actions need tools. A missing style or narrow skill needs fine-tuning.",
+  "useCase": {
+    "title": "Answer \"What is your return policy for opened electronics?\"",
+    "story": "The policy lives in 40 documents and changes every month. The bot must give the current answer with a source, not last year's."
+  },
+  "approaches": [
+    {
+      "name": "Ask the model directly",
+      "what": "Rely on what the model remembers from training.",
+      "greatWhen": "General knowledge.",
+      "avoidWhen": "Company facts. It will guess.",
+      "example": "\"What is ShopEase's return window?\" gets an invented number."
+    },
+    {
+      "name": "Paste everything in the prompt",
+      "what": "Put the whole document into every request (long context).",
+      "greatWhen": "One small, stable document.",
+      "avoidWhen": "Hundreds of pages. It is slow, costly, and details get lost.",
+      "example": "Paste a two-page FAQ."
+    },
+    {
+      "name": "RAG: look up, then answer",
+      "what": "Search your documents first, and hand only the relevant parts to the model.",
+      "greatWhen": "Knowledge is large or changing, and you need citations.",
+      "avoidWhen": "The knowledge is tiny and fits comfortably in one prompt.",
+      "example": "Find the electronics-returns paragraph, then answer with a link to it."
+    },
+    {
+      "name": "Fine-tuning",
+      "what": "Train the model further on your examples so its behavior changes.",
+      "greatWhen": "A consistent voice, format, or narrow skill.",
+      "avoidWhen": "Teaching facts that change.",
+      "example": "Train the bot to always answer in ShopEase's voice."
+    },
+    {
+      "name": "Tools and API lookups",
+      "what": "The model asks your software for live data or to take an action.",
+      "greatWhen": "Order status, stock and prices.",
+      "avoidWhen": "Static policy text. Use RAG for that.",
+      "example": "Look up the shipping status of order 48213."
+    }
+  ],
+  "challenge": {
+    "question": "Policy text changes monthly and answers must be current, with a source. What is the best approach?",
+    "options": [
+      {
+        "text": "RAG over the policy documents",
+        "verdict": "best",
+        "why": "Update a document and the next answer is current. No retraining, and you can cite the source."
+      },
+      {
+        "text": "Fine-tune the model on the policy",
+        "verdict": "poor",
+        "why": "It bakes in facts that will go stale, and you cannot point to where it learned them."
+      },
+      {
+        "text": "Ask the model directly",
+        "verdict": "poor",
+        "why": "It does not know your policy. It will guess."
+      },
+      {
+        "text": "Paste all 40 documents into every prompt",
+        "verdict": "ok",
+        "why": "Works at small scale, but it is slow and costly, and details get lost."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "RAG for facts, tools for live data, fine-tuning only for style",
+    "example": "The policy is updated on Monday. On Tuesday a customer asks about opened electronics. The bot finds the new paragraph and answers: 14 days, 10% restocking fee, with a link to the Returns Policy."
+  },
+  "worstCase": {
+    "title": "Fine-tuning facts into the model",
+    "example": "You fine-tune on last year's policy. The bot now confidently quotes the old 30-day window, you cannot tell where it learned that, and fixing it means training again."
+  },
+  "route": {
+    "travelling": "\"Return policy for opened electronics?\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Question",
+            "goes": "The customer asks."
+          },
+          {
+            "label": "Search your documents",
+            "goes": "It finds the two most relevant policy paragraphs.",
+            "goesWrong": "There is no search. The model answers from memory and says \"30 days\", which was last year's rule."
+          },
+          {
+            "label": "Build the prompt",
+            "goes": "Question plus passages: \"Answer only using these passages.\""
+          },
+          {
+            "label": "Language model",
+            "goes": "It writes a short answer from the passages."
+          },
+          {
+            "label": "Answer with source",
+            "goes": "The answer is shown with a link to the policy."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Prompt is instructions. RAG is knowledge. Tools are live data and actions. Fine-tuning is behavior. Pick by what is missing."
+}

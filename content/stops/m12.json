@@ -1,0 +1,106 @@
+{
+  "id": "m12",
+  "line": 6,
+  "level": "advanced",
+  "shortTitle": "One agent or many",
+  "title": "One agent or many?",
+  "hook": "Single agent, parallel workflow, orchestrator with specialists, reviewer pairs.",
+  "useCase": {
+    "title": "A weekly store report",
+    "story": "Every Monday: pull sales figures, read customer complaints, check stock, and write a one-page report for the manager."
+  },
+  "approaches": [
+    {
+      "name": "One agent with a few tools",
+      "what": "A single model with sales, tickets and stock tools.",
+      "greatWhen": "Most tasks.",
+      "avoidWhen": "Too many tools confuse it.",
+      "example": "One agent, three tools, one report."
+    },
+    {
+      "name": "Parallel workflow",
+      "what": "Split into fixed steps and run some at the same time.",
+      "greatWhen": "The structure is known and you want speed and cost control.",
+      "avoidWhen": "The steps cannot be predicted.",
+      "example": "Sales, complaints and stock summaries run together, then one step merges them."
+    },
+    {
+      "name": "Orchestrator with specialists",
+      "what": "A lead agent hands work to specialist agents.",
+      "greatWhen": "Big, varied tasks where each specialist needs different tools or knowledge.",
+      "avoidWhen": "Small tasks. It is costly and hard to debug.",
+      "example": "A research agent, a data agent and a writing agent."
+    },
+    {
+      "name": "Writer and reviewer pair",
+      "what": "One agent drafts and another critiques.",
+      "greatWhen": "High-stakes quality checks.",
+      "avoidWhen": "Routine tasks.",
+      "example": "A writer plus a fact-checker."
+    }
+  ],
+  "challenge": {
+    "question": "A weekly report from three data sources. What is the simplest design that works?",
+    "options": [
+      {
+        "text": "One agent with three tools",
+        "verdict": "ok",
+        "why": "Simple and often enough. Watch for slow, meandering runs."
+      },
+      {
+        "text": "Three parallel steps and one merge step",
+        "verdict": "best",
+        "why": "The structure is known, so a fixed workflow is faster, cheaper and easier to test."
+      },
+      {
+        "text": "A five-agent team with a manager",
+        "verdict": "poor",
+        "why": "Costly and hard to debug for a three-step job."
+      },
+      {
+        "text": "One giant prompt with all the data pasted in",
+        "verdict": "poor",
+        "why": "Too much to paste, and the model will miss details."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Start with one agent or a workflow, and split only when it hurts",
+    "example": "Three summaries run in parallel, which is fast. A final step merges them and flags anything odd. Each part can be tested on its own."
+  },
+  "worstCase": {
+    "title": "A five-agent team for a three-step job",
+    "example": "A manager agent hands work to a research agent, a data agent, a writer and a reviewer. They pass long messages back and forth, the run costs many times more, and when the numbers are wrong nobody can tell which agent made the mistake."
+  },
+  "route": {
+    "travelling": "The weekly store report",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Monday 8am trigger",
+            "goes": "A scheduled start."
+          },
+          {
+            "label": "Three parallel steps",
+            "goes": "Sales, complaints and stock are summarized at the same time.",
+            "goesWrong": "A manager agent hands work to four sub-agents that chat at length."
+          },
+          {
+            "label": "Merge step",
+            "goes": "One model writes the one-page report."
+          },
+          {
+            "label": "Check step",
+            "goes": "Numbers are compared with the source data."
+          },
+          {
+            "label": "Send to the manager",
+            "goes": "The report is emailed."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Every extra agent adds cost, delay and confusion. Add one only when a single agent demonstrably fails."
+}

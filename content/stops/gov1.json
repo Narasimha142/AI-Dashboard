@@ -1,0 +1,132 @@
+{
+  "id": "gov1",
+  "line": 7,
+  "level": "intermediate",
+  "shortTitle": "Privacy and governance",
+  "title": "Privacy, regulation and governance",
+  "hook": "Data minimization, where data goes, retention, rules that vary by region, and who is accountable.",
+  "inPlainWords": "If AI touches personal data, three questions matter: should we use this data at all, where does it go, and who is accountable? Laws differ by country and change often, so treat this stop as a list of questions to ask your legal and security teams, not as legal advice.",
+  "useCase": {
+    "title": "Get the ShopEase assistant approved for launch",
+    "story": "The assistant reads customer emails, order history and payment status. It sends text to an outside model provider, keeps memory, and will run in several countries. Legal and security must sign off."
+  },
+  "approaches": [
+    {
+      "name": "Data minimization",
+      "what": "Collect and send only what is needed.",
+      "greatWhen": "Always.",
+      "avoidWhen": "Sending everything \"just in case\".",
+      "example": "Send the order status, not the whole customer record."
+    },
+    {
+      "name": "Masking and redaction",
+      "what": "Remove or replace personal details before they reach a model or a log.",
+      "greatWhen": "Anything with names, emails or card numbers.",
+      "avoidWhen": "Relying on it as your only protection.",
+      "example": "Replace card numbers with tokens."
+    },
+    {
+      "name": "Choosing where models run",
+      "what": "Decide which provider, region and contract terms apply, including whether data is kept or used for training.",
+      "greatWhen": "Sensitive data, or regional rules.",
+      "avoidWhen": "Leaving everything at the defaults.",
+      "example": "A provider agreement that excludes training on your data, in a chosen region."
+    },
+    {
+      "name": "Consent, retention and deletion",
+      "what": "Tell people what is stored, keep it as short a time as possible, and let them delete it.",
+      "greatWhen": "Memory and logs.",
+      "avoidWhen": "Keeping everything forever.",
+      "example": "Delete chat memory after 90 days, or on request."
+    },
+    {
+      "name": "Risk classification and regulation",
+      "what": "Sort each use by how much harm it could do, and check the rules that apply in your regions.",
+      "greatWhen": "Before launch, and when rules change.",
+      "avoidWhen": "Assuming one rule set fits every country.",
+      "example": "A chat FAQ is low risk. Declining credit is higher risk."
+    },
+    {
+      "name": "Governance: owners, records, reviews",
+      "what": "Name an owner, keep a register of AI systems, and review them on a schedule.",
+      "greatWhen": "Any real deployment.",
+      "avoidWhen": "A one-time checklist.",
+      "example": "A register listing purpose, data, owner and last review date."
+    },
+    {
+      "name": "Copyright and content rights",
+      "what": "Check the rights for training data, generated content and documents you feed in.",
+      "greatWhen": "Publishing generated content.",
+      "avoidWhen": "Assuming generated content has no restrictions.",
+      "example": "Review the licence for the product photos you use."
+    }
+  ],
+  "challenge": {
+    "question": "Which is the strongest way to prepare the assistant for approval?",
+    "options": [
+      {
+        "text": "Minimize and mask data, choose provider terms and region deliberately, set retention and deletion, classify risk by use, name an owner, and log access",
+        "verdict": "best",
+        "why": "It covers what data, where it goes, how long it stays, and who is accountable."
+      },
+      {
+        "text": "Ship first and write the policy later",
+        "verdict": "poor",
+        "why": "Fixing privacy after launch is slower, costlier and riskier."
+      },
+      {
+        "text": "Send full customer records so the model has more context",
+        "verdict": "poor",
+        "why": "More data means more exposure and more to delete later."
+      },
+      {
+        "text": "Copy another company's checklist and assume it fits every country",
+        "verdict": "ok",
+        "why": "A useful start, but your data, regions and uses are different."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Ask the questions early and keep records",
+    "example": "The team sends only what each task needs, masks card numbers and emails, picks a provider agreement that excludes training on the data, sets 90-day memory deletion, and registers the system with an owner. Legal reviews each region's rules before launch and again when the rules change."
+  },
+  "worstCase": {
+    "title": "Treating privacy and rules as an afterthought",
+    "example": "Full customer records go to an outside provider \"for context\". Chat logs keep card digits forever. A customer asks for their data to be deleted and nobody can find all the copies."
+  },
+  "route": {
+    "travelling": "Customer email containing an order number and card digits",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Email arrives",
+            "goes": "It contains an order number and card digits."
+          },
+          {
+            "label": "Minimize and mask",
+            "goes": "Card digits become a token. Only the needed fields go on.",
+            "goesWrong": "The whole email and customer record go to the provider as they are."
+          },
+          {
+            "label": "Approved provider and region",
+            "goes": "Contract terms and region were chosen deliberately."
+          },
+          {
+            "label": "Model answers",
+            "goes": "The assistant replies using only what it was given."
+          },
+          {
+            "label": "Retention rule",
+            "goes": "Memory expires after 90 days, or on request."
+          },
+          {
+            "label": "Audit log and owner review",
+            "goes": "Access is logged, and the owner reviews it every quarter."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Ask early: do we need this data, where does it go, and who is accountable? Then keep records, and check the local rules."
+}

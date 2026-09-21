@@ -1,0 +1,114 @@
+{
+  "id": "m11",
+  "line": 6,
+  "level": "intermediate",
+  "shortTitle": "Memory",
+  "title": "Memory: what the bot remembers",
+  "hook": "A model forgets everything between calls. Memory is what your software puts back on its desk.",
+  "inPlainWords": "A model remembers nothing between calls. \"Memory\" is whatever your software puts back in front of it each time, and the rules about what to keep and what to forget.",
+  "useCase": {
+    "title": "A returning customer says \"Same problem as last week\"",
+    "story": "The bot should know last week's ticket, the customer's language preference, and the current conversation."
+  },
+  "approaches": [
+    {
+      "name": "No memory",
+      "what": "Every message starts from a blank page.",
+      "greatWhen": "One-off questions.",
+      "avoidWhen": "Any real conversation.",
+      "example": "The bot asks for the order number again and again."
+    },
+    {
+      "name": "Recent chat in the prompt",
+      "what": "Send the last messages with every request.",
+      "greatWhen": "Short conversations.",
+      "avoidWhen": "Long ones. Cost grows and the desk overflows.",
+      "example": "Include the last 10 messages."
+    },
+    {
+      "name": "Summaries",
+      "what": "Compress older conversation into a short summary.",
+      "greatWhen": "Long sessions.",
+      "avoidWhen": "Details matter. Summaries lose them.",
+      "example": "\"Customer had a broken blender and is waiting for a replacement.\""
+    },
+    {
+      "name": "Long-term memory store",
+      "what": "Save facts like preferences and past cases, and look them up later.",
+      "greatWhen": "Returning customers and personalization.",
+      "avoidWhen": "Sensitive data without consent and controls.",
+      "example": "Saved: prefers email; ticket 771 about a blender."
+    },
+    {
+      "name": "Search over past tickets",
+      "what": "Use RAG over old conversations and tickets.",
+      "greatWhen": "A large history.",
+      "avoidWhen": "A very small history.",
+      "example": "Find last week's ticket about \"blender\"."
+    }
+  ],
+  "challenge": {
+    "question": "The customer says \"same problem as last week\". What gives the best answer?",
+    "options": [
+      {
+        "text": "No memory",
+        "verdict": "poor",
+        "why": "It has to ask the customer to explain everything again."
+      },
+      {
+        "text": "Search past tickets and read a short saved profile",
+        "verdict": "best",
+        "why": "It finds the right case and only brings in what is relevant."
+      },
+      {
+        "text": "Send the customer's entire three-year history every time",
+        "verdict": "poor",
+        "why": "Costly and noisy, and it exposes far more than needed."
+      },
+      {
+        "text": "Only the last 10 messages of this chat",
+        "verdict": "ok",
+        "why": "Helps within a session, but last week is out of reach."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Short-term chat plus searchable long-term facts, with controls",
+    "example": "The bot retrieves ticket 771 (blender, replacement pending) and says \"I see your blender replacement from last week. It shipped yesterday.\" The customer can view and delete what is saved about them."
+  },
+  "worstCase": {
+    "title": "Forgetting everything, or remembering too much",
+    "example": "Either the bot asks the same five questions every visit and the customer leaves, or it stores card details and health remarks in memory and repeats them to the wrong person."
+  },
+  "route": {
+    "travelling": "\"Same problem as last week\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "New message",
+            "goes": "\"Same problem as last week.\""
+          },
+          {
+            "label": "Look up memory",
+            "goes": "It finds ticket 771 and the profile: email, English.",
+            "goesWrong": "No lookup. The bot says \"Which problem? Please describe it again.\""
+          },
+          {
+            "label": "Build the prompt",
+            "goes": "Question, recent chat, and only the relevant memory."
+          },
+          {
+            "label": "Language model",
+            "goes": "It writes a reply that uses that context."
+          },
+          {
+            "label": "Update memory",
+            "goes": "New facts are saved. The customer can review or delete them."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Memory is retrieval plus rules: what to keep, what to forget, and who may see it."
+}

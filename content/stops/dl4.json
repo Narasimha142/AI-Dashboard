@@ -1,0 +1,125 @@
+{
+  "id": "dl4",
+  "line": 3,
+  "level": "advanced",
+  "shortTitle": "Running networks fast",
+  "title": "Running networks fast and cheaply",
+  "hook": "Big GPU server, compression, distillation, edge devices, batching.",
+  "inPlainWords": "Training gets the attention, but most of the cost and delay comes from running the model millions of times.",
+  "useCase": {
+    "title": "Inspect every parcel photo on the packing line in 50 milliseconds",
+    "story": "1,200 parcels an hour pass a camera. The line cannot wait for slow answers, and the warehouse has an unreliable internet connection."
+  },
+  "approaches": [
+    {
+      "name": "Big GPU server",
+      "what": "A powerful server runs the full model.",
+      "greatWhen": "Heavy models shared by many users.",
+      "avoidWhen": "It adds a network trip and costs a lot when idle.",
+      "example": "A cloud GPU serving a large model."
+    },
+    {
+      "name": "Compression (quantization)",
+      "what": "Store the network's numbers with less precision so it runs faster and smaller.",
+      "greatWhen": "Most deployments. The quality loss is usually small.",
+      "avoidWhen": "Tasks that need very fine numeric precision.",
+      "example": "A model half the size, nearly as accurate."
+    },
+    {
+      "name": "Distillation",
+      "what": "A small model copies a big one.",
+      "greatWhen": "A stable, narrow task.",
+      "avoidWhen": "The task changes often.",
+      "example": "A small inspector model trained from a big one's answers."
+    },
+    {
+      "name": "Edge device",
+      "what": "Run the model on a small computer beside the camera.",
+      "greatWhen": "Low delay, offline use, and privacy.",
+      "avoidWhen": "Very heavy models.",
+      "example": "A compact device at the packing line."
+    },
+    {
+      "name": "Batching",
+      "what": "Process many items together.",
+      "greatWhen": "Throughput matters more than delay.",
+      "avoidWhen": "Real-time single requests.",
+      "example": "Nightly analysis of the day's photos."
+    },
+    {
+      "name": "Cheap first check",
+      "what": "Run a tiny check first and call the big model only for unclear cases.",
+      "greatWhen": "Most inputs are easy.",
+      "avoidWhen": "Every input is hard.",
+      "example": "Obviously fine boxes skip the big model."
+    }
+  ],
+  "challenge": {
+    "question": "The line needs answers in 50 milliseconds, and the internet is unreliable. What fits best?",
+    "options": [
+      {
+        "text": "Send photos to a distant big GPU service",
+        "verdict": "poor",
+        "why": "Network delay and outages would stall the line."
+      },
+      {
+        "text": "Compress or distill a model, run it at the edge, and add a cheap first check",
+        "verdict": "best",
+        "why": "It is fast, works offline, and only calls a bigger model for unclear cases."
+      },
+      {
+        "text": "Batch the photos overnight",
+        "verdict": "poor",
+        "why": "Defective boxes would already be shipped."
+      },
+      {
+        "text": "A GPU server in the warehouse",
+        "verdict": "ok",
+        "why": "Fast enough, but costly and more to maintain than a small edge device."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Right-size the model for where and how it runs",
+    "example": "A distilled, compressed model runs on a small device beside the camera, answering in 20 milliseconds with no internet needed. Unclear photos go to a bigger model in the back office."
+  },
+  "worstCase": {
+    "title": "The biggest model, far away",
+    "example": "Photos travel to a distant server and come back in 400 milliseconds when the internet is busy, so the line stalls. The monthly GPU bill is high, and the servers sit idle at night."
+  },
+  "route": {
+    "travelling": "Parcel photo: box corner slightly dented",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Camera photo",
+            "goes": "A photo is taken as the parcel passes."
+          },
+          {
+            "label": "Cheap first check",
+            "goes": "A tiny model clears obviously fine boxes."
+          },
+          {
+            "label": "Compact model on the device",
+            "goes": "A compressed model judges the rest in 20 milliseconds.",
+            "goesWrong": "The photo is sent to a distant server to be judged by the largest model."
+          },
+          {
+            "label": "Confidence gate",
+            "goes": "Unclear cases go to a bigger model."
+          },
+          {
+            "label": "Decision",
+            "goes": "Pass the box, or divert it to inspection."
+          },
+          {
+            "label": "Log for retraining",
+            "goes": "Hard cases are saved to improve the model."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Where a model runs decides its cost and speed. Shrink it, move it close, and only call the big one when needed."
+}

@@ -1,0 +1,125 @@
+{
+  "id": "ml3",
+  "line": 2,
+  "level": "intermediate",
+  "shortTitle": "Preparing data",
+  "title": "Preparing data and features",
+  "hook": "Gaps, text categories, new columns, and rare outcomes. Do it in the right order.",
+  "inPlainWords": "Features are the columns a model gets to see. Better features usually beat a better algorithm. The order matters: split first, prepare second.",
+  "useCase": {
+    "title": "Cancellation data with gaps and a rare outcome",
+    "story": "Only 4% of customers cancel. Some ages are missing, \"country\" is text, and dates are raw timestamps. All of it must be fixed before training."
+  },
+  "approaches": [
+    {
+      "name": "Drop rows with gaps",
+      "what": "Delete rows that have missing values.",
+      "greatWhen": "Few gaps and plenty of data.",
+      "avoidWhen": "Gaps are common, or not random. People may leave things blank for a reason.",
+      "example": "Remove 20 rows out of 20,000."
+    },
+    {
+      "name": "Fill gaps and flag them",
+      "what": "Fill in a typical value and add a column saying it was missing.",
+      "greatWhen": "Gaps are frequent, or the gap itself carries a clue.",
+      "avoidWhen": "The column is mostly empty.",
+      "example": "Age is blank, so fill a typical age and set age_missing to yes."
+    },
+    {
+      "name": "Turn text categories into numbers",
+      "what": "Convert labels like country into columns a model can use.",
+      "greatWhen": "Country, product type, device.",
+      "avoidWhen": "Thousands of unique values need special handling.",
+      "example": "Country becomes a set of yes or no columns."
+    },
+    {
+      "name": "Create new features",
+      "what": "Combine or reshape raw columns into better clues.",
+      "greatWhen": "Dates, ratios, counts and trends.",
+      "avoidWhen": "You create so many that they mostly add noise.",
+      "example": "days_since_last_visit and orders_per_month."
+    },
+    {
+      "name": "Put numbers on similar scales",
+      "what": "Squeeze numbers into similar ranges.",
+      "greatWhen": "Neighbor-based and neural models.",
+      "avoidWhen": "Tree models do not need it.",
+      "example": "Spend in dollars and visits in counts both scaled."
+    },
+    {
+      "name": "Handle rare outcomes",
+      "what": "Give rare cases more weight, or resample the training data, and judge with measures that reward catching them.",
+      "greatWhen": "Rare events like cancellations and fraud.",
+      "avoidWhen": "Never alter the exam set. It must look like real life.",
+      "example": "Cancellations count ten times more during training."
+    }
+  ],
+  "challenge": {
+    "question": "Only 4% of customers cancel. A model that says \"nobody cancels\" is 96% accurate. What do you do?",
+    "options": [
+      {
+        "text": "Celebrate the 96%",
+        "verdict": "poor",
+        "why": "The model has learned nothing useful. It always guesses \"stays\"."
+      },
+      {
+        "text": "Weight the rare cases, judge with catch-rate and false-alarm measures, and leave the exam set untouched",
+        "verdict": "best",
+        "why": "The model must earn its score on realistic data."
+      },
+      {
+        "text": "Rebalance the exam set to 50/50",
+        "verdict": "poor",
+        "why": "The exam should look like real life, where cancellations are rare."
+      },
+      {
+        "text": "Resample only the training data",
+        "verdict": "ok",
+        "why": "A sound technique, but you still need the right measures to judge it."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Split first, fix the training data, add useful features",
+    "example": "days_since_last_visit becomes the strongest clue. Cancellers get more weight in training. The exam set keeps the real 4%, so the final score reflects real life."
+  },
+  "worstCase": {
+    "title": "Cleaning before splitting, and rewarding the lazy answer",
+    "example": "You fill gaps using averages from the whole table, including the exam rows, so exam information leaks into training. The model catches nothing yet reports 96% accuracy by always guessing \"stays\"."
+  },
+  "route": {
+    "travelling": "Raw row: last visit January 10, age blank, country IN",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Raw table",
+            "goes": "Blank ages, text countries, raw dates."
+          },
+          {
+            "label": "Split first",
+            "goes": "Set the exam rows aside before touching anything.",
+            "goesWrong": "Everything is cleaned first, then split. Exam information leaks into training."
+          },
+          {
+            "label": "Fix gaps and text",
+            "goes": "Fill age, flag it as missing, and turn country into columns."
+          },
+          {
+            "label": "Build new features",
+            "goes": "days_since_last_visit and orders_per_month appear."
+          },
+          {
+            "label": "Weight the rare cases",
+            "goes": "Cancellations count more during training."
+          },
+          {
+            "label": "Test on the untouched exam",
+            "goes": "The score reflects real life."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Split first, prepare second, and never let a lazy answer earn a good score."
+}

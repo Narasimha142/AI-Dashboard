@@ -1,0 +1,121 @@
+{
+  "id": "m5",
+  "line": 4,
+  "level": "beginner",
+  "shortTitle": "Prompting",
+  "title": "Prompting: writing the job description",
+  "hook": "Six ways to instruct a model, and which combination gives reliable results.",
+  "inPlainWords": "A prompt is a job description for the model: who it is, what to do, examples of good work, the shape of the output, and what to do when information is missing.",
+  "useCase": {
+    "title": "Turn messy emails into a ticket form",
+    "story": "Pull three things out of every email: the order number, the type of problem, and how urgent it is, so a ticket can be created automatically."
+  },
+  "approaches": [
+    {
+      "name": "Just ask (zero-shot)",
+      "what": "One plain request with no examples.",
+      "greatWhen": "Simple, one-off tasks.",
+      "avoidWhen": "You need a consistent format every time.",
+      "example": "\"What is the order number in this email?\""
+    },
+    {
+      "name": "Clear instructions and a role",
+      "what": "Say who the model is, what to do, what to avoid, and what to do when unsure.",
+      "greatWhen": "Almost always. It is the base of every good prompt.",
+      "avoidWhen": "Never skip it.",
+      "example": "\"You are a support triager. If the order number is missing, return null.\""
+    },
+    {
+      "name": "Show examples (few-shot)",
+      "what": "Include two to five examples of input and ideal output.",
+      "greatWhen": "Custom labels, tone, or formats.",
+      "avoidWhen": "Your examples disagree with each other. The model copies the confusion.",
+      "example": "Three sample emails with their correct forms."
+    },
+    {
+      "name": "Think step by step",
+      "what": "Ask the model to reason through steps before it answers.",
+      "greatWhen": "Multi-step judgement and logic.",
+      "avoidWhen": "Simple extraction, where it only adds time and cost.",
+      "example": "\"First list what the customer wants, then choose the urgency.\""
+    },
+    {
+      "name": "Structured output",
+      "what": "Require a fixed shape that your code can read, such as JSON.",
+      "greatWhen": "Anything a program will consume.",
+      "avoidWhen": "Pure conversation.",
+      "example": "{\"order\":\"48213\",\"problem\":\"damaged\",\"urgency\":\"high\"}"
+    },
+    {
+      "name": "Chain of small prompts",
+      "what": "Split a big task into small prompts that each do one job.",
+      "greatWhen": "A big task keeps failing in one shot.",
+      "avoidWhen": "The task fits comfortably in one prompt.",
+      "example": "Step 1 extract the facts. Step 2 draft the reply."
+    }
+  ],
+  "challenge": {
+    "question": "You need the same JSON shape every time, even for strange emails. Which prompt is best?",
+    "options": [
+      {
+        "text": "\"Read this and tell me what's up\"",
+        "verdict": "poor",
+        "why": "The output changes every run and cannot be parsed."
+      },
+      {
+        "text": "Clear instructions, three examples, a required JSON shape, and \"use null if missing\"",
+        "verdict": "best",
+        "why": "It sets the job, shows the target, fixes the shape, and handles missing data."
+      },
+      {
+        "text": "Long step-by-step reasoning with no format",
+        "verdict": "ok",
+        "why": "It helps thinking, but does not guarantee a shape your code can read."
+      },
+      {
+        "text": "Examples only, with no instructions",
+        "verdict": "ok",
+        "why": "Often works, but edge cases such as missing numbers are left to chance."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Instructions, examples, a fixed output shape, and \"null if missing\"",
+    "example": "\"Order #48213 arrived cracked!! Need replacement before Friday\" becomes {\"order\":\"48213\",\"problem\":\"damaged\",\"urgency\":\"high\"}. An email with no number gives {\"order\":null}, and the ticket goes to a human."
+  },
+  "worstCase": {
+    "title": "A vague prompt with no rule for missing information",
+    "example": "\"Tell me about this email\" returns a friendly paragraph that differs every run and cannot be parsed. When there is no order number, the model invents one, and a refund goes to the wrong order."
+  },
+  "route": {
+    "travelling": "\"Order #48213 arrived cracked!! Need replacement before Friday\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Email text",
+            "goes": "The raw, messy customer message."
+          },
+          {
+            "label": "Prompt template",
+            "goes": "Instructions, three examples, a required JSON shape, and \"null if missing\".",
+            "goesWrong": "The prompt only says \"Tell me about this email\"."
+          },
+          {
+            "label": "Language model",
+            "goes": "It reads the pieces and fills in the form."
+          },
+          {
+            "label": "Check the shape",
+            "goes": "Code checks that every field is present and urgency is low, medium or high."
+          },
+          {
+            "label": "Create the ticket",
+            "goes": "A clean ticket appears in the queue."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "A prompt is a specification: role, steps, examples, output shape, and what to do when information is missing."
+}

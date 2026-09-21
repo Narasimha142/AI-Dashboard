@@ -1,0 +1,125 @@
+{
+  "id": "lm1",
+  "line": 4,
+  "level": "intermediate",
+  "shortTitle": "How models are trained",
+  "title": "How language models are trained",
+  "hook": "Pretraining, instruction tuning, feedback tuning and reasoning training, and what each explains.",
+  "inPlainWords": "A language model is built in stages. It first learns to predict text from a huge amount of writing, then it is taught to follow instructions, then it is tuned toward answers people prefer. Each stage explains a behavior you see later.",
+  "useCase": {
+    "title": "Why does the ShopEase bot sound sure and still be wrong?",
+    "story": "The team keeps seeing confident wrong answers, refusals on harmless requests, and different answers to the same question. They want to understand where this comes from so they choose the right fix."
+  },
+  "approaches": [
+    {
+      "name": "Pretraining",
+      "what": "The model reads a vast amount of text and learns to predict what comes next.",
+      "greatWhen": "It gives broad knowledge and language skill.",
+      "avoidWhen": "It does not know your company, and its knowledge stops at a cutoff date.",
+      "example": "It learns grammar, facts and styles from books, websites and code."
+    },
+    {
+      "name": "Instruction tuning",
+      "what": "Further training on examples of instructions and good responses.",
+      "greatWhen": "It turns a text predictor into a helpful assistant.",
+      "avoidWhen": "Sounding helpful can win over admitting it does not know.",
+      "example": "Trained on \"summarize this\" with good summaries."
+    },
+    {
+      "name": "Preference tuning (feedback)",
+      "what": "People, or other models, rank answers, and the model is nudged toward the preferred ones.",
+      "greatWhen": "It improves tone, helpfulness and safety.",
+      "avoidWhen": "It can learn to please. Fluent, confident answers may have been preferred.",
+      "example": "Reviewers prefer a clear, polite answer."
+    },
+    {
+      "name": "Reasoning training",
+      "what": "Training the model to work through steps before answering, rewarded when the final result is right.",
+      "greatWhen": "Hard, multi-step problems.",
+      "avoidWhen": "It is slower and costlier. Simple questions do not need it.",
+      "example": "Longer, careful answers on tricky refund logic."
+    },
+    {
+      "name": "Run-time help (RAG and tools)",
+      "what": "Give the model outside information and abilities at run time instead of training more.",
+      "greatWhen": "Fresh facts, live data and exact calculations.",
+      "avoidWhen": "It still needs checking.",
+      "example": "RAG for policy, a tool for order status."
+    },
+    {
+      "name": "Sampling settings (temperature)",
+      "what": "Controls how adventurous the next-word choice is.",
+      "greatWhen": "Low for consistent factual tasks, higher for creative ones.",
+      "avoidWhen": "Even low settings cannot make a model know what it does not know.",
+      "example": "Low temperature for policy answers."
+    }
+  ],
+  "challenge": {
+    "question": "The bot gives a confident but wrong return policy. Which fix targets the root cause?",
+    "options": [
+      {
+        "text": "Give it the real policy at run time (RAG) and tell it to say when it does not know",
+        "verdict": "best",
+        "why": "The gap is missing knowledge. Supply it, and give the model a way out when it is not there."
+      },
+      {
+        "text": "Retrain the model from scratch on ShopEase data",
+        "verdict": "poor",
+        "why": "Enormously costly, and the policy would still change next month."
+      },
+      {
+        "text": "Set temperature to zero and assume it is fixed",
+        "verdict": "ok",
+        "why": "More consistent, but not more correct."
+      },
+      {
+        "text": "Tell it to be more confident",
+        "verdict": "poor",
+        "why": "That is the opposite of what you need."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Match the fix to the stage the behavior came from",
+    "example": "Confident wrong answers come from pretraining plus feedback that rewarded fluent answers. The fix is run-time grounding: retrieved policy, a rule to say \"I don't know\" when the passages do not answer the question, and a low temperature for consistency."
+  },
+  "worstCase": {
+    "title": "Treating the model as a database you can edit",
+    "example": "The team tries to retrain the model to fix one policy and spends weeks. The model still guesses about new policies, and the change breaks unrelated behavior."
+  },
+  "route": {
+    "travelling": "\"What is the return window for opened electronics?\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Pretraining",
+            "goes": "It learned general language and knowledge from vast text."
+          },
+          {
+            "label": "Instruction tuning",
+            "goes": "It learned to follow instructions and answer helpfully."
+          },
+          {
+            "label": "Preference tuning",
+            "goes": "It learned which kinds of answers people prefer."
+          },
+          {
+            "label": "ShopEase adds run-time help",
+            "goes": "Retrieved policy, tools and clear instructions are added to the prompt.",
+            "goesWrong": "Nothing is added at run time. The model answers from memory: \"30 days\"."
+          },
+          {
+            "label": "Answer",
+            "goes": "A grounded answer, or \"I don't know\"."
+          },
+          {
+            "label": "Check and monitor",
+            "goes": "Answers are tested and reviewed over time."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Models are trained to predict text and to please. To make one reliable about your business, add facts and checks at run time."
+}

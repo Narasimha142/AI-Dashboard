@@ -1,0 +1,125 @@
+{
+  "id": "dl6",
+  "line": 3,
+  "level": "advanced",
+  "shortTitle": "Learning by trying",
+  "title": "Learning by trying: tests, bandits and reinforcement learning",
+  "hook": "A/B tests, bandits, contextual bandits, full reinforcement learning, or plain optimization.",
+  "inPlainWords": "When an AI's choice changes what happens next, it can learn from the results. The methods range from simple experiments to full reinforcement learning. Use the lightest one that fits.",
+  "useCase": {
+    "title": "Which discount banner should the home page show?",
+    "story": "Three banners: 10% off, free shipping, and a bundle deal. Every visitor sees one, and you learn from what they buy. Tastes shift by season."
+  },
+  "approaches": [
+    {
+      "name": "Rules or gut feeling",
+      "what": "Pick the banner by opinion.",
+      "greatWhen": "Very low traffic.",
+      "avoidWhen": "Anything you can measure.",
+      "example": "Marketing says free shipping always wins."
+    },
+    {
+      "name": "A/B test",
+      "what": "Show each version to a fixed share of visitors, then compare.",
+      "greatWhen": "One clear decision and enough traffic, when you want a clean answer.",
+      "avoidWhen": "Many options or changing tastes. It wastes traffic on losers.",
+      "example": "Split visitors 50/50 for two weeks."
+    },
+    {
+      "name": "Bandit",
+      "what": "Send more visitors to whichever banner is winning, while still testing the others.",
+      "greatWhen": "Many options, when you want to earn while you learn.",
+      "avoidWhen": "Results show up only weeks later.",
+      "example": "After a day, the best banner gets 70% of visitors."
+    },
+    {
+      "name": "Contextual bandit",
+      "what": "Choose using clues about the visitor, like device and past orders.",
+      "greatWhen": "Different people respond differently.",
+      "avoidWhen": "There is little data per group.",
+      "example": "Bundle deals for repeat buyers, free shipping for first-time visitors."
+    },
+    {
+      "name": "Full reinforcement learning",
+      "what": "Learn a strategy across a long series of decisions with delayed rewards.",
+      "greatWhen": "Sequences like pricing over weeks, robots, or logistics.",
+      "avoidWhen": "You have no safe simulator, or feedback is scarce.",
+      "example": "Learn when to raise or cut prices across a season."
+    },
+    {
+      "name": "Optimization solver",
+      "what": "Compute the best plan under known constraints. No learning needed.",
+      "greatWhen": "Rules and costs are known, like routes and schedules.",
+      "avoidWhen": "Outcomes are uncertain.",
+      "example": "Plan delivery routes for 40 vans."
+    }
+  ],
+  "challenge": {
+    "question": "Three banners, lots of traffic, and tastes that shift by season. What is the smart fit?",
+    "options": [
+      {
+        "text": "Gut feeling",
+        "verdict": "poor",
+        "why": "You have traffic to learn from. Use it."
+      },
+      {
+        "text": "One two-week A/B test, then never revisit",
+        "verdict": "ok",
+        "why": "Clean, but it goes stale when tastes shift."
+      },
+      {
+        "text": "A bandit that keeps shifting traffic toward winners",
+        "verdict": "best",
+        "why": "It earns while it learns and notices seasonal change."
+      },
+      {
+        "text": "Full reinforcement learning with a custom simulator",
+        "verdict": "poor",
+        "why": "Massive overkill for a three-way choice."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Use the lightest method that fits the decision",
+    "example": "A bandit sends most visitors to the current best banner and keeps a few percent exploring. When autumn arrives and free shipping stops winning, it notices within days and shifts."
+  },
+  "worstCase": {
+    "title": "Overbuilding, or never learning",
+    "example": "The team spends six months building a full reinforcement-learning system with a custom simulator, when a bandit would have worked in a week. Or they pick one banner from opinion and never check that it works."
+  },
+  "route": {
+    "travelling": "Visitor 55,102 opens the home page",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Visitor arrives",
+            "goes": "A new visitor opens the home page."
+          },
+          {
+            "label": "Choose a banner",
+            "goes": "Mostly the current best, sometimes another to keep learning.",
+            "goesWrong": "The banner was chosen by opinion, and nobody ever checks the result."
+          },
+          {
+            "label": "Show it",
+            "goes": "The banner appears on the page."
+          },
+          {
+            "label": "Watch what happens",
+            "goes": "Did the visitor click or buy?"
+          },
+          {
+            "label": "Update the scores",
+            "goes": "The winning banner's score rises."
+          },
+          {
+            "label": "Repeat",
+            "goes": "The next visitor gets a smarter choice."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "When choices shape outcomes, learn from the results. Start with a test or a bandit before reinforcement learning."
+}

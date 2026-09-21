@@ -1,0 +1,118 @@
+{
+  "id": "dl1",
+  "line": 3,
+  "level": "intermediate",
+  "shortTitle": "Reusing pretrained networks",
+  "title": "Neural networks, and reusing pretrained ones",
+  "hook": "Train from scratch, fine-tune, use as-is, or extract features. Almost nobody starts from zero.",
+  "inPlainWords": "A neural network learns by guessing, checking, and nudging itself, over and over, across many examples. The big idea: a network that already learned general things, like edges, shapes and word meaning, can be reused for your task.",
+  "useCase": {
+    "title": "Sort 2,000 labeled product photos into 30 categories",
+    "story": "ShopEase has 2,000 photos, labeled by hand, across 30 categories. The photos come from different phones and lighting. The team is three people with one small GPU."
+  },
+  "approaches": [
+    {
+      "name": "Train from scratch",
+      "what": "Start with a blank network.",
+      "greatWhen": "You have millions of examples, or unusual data that no pretrained model has seen.",
+      "avoidWhen": "Small datasets and small teams.",
+      "example": "Training an image network on 2,000 photos alone."
+    },
+    {
+      "name": "Use a pretrained model as it is",
+      "what": "Use a model someone already trained, without changing it.",
+      "greatWhen": "Your categories match what it already knows.",
+      "avoidWhen": "Your categories are unusual.",
+      "example": "A general image model tags shoe, bag and lamp."
+    },
+    {
+      "name": "Feature extraction",
+      "what": "Use the pretrained network to turn each image into numbers, then train a small classic model on those.",
+      "greatWhen": "Small data, and you want it fast with no GPU training.",
+      "avoidWhen": "You need the very best accuracy.",
+      "example": "Image to numbers, then a simple classifier."
+    },
+    {
+      "name": "Fine-tuning (transfer learning)",
+      "what": "Start from a pretrained network and train it a little on your photos.",
+      "greatWhen": "You have hundreds to thousands of examples per category. This is the usual best choice.",
+      "avoidWhen": "You have almost no labeled data.",
+      "example": "Fine-tune with your 2,000 photos."
+    },
+    {
+      "name": "Prompt a hosted vision model",
+      "what": "Send images to a hosted vision model and describe the categories in the prompt.",
+      "greatWhen": "No training team, low volume, or categories that change often.",
+      "avoidWhen": "Huge volume or strict privacy.",
+      "example": "\"Which of these 30 categories fits this photo?\""
+    }
+  ],
+  "challenge": {
+    "question": "2,000 labeled photos, 30 categories, three people, one small GPU. What do you do?",
+    "options": [
+      {
+        "text": "Train a network from scratch",
+        "verdict": "poor",
+        "why": "2,000 photos are far too few to learn vision from nothing."
+      },
+      {
+        "text": "Fine-tune a pretrained vision model on the photos",
+        "verdict": "best",
+        "why": "It already knows edges, textures and shapes. Your photos only teach it your 30 categories."
+      },
+      {
+        "text": "Buy 2 million more photos first",
+        "verdict": "poor",
+        "why": "Costly, and unnecessary when a pretrained model exists."
+      },
+      {
+        "text": "Extract features and train a simple classifier",
+        "verdict": "ok",
+        "why": "A great quick baseline, but fine-tuning usually reaches higher accuracy."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Start from a pretrained network and adapt it",
+    "example": "The pretrained model already knows edges, textures and shapes. Fine-tuning on 2,000 photos takes an afternoon and reaches good accuracy. A quick feature-extraction baseline was built first to know the bar."
+  },
+  "worstCase": {
+    "title": "Training from scratch on a small set",
+    "example": "A blank network memorizes the 2,000 photos, including the photographer's desk in the background. It works on the training photos and fails on new lighting and new angles."
+  },
+  "route": {
+    "travelling": "Photo of a red trainer on a desk",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Labeled photos",
+            "goes": "2,000 photos across 30 categories."
+          },
+          {
+            "label": "Pick a pretrained model",
+            "goes": "Choose one already trained on millions of images.",
+            "goesWrong": "The team starts with a blank network. It has no general knowledge to reuse."
+          },
+          {
+            "label": "Add a new final layer",
+            "goes": "A small new part maps its knowledge to your 30 categories."
+          },
+          {
+            "label": "Fine-tune gently",
+            "goes": "Train a little on your own photos."
+          },
+          {
+            "label": "Check on unseen photos",
+            "goes": "Accuracy holds up on different phones and lighting."
+          },
+          {
+            "label": "Serve",
+            "goes": "Photo in, category out."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Do not train from zero. Reuse what a pretrained network already knows, and adapt it."
+}

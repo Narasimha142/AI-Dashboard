@@ -1,0 +1,106 @@
+{
+  "id": "m3",
+  "line": 1,
+  "level": "beginner",
+  "shortTitle": "Ways machines learn",
+  "title": "Ways machines learn",
+  "hook": "Supervised, unsupervised, self-supervised and reinforcement, matched to real problems.",
+  "useCase": {
+    "title": "Three different ShopEase problems",
+    "story": "(1) Tag tickets, where you have past tags. (2) Group 50,000 customers into segments, where nobody has labeled anything. (3) Choose which discount banner to show, where you learn by trying and watching sales."
+  },
+  "approaches": [
+    {
+      "name": "Supervised learning",
+      "what": "Learn from examples that come with the right answer.",
+      "greatWhen": "You have labels, such as tickets already tagged.",
+      "avoidWhen": "Labels are expensive or do not exist.",
+      "example": "Tickets already tagged Billing, Delivery or Returns."
+    },
+    {
+      "name": "Unsupervised learning",
+      "what": "Find structure in data that has no answers attached.",
+      "greatWhen": "You want to explore, group, or spot oddballs.",
+      "avoidWhen": "You need a specific predicted label.",
+      "example": "Discover a group of weekend bargain hunters."
+    },
+    {
+      "name": "Self-supervised learning",
+      "what": "The data supplies its own answers, for example by hiding the next word and predicting it.",
+      "greatWhen": "Huge piles of raw text or images. This is how language models are pre-trained.",
+      "avoidWhen": "You will rarely do this yourself. You use models that are already pre-trained.",
+      "example": "A language model read enormous text by predicting the next word, again and again."
+    },
+    {
+      "name": "Reinforcement learning",
+      "what": "Learn by trial, reward and penalty.",
+      "greatWhen": "A series of decisions with clear feedback, like games, robots, or click-tuned recommendations.",
+      "avoidWhen": "Trials are costly or unsafe, or feedback comes slowly.",
+      "example": "Try banners A, B and C, then shift toward the one that sells."
+    }
+  ],
+  "challenge": {
+    "question": "Group 50,000 customers into natural segments. Nobody has labeled them. Which learning style?",
+    "options": [
+      {
+        "text": "Supervised learning",
+        "verdict": "poor",
+        "why": "It needs labels, and none exist."
+      },
+      {
+        "text": "Unsupervised learning",
+        "verdict": "best",
+        "why": "It finds natural groups without answers. People then name the groups."
+      },
+      {
+        "text": "Reinforcement learning",
+        "verdict": "poor",
+        "why": "There is no trial-and-reward loop here."
+      },
+      {
+        "text": "Self-supervised learning",
+        "verdict": "poor",
+        "why": "That is how language models are pre-trained. Not the tool for a segmentation job."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Match the learning style to the data you actually have",
+    "example": "Tickets have tags, so use supervised learning. Customers have none, so group them without labels. The banner has instant feedback, so use trial and reward."
+  },
+  "worstCase": {
+    "title": "Inventing labels that are not real",
+    "example": "Someone hand-labels 500 customers as \"VIP\" on gut feeling and trains a model. The model faithfully learns that person's bias and applies it to everyone."
+  },
+  "route": {
+    "travelling": "50,000 customer records",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Raw customer data",
+            "goes": "Orders, visits and spend for each customer."
+          },
+          {
+            "label": "Pick a learning style",
+            "goes": "No labels exist, so choose grouping without labels.",
+            "goesWrong": "The team invents quick labels like \"VIP\" on gut feeling."
+          },
+          {
+            "label": "Find groups",
+            "goes": "The model finds five natural clusters."
+          },
+          {
+            "label": "Humans name them",
+            "goes": "\"Weekend bargain hunters\", \"Gift buyers\" and so on."
+          },
+          {
+            "label": "Use them",
+            "goes": "Send a different email to each group."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Ask first: do I have answers, no answers, or a reward signal? That picks the learning style."
+}

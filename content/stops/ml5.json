@@ -1,0 +1,122 @@
+{
+  "id": "ml5",
+  "line": 2,
+  "level": "intermediate",
+  "shortTitle": "Overfitting",
+  "title": "Overfitting: memorizing versus learning",
+  "hook": "A model that aces practice and fails live. How to spot it, and what to do.",
+  "inPlainWords": "Overfitting is a student who memorizes last year's exam answers. Great on the practice paper, lost on a new question.",
+  "useCase": {
+    "title": "A delivery-time model that fails after launch",
+    "story": "Your model predicted delivery days perfectly on the data it trained on, but live predictions are off by days. You only have 1,500 past deliveries."
+  },
+  "approaches": [
+    {
+      "name": "Hold-out exam set",
+      "what": "Keep some data hidden until the end.",
+      "greatWhen": "Always.",
+      "example": "Train on 80%, test on 20%."
+    },
+    {
+      "name": "Cross-validation",
+      "what": "Rotate which part is the exam several times, then average the scores.",
+      "greatWhen": "Small data where you want a steadier score.",
+      "avoidWhen": "Very large data, or data ordered in time.",
+      "example": "Five different exams from the same data."
+    },
+    {
+      "name": "Simplify the model",
+      "what": "Limit how much it can memorize, with fewer or shallower rules.",
+      "greatWhen": "The model is too flexible for the data you have.",
+      "avoidWhen": "The model is already too simple.",
+      "example": "Limit trees to a few questions deep."
+    },
+    {
+      "name": "Get more data",
+      "what": "Add more examples.",
+      "greatWhen": "It is the cheapest cure when possible.",
+      "avoidWhen": "Data is expensive or unavailable.",
+      "example": "Add another year of deliveries."
+    },
+    {
+      "name": "Stop early or add a penalty",
+      "what": "Stop training before it starts memorizing, or penalize complexity.",
+      "greatWhen": "Neural networks and boosted trees.",
+      "example": "Stop when the exam score stops improving."
+    },
+    {
+      "name": "Split by time",
+      "what": "Train on the past and test on the future.",
+      "greatWhen": "Anything that changes over time.",
+      "example": "Train on January to September, test on October."
+    }
+  ],
+  "challenge": {
+    "question": "Practice score 99%, exam score 70%. What is the most sensible first move?",
+    "options": [
+      {
+        "text": "Ship it, because 99% is great",
+        "verdict": "poor",
+        "why": "The practice score only shows memory, not skill."
+      },
+      {
+        "text": "Simplify or limit the model, add data if you can, and re-check the exam score",
+        "verdict": "best",
+        "why": "It attacks the memorizing directly, and the exam score tells you if it worked."
+      },
+      {
+        "text": "Train it longer",
+        "verdict": "poor",
+        "why": "Longer training usually memorizes even more."
+      },
+      {
+        "text": "Run cross-validation to confirm the gap is real",
+        "verdict": "ok",
+        "why": "Good for confirming, but it does not fix anything."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Trust the exam score, and shrink the gap",
+    "example": "The team limits tree depth and adds another year of deliveries. The practice score drops to 82% and the exam score rises to 79%. The gap is small, so live results match what was measured."
+  },
+  "worstCase": {
+    "title": "Trusting the practice score",
+    "example": "The model memorized 1,500 deliveries, including quirks like one courier's slow Tuesday. Live, it predicts 2 days for a parcel that takes 6. Customers are given wrong promises."
+  },
+  "route": {
+    "travelling": "Delivery data: 1,500 past parcels",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Past deliveries",
+            "goes": "1,500 parcels with known delivery times."
+          },
+          {
+            "label": "Split by time",
+            "goes": "Train on January to September, exam on October and November.",
+            "goesWrong": "There is no exam set. The model is judged on the same parcels it learned from."
+          },
+          {
+            "label": "Train a limited model",
+            "goes": "Shallow rules leave no room to memorize."
+          },
+          {
+            "label": "Compare the two scores",
+            "goes": "Practice 82%, exam 79%. The gap is small."
+          },
+          {
+            "label": "Adjust if the gap is big",
+            "goes": "Simplify the model or add data."
+          },
+          {
+            "label": "Go live and monitor",
+            "goes": "Track live accuracy against the exam score."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Judge a model only on data it has never seen, and watch the gap between practice and exam."
+}

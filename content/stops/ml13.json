@@ -1,0 +1,129 @@
+{
+  "id": "ml13",
+  "line": 2,
+  "level": "advanced",
+  "shortTitle": "When labels are scarce",
+  "title": "When labels are scarce: semi-supervised and active learning",
+  "hook": "Use the unlabeled pile, choose what to label next, and start from a model that already knows a lot.",
+  "inPlainWords": "Labels cost time and money, while unlabeled data is plentiful. Several techniques stretch a few labels a long way: learn from the unlabeled pile, ask people to label only the most useful examples, or start from a model that already knows a lot.",
+  "useCase": {
+    "title": "Classify 200,000 emails with only 400 labeled",
+    "story": "ShopEase has 400 labeled emails across 12 topics and 199,600 unlabeled ones. Labeling costs about 50 cents an email. The team wants a good classifier without labeling everything."
+  },
+  "approaches": [
+    {
+      "name": "Label more at random",
+      "what": "Pay to label a random sample.",
+      "greatWhen": "The budget is generous, and you also need an unbiased test set.",
+      "avoidWhen": "The budget is tight.",
+      "example": "Label another 2,000 at random."
+    },
+    {
+      "name": "Transfer learning",
+      "what": "Start from a pretrained text model and fine-tune it on the 400.",
+      "greatWhen": "Almost always the first move.",
+      "avoidWhen": "Your language or field is very unusual.",
+      "example": "Fine-tune a language model on 400 examples."
+    },
+    {
+      "name": "Prompt a language model",
+      "what": "Describe the topics and let a model classify, with a few examples.",
+      "greatWhen": "Few labels and a quick start.",
+      "avoidWhen": "Volume is so high that cost matters.",
+      "example": "Use the labeled emails as examples in the prompt."
+    },
+    {
+      "name": "Semi-supervised learning",
+      "what": "Use the model's confident guesses on unlabeled data as extra training examples.",
+      "greatWhen": "Lots of unlabeled data and a decent starting model.",
+      "avoidWhen": "The starting model is poor. Its errors reinforce themselves.",
+      "example": "Add the 5,000 most confident predictions to training."
+    },
+    {
+      "name": "Active learning",
+      "what": "The model picks the examples it is least sure about, and people label those.",
+      "greatWhen": "Labeling is costly.",
+      "avoidWhen": "You need a fair random test set. Keep that separate.",
+      "example": "Label the 300 emails where the model is torn."
+    },
+    {
+      "name": "Weak labeling with rules",
+      "what": "Write rules that label many examples roughly, then train on the noisy result.",
+      "greatWhen": "Domain rules are easy to write.",
+      "avoidWhen": "The rules contradict each other.",
+      "example": "Emails with \"refund\" and \"charged\" get a Billing label."
+    }
+  ],
+  "challenge": {
+    "question": "You have 400 labels, a small budget and 200,000 unlabeled emails. What is the smartest plan?",
+    "options": [
+      {
+        "text": "Start from a pretrained model, get a prompt-based baseline, have people label the most uncertain emails, and keep a separate random test set",
+        "verdict": "best",
+        "why": "Each step multiplies what the few labels can do."
+      },
+      {
+        "text": "Train a large network from scratch on the 400",
+        "verdict": "poor",
+        "why": "Far too little data to learn from nothing."
+      },
+      {
+        "text": "Trust the model's own guesses on all 200,000 with no human check",
+        "verdict": "poor",
+        "why": "Its early mistakes become its training data."
+      },
+      {
+        "text": "Label all 200,000 by hand",
+        "verdict": "ok",
+        "why": "It works, but it is far beyond the budget."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Reuse a pretrained model, label the uncertain cases, keep a clean test set",
+    "example": "A fine-tuned pretrained model reaches a solid baseline from 400 labels. People label the 300 emails it is most torn about. Two rounds later accuracy is high, and a separate random test set of 200 confirms it."
+  },
+  "worstCase": {
+    "title": "Learning from its own mistakes",
+    "example": "A weak model labels 50,000 emails and retrains on them. Its early errors become training data, so it grows more confident in the wrong answers. Accuracy looks fine on its own labels and falls on real ones."
+  },
+  "route": {
+    "travelling": "Email the model is unsure about: \"Charged for the wrong size, want to swap\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "400 labeled emails",
+            "goes": "A small starting set."
+          },
+          {
+            "label": "Start from a pretrained model",
+            "goes": "Fine-tune it on the 400."
+          },
+          {
+            "label": "Score the unlabeled pile",
+            "goes": "The model rates its confidence on each email."
+          },
+          {
+            "label": "Find the uncertain ones",
+            "goes": "Emails torn between Billing and Returns are picked.",
+            "goesWrong": "Every prediction, right or wrong, is fed straight back in as a new label."
+          },
+          {
+            "label": "People label those",
+            "goes": "Reviewers give the correct topic."
+          },
+          {
+            "label": "Retrain and test",
+            "goes": "Tested on a random labeled set kept apart."
+          },
+          {
+            "label": "Repeat while it helps",
+            "goes": "Stop when gains flatten."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Few labels can go a long way: reuse pretrained models, label the most informative examples, and never let a model train on its own unchecked guesses."
+}

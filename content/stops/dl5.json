@@ -1,0 +1,124 @@
+{
+  "id": "dl5",
+  "line": 3,
+  "level": "beginner",
+  "shortTitle": "Generating content",
+  "title": "Generating text, images and audio",
+  "hook": "Language, image, speech and multimodal generators, and what must stay human-checked.",
+  "inPlainWords": "Generative models create new content that looks like what they were trained on. That is powerful, and it also means they can create convincing errors.",
+  "useCase": {
+    "title": "Write 500 product descriptions and add lifestyle images",
+    "story": "A new catalog has 500 products. Each needs a description and one clean background image. The specs come from a supplier spreadsheet."
+  },
+  "approaches": [
+    {
+      "name": "Language model for text",
+      "what": "Draft descriptions from the spec sheet.",
+      "greatWhen": "Drafting, rewriting and summarizing.",
+      "avoidWhen": "Facts must be exact and no one checks them.",
+      "example": "Turn \"steel, 1.2 liters, 220 volts\" into a friendly description."
+    },
+    {
+      "name": "Image generation",
+      "what": "Create images from descriptions, or edit existing ones.",
+      "greatWhen": "Backgrounds, mood images and concept art.",
+      "avoidWhen": "Showing the exact product with correct details.",
+      "example": "Place a real product photo on a kitchen scene."
+    },
+    {
+      "name": "Speech and audio",
+      "what": "Turn text into natural voice, or voice into text.",
+      "greatWhen": "Voice assistants and accessibility.",
+      "avoidWhen": "Cloning real people without consent.",
+      "example": "Spoken order updates."
+    },
+    {
+      "name": "Multimodal models",
+      "what": "One model reads and writes text, images and sound.",
+      "greatWhen": "Photos and questions together.",
+      "avoidWhen": "Highly specialized image tasks.",
+      "example": "\"What is wrong in this photo?\""
+    },
+    {
+      "name": "Synthetic data",
+      "what": "Generate fake but realistic examples for testing or training.",
+      "greatWhen": "Privacy-safe testing and rare cases.",
+      "avoidWhen": "As your only training data. Errors get baked in.",
+      "example": "Make 1,000 fake complaint emails to test the bot."
+    },
+    {
+      "name": "Grounding and human review",
+      "what": "Feed in the real spec sheet, and have a person check the facts and the brand.",
+      "greatWhen": "Always, for customer-facing content.",
+      "example": "An editor approves each batch."
+    }
+  ],
+  "challenge": {
+    "question": "Generated descriptions might invent specs. What is the best setup?",
+    "options": [
+      {
+        "text": "Publish whatever the model writes",
+        "verdict": "poor",
+        "why": "Invented specs lead to returns and complaints."
+      },
+      {
+        "text": "Draft only from the spec sheet, check numbers automatically, and review a sample and all flagged items",
+        "verdict": "best",
+        "why": "It keeps the model tied to real facts and catches mistakes before customers do."
+      },
+      {
+        "text": "Ask the model to recall the specs from memory",
+        "verdict": "poor",
+        "why": "It will guess."
+      },
+      {
+        "text": "Draft from the spec sheet, but publish with no review",
+        "verdict": "ok",
+        "why": "Faster and mostly right, but errors slip through."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Ground it in real specs, check automatically, review a sample",
+    "example": "The model drafts from the spec sheet only. A script compares numbers in the text with the sheet. An editor reviews a sample and all flagged items. Product photos get generated backgrounds, but the product itself is always the real photo."
+  },
+  "worstCase": {
+    "title": "Publishing unchecked output",
+    "example": "A blender description claims \"2,000-watt motor, dishwasher safe\" because the model liked the phrase. The spec sheet says 800 watts, hand wash. Returns and complaints follow, and the brand looks careless."
+  },
+  "route": {
+    "travelling": "Spec row: steel kettle, 1.2 liters, 220 volts",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Spec sheet",
+            "goes": "The supplier's real numbers."
+          },
+          {
+            "label": "Draft with the model",
+            "goes": "It writes a description using only those specs."
+          },
+          {
+            "label": "Automatic fact check",
+            "goes": "Every number in the text matches the sheet.",
+            "goesWrong": "There is no check, so an invented \"2,000-watt, dishwasher safe\" claim sails through."
+          },
+          {
+            "label": "Image step",
+            "goes": "The real product photo is placed on a generated kitchen scene."
+          },
+          {
+            "label": "Human review",
+            "goes": "An editor reviews flagged items and a sample."
+          },
+          {
+            "label": "Publish",
+            "goes": "The page goes live."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Generated content needs grounding, checking, and a person in the loop wherever facts matter."
+}

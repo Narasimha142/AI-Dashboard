@@ -1,0 +1,132 @@
+{
+  "id": "biz1",
+  "line": 7,
+  "level": "beginner",
+  "shortTitle": "Use cases and build vs buy",
+  "title": "Choosing use cases, and build versus buy",
+  "hook": "Scoring ideas, piloting against a baseline, measuring value, and deciding to buy, build or blend.",
+  "inPlainWords": "Most failed AI projects fail before any model is built. The problem was wrong, the value was never measured, or the team built what it could have bought. This stop is the checklist for that decision.",
+  "useCase": {
+    "title": "ShopEase has 12 AI ideas and one small team",
+    "story": "Ideas include the support bot, return prediction, fraud alerts, product descriptions, demand forecasting, a voice assistant and more. There is budget for two projects this quarter. Which two, and should ShopEase build or buy?"
+  },
+  "approaches": [
+    {
+      "name": "Score ideas by value and feasibility",
+      "what": "Rate each idea on business value, data readiness, risk and effort.",
+      "greatWhen": "Choosing from a long list.",
+      "avoidWhen": "Scoring on opinion alone.",
+      "example": "Support bot: high value, ready data, medium risk."
+    },
+    {
+      "name": "Pilot against a baseline",
+      "what": "Test on a small slice and compare with the current process.",
+      "greatWhen": "Anything new.",
+      "avoidWhen": "Skipping the comparison.",
+      "example": "The bot handles 10% of tickets and is compared with human agents."
+    },
+    {
+      "name": "Measure the business result",
+      "what": "Tie the project to a number the business already tracks.",
+      "greatWhen": "Always.",
+      "avoidWhen": "Measuring only the model's accuracy.",
+      "example": "Hours saved, cost per ticket, returns avoided."
+    },
+    {
+      "name": "Buy a ready product",
+      "what": "Use a finished product or service.",
+      "greatWhen": "A common problem that others have already solved.",
+      "avoidWhen": "Your edge depends on it, or the product cannot fit your data or rules.",
+      "example": "A standard helpdesk assistant."
+    },
+    {
+      "name": "Build with existing parts",
+      "what": "Assemble your own from models, search and tools.",
+      "greatWhen": "A specific need that no product meets.",
+      "avoidWhen": "You lack a team to run it.",
+      "example": "A custom assistant that uses your policies and order system."
+    },
+    {
+      "name": "Blend: buy the common, build the edge",
+      "what": "Buy the standard parts and build only where you differ.",
+      "greatWhen": "Most companies.",
+      "avoidWhen": "Nobody owns the seams between the parts.",
+      "example": "Buy speech to text, build the refund workflow."
+    },
+    {
+      "name": "Total cost and an exit plan",
+      "what": "Count build cost, running cost, review time and the cost of switching.",
+      "greatWhen": "Before committing.",
+      "avoidWhen": "Counting only the licence price.",
+      "example": "Include monitoring and human review time."
+    }
+  ],
+  "challenge": {
+    "question": "Two project slots and a small team. What is the smartest approach?",
+    "options": [
+      {
+        "text": "Score ideas on value, data readiness and risk. Pilot two against a baseline, measure business results, buy common parts, and build only what is different",
+        "verdict": "best",
+        "why": "It picks by evidence, proves it small, and spends build effort where it matters."
+      },
+      {
+        "text": "Pick the most exciting technology",
+        "verdict": "poor",
+        "why": "Technology is not a problem to solve."
+      },
+      {
+        "text": "Build everything in-house to stay independent",
+        "verdict": "poor",
+        "why": "You will spend the quarter rebuilding what already exists."
+      },
+      {
+        "text": "Buy something for every idea, with no pilot",
+        "verdict": "ok",
+        "why": "Fast, but you do not learn if it works for you."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Choose by value and readiness, prove it small, buy the common parts",
+    "example": "ShopEase picks the support bot and return prediction: high value, data ready, moderate risk. Each runs a pilot against today's process. They buy speech to text and a monitoring tool, and build the refund workflow that is unique to the store. Results are reported in hours saved and returns avoided."
+  },
+  "worstCase": {
+    "title": "Starting from the technology, not the problem",
+    "example": "The team builds a flashy voice assistant nobody asked for, in-house, with no baseline. After six months it handles 2% of calls, costs more than the human team, and is quietly shelved."
+  },
+  "route": {
+    "travelling": "Idea list: 12 AI ideas and 2 slots",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Collect ideas",
+            "goes": "Every team lists its ideas."
+          },
+          {
+            "label": "Score value, data and risk",
+            "goes": "The support bot and return prediction rank highest.",
+            "goesWrong": "The most exciting technology is picked without scoring."
+          },
+          {
+            "label": "Pilot against a baseline",
+            "goes": "Each runs on a small slice and is compared with today's process."
+          },
+          {
+            "label": "Buy, build or blend",
+            "goes": "Buy common parts. Build what makes ShopEase different."
+          },
+          {
+            "label": "Measure business results",
+            "goes": "Track hours saved and returns avoided."
+          },
+          {
+            "label": "Scale, adjust or stop",
+            "goes": "Decide with evidence."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Pick problems by value and readiness, prove them small, and buy what is common. Build only what makes you different."
+}

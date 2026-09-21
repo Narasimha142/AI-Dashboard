@@ -1,0 +1,129 @@
+{
+  "id": "ml12",
+  "line": 2,
+  "level": "intermediate",
+  "shortTitle": "Too many columns",
+  "title": "Too many columns: selecting and shrinking features",
+  "hook": "Drop the useless, merge the similar, or compress many columns into a few.",
+  "inPlainWords": "More columns are not always better. Extra columns add noise, slow training and invite memorizing. You can drop columns, combine ones that say the same thing, or compress many into a few summary columns.",
+  "useCase": {
+    "title": "The cancellation table grew to 400 columns",
+    "story": "Engineers added every log field they could find, so the cancellation table now has 400 columns and only 20,000 customers. Training is slow, the model overfits, and managers cannot tell what matters."
+  },
+  "approaches": [
+    {
+      "name": "Keep everything",
+      "what": "Feed all columns to the model.",
+      "greatWhen": "You have lots of data and a robust model.",
+      "avoidWhen": "Few rows and many columns.",
+      "example": "All 400 columns go in."
+    },
+    {
+      "name": "Choose by domain knowledge",
+      "what": "Experts pick the columns that make sense.",
+      "greatWhen": "You know the business well.",
+      "avoidWhen": "Experts miss surprising signals.",
+      "example": "Keep tickets, visits and basket size. Drop internal debug fields."
+    },
+    {
+      "name": "Simple cleanup filters",
+      "what": "Drop columns that are empty, constant or duplicated.",
+      "greatWhen": "Always, as a first pass.",
+      "avoidWhen": "It will not catch subtle noise.",
+      "example": "Remove 90 columns that are always blank."
+    },
+    {
+      "name": "Model-based importance",
+      "what": "Train a model and keep the columns it relies on most.",
+      "greatWhen": "You want a fast, practical ranking.",
+      "avoidWhen": "Columns are highly correlated, so importance is unstable.",
+      "example": "Keep the top 40 by importance."
+    },
+    {
+      "name": "Combine similar columns",
+      "what": "Merge columns that say the same thing.",
+      "greatWhen": "Groups of closely related columns.",
+      "avoidWhen": "Merging loses detail you need.",
+      "example": "Combine 12 spend columns into total and average spend."
+    },
+    {
+      "name": "Compression (PCA-style summaries)",
+      "what": "Turn many numeric columns into a few summary columns that keep most of the variation.",
+      "greatWhen": "Many correlated numeric columns, or you want to visualize.",
+      "avoidWhen": "You must explain individual columns to people.",
+      "example": "400 columns become 30 summaries."
+    }
+  ],
+  "challenge": {
+    "question": "Which plan best cuts the 400 columns without losing important signal?",
+    "options": [
+      {
+        "text": "Remove empty, constant and duplicate columns, use importance from training data and expert review to keep the useful ones, and confirm on an untouched exam",
+        "verdict": "best",
+        "why": "It cuts noise while keeping the signal, and the exam stays honest."
+      },
+      {
+        "text": "Keep all 400",
+        "verdict": "ok",
+        "why": "Can work with a strong model, but it is slower and harder to explain."
+      },
+      {
+        "text": "Drop half the columns at random",
+        "verdict": "poor",
+        "why": "You might drop the strongest signals."
+      },
+      {
+        "text": "Compress to 5 summary columns and explain those to managers",
+        "verdict": "ok",
+        "why": "Compact, but managers cannot read what a summary means."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Clean up, rank on training data only, keep the useful ones",
+    "example": "Empty and duplicate columns drop 400 to 310. Experts remove debug fields. Importance from training rows keeps 40 columns. The exam score holds, training is ten times faster, and managers see the top drivers."
+  },
+  "worstCase": {
+    "title": "Choosing columns with the exam set",
+    "example": "The team keeps the 30 columns that score best on the exam data, then reports that exam score. The exam helped choose the columns, so the score is inflated. Live results are much worse."
+  },
+  "route": {
+    "travelling": "Customer table with 400 columns",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Start with 400 columns",
+            "goes": "Too many for 20,000 customers."
+          },
+          {
+            "label": "Remove empty and duplicates",
+            "goes": "310 columns remain."
+          },
+          {
+            "label": "Ask experts",
+            "goes": "Experts drop internal debug fields."
+          },
+          {
+            "label": "Rank by importance",
+            "goes": "A model ranks columns using the training rows only.",
+            "goesWrong": "Columns are ranked using the exam rows too, so the exam leaks into the choice."
+          },
+          {
+            "label": "Keep the top 40",
+            "goes": "The rest are dropped."
+          },
+          {
+            "label": "Score once on the exam",
+            "goes": "An honest result on data never used for choosing."
+          },
+          {
+            "label": "Explain what matters",
+            "goes": "Managers see the top drivers."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "More columns are not better columns. Cut noise using training data only, and keep the final exam untouched."
+}

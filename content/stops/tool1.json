@@ -1,0 +1,138 @@
+{
+  "id": "tool1",
+  "line": 1,
+  "level": "beginner",
+  "shortTitle": "Your toolbox",
+  "title": "Your toolbox: code, libraries, notebooks and hardware",
+  "hook": "What people actually use to build AI, and when a simple option is enough.",
+  "inPlainWords": "You do not build everything from scratch. Most AI work uses a small set of ready-made tools. Tool names change quickly, so learn the roles: a language to write in, libraries that do the heavy lifting, a place to experiment, hardware to run on, and somewhere to keep your work. Check current documentation for the tools of the day.",
+  "useCase": {
+    "title": "A two-person team sets up to build ShopEase's first models",
+    "story": "The team has a laptop each, a small budget, and no ML infrastructure. They must explore data, train a return-risk model, try a language-model feature, and share their work. What should they set up first?"
+  },
+  "approaches": [
+    {
+      "name": "Spreadsheets and no-code tools",
+      "what": "Point-and-click tools with charts and built-in models.",
+      "greatWhen": "Quick exploration, non-programmers, and simple tasks.",
+      "avoidWhen": "You need control, scale or repeatability.",
+      "example": "A spreadsheet chart of returns by category."
+    },
+    {
+      "name": "Python with notebooks",
+      "what": "A programming language plus interactive notebooks for exploring and explaining.",
+      "greatWhen": "Exploring data and trying ideas fast.",
+      "avoidWhen": "As the only place production code lives.",
+      "example": "Load the orders table and plot return rates."
+    },
+    {
+      "name": "Libraries for classic ML",
+      "what": "Ready-made toolkits for tables: cleaning, models and scoring.",
+      "greatWhen": "Rows-and-columns problems.",
+      "avoidWhen": "Images or text at large scale.",
+      "example": "Train a boosted-tree model in a few lines."
+    },
+    {
+      "name": "Libraries for deep learning",
+      "what": "Frameworks that train neural networks, usually on GPUs.",
+      "greatWhen": "Images, text, audio and fine-tuning.",
+      "avoidWhen": "Small tables.",
+      "example": "Fine-tune a pretrained vision model."
+    },
+    {
+      "name": "Hubs of pretrained models",
+      "what": "Public libraries of models and datasets you can download and adapt.",
+      "greatWhen": "Almost any deep-learning project.",
+      "avoidWhen": "You skip checking licenses and quality.",
+      "example": "Download a pretrained image model."
+    },
+    {
+      "name": "Hosted model APIs",
+      "what": "Call a model over the internet.",
+      "greatWhen": "Language and vision features with no infrastructure.",
+      "avoidWhen": "Strict data rules or huge volume.",
+      "example": "Call an API to draft replies."
+    },
+    {
+      "name": "Hardware: laptop, rented GPU, own servers",
+      "what": "Where the computing happens.",
+      "greatWhen": "A laptop for small tables, a rented GPU for training, and your own servers when data rules or volume demand it.",
+      "avoidWhen": "Buying GPUs before you know you need them.",
+      "example": "Rent a GPU for one afternoon to fine-tune."
+    },
+    {
+      "name": "Version control and reproducibility",
+      "what": "Keep code, data versions and settings so results can be repeated.",
+      "greatWhen": "Always.",
+      "example": "Keep code in Git and note which data snapshot trained each model."
+    }
+  ],
+  "challenge": {
+    "question": "Two people, no infrastructure and a small budget. What is a sensible first setup?",
+    "options": [
+      {
+        "text": "Notebooks and a classic ML library for tables, a hosted API for language features, rented GPUs only if needed, and version control from day one",
+        "verdict": "best",
+        "why": "Light, cheap, and every result can be repeated."
+      },
+      {
+        "text": "Buy a rack of GPUs first",
+        "verdict": "poor",
+        "why": "You do not yet know what you need to run."
+      },
+      {
+        "text": "Build every tool in-house from scratch",
+        "verdict": "poor",
+        "why": "You would spend the budget rebuilding what already exists."
+      },
+      {
+        "text": "Spreadsheets only, forever",
+        "verdict": "ok",
+        "why": "Fine to start, but it will not scale or repeat."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Start light, rent what you need, and keep work repeatable",
+    "example": "The team explores in notebooks, trains the return model with a classic library on a laptop, calls a hosted API for reply drafting, rents a GPU for one fine-tuning afternoon, and keeps everything in version control with a note of which data snapshot was used."
+  },
+  "worstCase": {
+    "title": "Buying big before knowing the need",
+    "example": "The team spends the budget on two GPU servers, then finds the return model trains in a minute on a laptop. Nobody records which data made which model, so a good result cannot be reproduced."
+  },
+  "route": {
+    "travelling": "The return-risk project",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Explore in a notebook",
+            "goes": "Load orders, plot returns, and spot problems."
+          },
+          {
+            "label": "Prepare data",
+            "goes": "Clean and split it with a table library."
+          },
+          {
+            "label": "Train and score",
+            "goes": "A classic ML library trains a model on the laptop."
+          },
+          {
+            "label": "Need more power?",
+            "goes": "Only for deep learning: rent a GPU for a day.",
+            "goesWrong": "Two GPU servers are bought up front and sit mostly idle."
+          },
+          {
+            "label": "Save and share",
+            "goes": "Code, settings and the data version go into version control."
+          },
+          {
+            "label": "Hand over to deployment",
+            "goes": "A teammate can reproduce and run it."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Learn the roles, not the brand names: a language, table and model libraries, notebooks, model hubs, rented hardware, and version control."
+}

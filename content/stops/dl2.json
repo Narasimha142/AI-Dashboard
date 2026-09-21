@@ -1,0 +1,125 @@
+{
+  "id": "dl2",
+  "line": 3,
+  "level": "intermediate",
+  "shortTitle": "Which network for which data",
+  "title": "Which network for which kind of data",
+  "hook": "Feed-forward, convolutional, recurrent, transformer, autoencoder, and generators.",
+  "inPlainWords": "Different data have different shapes. Images have neighbors, sentences have order, and tables have columns. Each network family is built around one of those shapes.",
+  "useCase": {
+    "title": "Five kinds of ShopEase data",
+    "story": "Order tables, product photos, customer reviews, delivery sensor readings over time, and warehouse audio alarms. Which network family suits each?"
+  },
+  "approaches": [
+    {
+      "name": "Feed-forward network",
+      "what": "Layers of simple units, each one seeing all of the inputs.",
+      "greatWhen": "Tables and small tasks. It is also the building block inside other networks.",
+      "avoidWhen": "Images and long text. There are too many connections and no sense of position.",
+      "example": "Predict from one row of numbers."
+    },
+    {
+      "name": "Convolutional network (CNN)",
+      "what": "Slides small filters across an image to find edges, then shapes, then objects.",
+      "greatWhen": "Images, and pictures of sound.",
+      "avoidWhen": "Text and tables.",
+      "example": "Detect a cracked screen in a photo."
+    },
+    {
+      "name": "Recurrent network (RNN, LSTM)",
+      "what": "Reads items in order and carries a memory forward.",
+      "greatWhen": "Short sequences on small devices, and older systems.",
+      "avoidWhen": "Long text. Transformers have replaced most of its uses.",
+      "example": "Predict the next reading from a short sensor stream."
+    },
+    {
+      "name": "Transformer",
+      "what": "Looks at all parts of the input at once and learns which parts matter to each other.",
+      "greatWhen": "Text, and now images, audio and code. It is the basis of language models.",
+      "avoidWhen": "Tiny data or tiny devices.",
+      "example": "Language models and vision transformers."
+    },
+    {
+      "name": "Autoencoder",
+      "what": "Squeezes data into a small summary and rebuilds it. A bad rebuild signals something odd.",
+      "greatWhen": "Anomaly detection and cleaning up noise.",
+      "avoidWhen": "You have plenty of labeled defects. Classify instead.",
+      "example": "Flag a sensor pattern that rebuilds poorly."
+    },
+    {
+      "name": "Generative models (diffusion, GANs)",
+      "what": "Create new images, audio or other data.",
+      "greatWhen": "Design, art and synthetic data.",
+      "avoidWhen": "Anywhere facts must be exact.",
+      "example": "Generate product background scenes."
+    }
+  ],
+  "challenge": {
+    "question": "Photos on a packing line must be checked for damage in real time. Which family?",
+    "options": [
+      {
+        "text": "A feed-forward network on raw pixel numbers",
+        "verdict": "poor",
+        "why": "It ignores which pixels are neighbors, so it needs huge data and learns poorly."
+      },
+      {
+        "text": "A convolutional or vision transformer network, ideally pretrained",
+        "verdict": "best",
+        "why": "Built for images, and pretrained versions already know how to see."
+      },
+      {
+        "text": "A recurrent network",
+        "verdict": "poor",
+        "why": "It is designed for ordered sequences, not pictures."
+      },
+      {
+        "text": "An autoencoder only",
+        "verdict": "ok",
+        "why": "Good if you almost have no damaged examples. Otherwise a classifier does better."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Match the network family to the shape of the data",
+    "example": "Tables get boosted trees or a plain network. Photos get a pretrained convolutional or vision transformer network. Reviews get a transformer. Sensor streams get a small sequence model, or an autoencoder to spot odd patterns. Sound is turned into a picture and given to a convolutional network."
+  },
+  "worstCase": {
+    "title": "One favorite network for every problem",
+    "example": "The team pushes photos through a table-style network by flattening the pixels into one long row. It learns nothing about neighbors, needs huge data, and mislabels a slightly shifted photo."
+  },
+  "route": {
+    "travelling": "Packing-line photo of a box corner",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Camera photo",
+            "goes": "A photo of each box corner."
+          },
+          {
+            "label": "Choose by data shape",
+            "goes": "Images have neighbors, so use a convolutional or vision transformer network.",
+            "goesWrong": "The pixels are flattened into one row and pushed through a table network."
+          },
+          {
+            "label": "Pretrained backbone",
+            "goes": "Reuse general vision knowledge."
+          },
+          {
+            "label": "Small task head",
+            "goes": "The output is simply OK or damaged."
+          },
+          {
+            "label": "Speed check",
+            "goes": "It runs in 30 milliseconds per photo."
+          },
+          {
+            "label": "Reject and alert",
+            "goes": "Damaged boxes are diverted."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Choose the network by the shape of your data. Most modern work reuses a pretrained transformer or convolutional network."
+}

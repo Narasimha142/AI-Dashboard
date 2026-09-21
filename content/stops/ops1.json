@@ -1,0 +1,135 @@
+{
+  "id": "ops1",
+  "line": 7,
+  "level": "advanced",
+  "shortTitle": "From notebook to production",
+  "title": "From notebook to production: MLOps",
+  "hook": "Scripts, pipelines, registries, safe rollouts, and catching drift.",
+  "inPlainWords": "A model that works in a notebook is a prototype. Production means the same steps run automatically, every result is traceable, new versions roll out safely, and someone is alerted when data or accuracy changes.",
+  "useCase": {
+    "title": "Make the return-risk model run reliably every day",
+    "story": "The return-risk model lives in one data scientist's notebook. The warehouse now depends on it. It must retrain monthly, roll out without breaking anything, and warn the team when the world changes."
+  },
+  "approaches": [
+    {
+      "name": "Keep it in the notebook",
+      "what": "Run it by hand when needed.",
+      "greatWhen": "Prototypes.",
+      "avoidWhen": "Anything others depend on.",
+      "example": "Someone runs the cells every Monday."
+    },
+    {
+      "name": "Scripts with a scheduler",
+      "what": "Turn the notebook into scripts that run on a schedule.",
+      "greatWhen": "A first step.",
+      "avoidWhen": "Many models, or complex dependencies.",
+      "example": "A script runs every night."
+    },
+    {
+      "name": "Automated pipelines",
+      "what": "Data checks, training, tests and deployment as one repeatable chain.",
+      "greatWhen": "Models that must be retrained and released regularly.",
+      "avoidWhen": "One-off analyses.",
+      "example": "The monthly retrain runs the same steps every time."
+    },
+    {
+      "name": "Model registry and versioning",
+      "what": "Record which data, code and settings produced each model.",
+      "greatWhen": "Always, in production.",
+      "example": "Model version 14 is traced to its data snapshot and code."
+    },
+    {
+      "name": "Safe rollout",
+      "what": "Run the new model in shadow, then on a small share, then fully, with easy rollback.",
+      "greatWhen": "Any change that affects users.",
+      "avoidWhen": "Replacing everything at once.",
+      "example": "The new model scores 5% of orders first."
+    },
+    {
+      "name": "Monitor for drift",
+      "what": "Watch inputs, outputs and accuracy over time, and alert on changes.",
+      "greatWhen": "Always.",
+      "avoidWhen": "Logging without alerts.",
+      "example": "Alert when the average basket size shifts sharply."
+    },
+    {
+      "name": "Feature store",
+      "what": "One place that serves the same features for training and live use.",
+      "greatWhen": "Many models share features.",
+      "avoidWhen": "A single small model.",
+      "example": "days_since_last_visit computed the same way everywhere."
+    }
+  ],
+  "challenge": {
+    "question": "The warehouse now depends on the model. What is the right next step?",
+    "options": [
+      {
+        "text": "Automate the pipeline, version everything, roll out new models in shadow and then on a small share, and monitor for drift with alerts",
+        "verdict": "best",
+        "why": "It makes the model repeatable, traceable, safe to change, and watched."
+      },
+      {
+        "text": "Leave it in the notebook",
+        "verdict": "poor",
+        "why": "One person's laptop is now a single point of failure."
+      },
+      {
+        "text": "Replace the live model directly each month",
+        "verdict": "poor",
+        "why": "A bad model would hit everyone at once."
+      },
+      {
+        "text": "Automate training but skip monitoring",
+        "verdict": "ok",
+        "why": "Better, but you would not notice drift."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Repeatable, traceable, safe to change, and watched",
+    "example": "Every month a pipeline checks the data, trains, tests, and registers version 15 with its data and code. Version 15 scores 5% of orders beside version 14 for a week. It replaces 14 only if it is better. An alert fires when basket sizes shift."
+  },
+  "worstCase": {
+    "title": "A notebook the business depends on",
+    "example": "The one person who knows the notebook is on holiday when a data column is renamed. The model silently scores nonsense for two weeks, and nobody can say which data or code produced the old results."
+  },
+  "route": {
+    "travelling": "Monthly retrain of return-risk model version 14",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "New data arrives",
+            "goes": "A fresh month of orders."
+          },
+          {
+            "label": "Automated data checks",
+            "goes": "Missing or odd data stops the run."
+          },
+          {
+            "label": "Train and test",
+            "goes": "Same steps, every time."
+          },
+          {
+            "label": "Register the new version",
+            "goes": "Version 15 is recorded with its data and code."
+          },
+          {
+            "label": "Shadow, then small share",
+            "goes": "Version 15 scores 5% of orders beside version 14.",
+            "goesWrong": "Version 15 replaces version 14 for everything at once, with no rollback plan."
+          },
+          {
+            "label": "Full release or roll back",
+            "goes": "Promote it if it is better, or revert."
+          },
+          {
+            "label": "Monitor drift and accuracy",
+            "goes": "Alerts fire when inputs or results change."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Production means repeatable, traceable, safe to change, and watched. A model that only works in a notebook is a prototype."
+}

@@ -1,0 +1,125 @@
+{
+  "id": "db1",
+  "line": 1,
+  "level": "beginner",
+  "shortTitle": "Where data lives",
+  "title": "Where the data lives: choosing a database",
+  "hook": "Relational, document, key-value, vector, graph and warehouse. The right home for each kind of ShopEase data.",
+  "inPlainWords": "A database is where data is stored and asked for. Different shapes of data and different questions suit different kinds. Most AI projects start with one reliable source of truth, then add specialized stores only where they help.",
+  "useCase": {
+    "title": "Four kinds of ShopEase data need a home",
+    "story": "Orders and payments (must never be wrong). Chat sessions and saved memory (flexible and fast). Policy documents and their embeddings (found by meaning). Three years of history for ML training (huge, read in bulk)."
+  },
+  "approaches": [
+    {
+      "name": "Relational database (SQL)",
+      "what": "Tables of rows and columns, linked by keys, with strict rules and safe transactions.",
+      "greatWhen": "Orders, customers, payments. Anything that must be exact and consistent.",
+      "avoidWhen": "Data whose shape changes constantly.",
+      "example": "An orders table linked to a customers table."
+    },
+    {
+      "name": "Document database",
+      "what": "Stores flexible records, like JSON documents, without a fixed table shape.",
+      "greatWhen": "Chat logs, profiles and varied records.",
+      "avoidWhen": "Complex reports that join many kinds of records.",
+      "example": "A saved conversation with its messages and notes."
+    },
+    {
+      "name": "Key-value store or cache",
+      "what": "Look up a value by its name, extremely fast.",
+      "greatWhen": "Sessions, caches and counters.",
+      "avoidWhen": "Searching or joining across data.",
+      "example": "A cached answer for \"opening hours\"."
+    },
+    {
+      "name": "Vector database or vector index",
+      "what": "Stores embeddings and finds the closest matches by meaning.",
+      "greatWhen": "Semantic search and RAG.",
+      "avoidWhen": "Exact records like orders. It is a search helper, not a source of truth.",
+      "example": "Find the policy paragraphs closest in meaning to a question."
+    },
+    {
+      "name": "Graph database",
+      "what": "Stores things and the links between them.",
+      "greatWhen": "Questions about connections, like what works with what.",
+      "avoidWhen": "Simple lookups.",
+      "example": "Product to accessory to compatible device."
+    },
+    {
+      "name": "Data warehouse or lake",
+      "what": "A large copy of history arranged for analysis and training.",
+      "greatWhen": "ML training and reports over years of data.",
+      "avoidWhen": "Live apps that read and write one record at a time.",
+      "example": "Three years of orders for training the return model."
+    }
+  ],
+  "challenge": {
+    "question": "Where should the order and payment data live as the source of truth?",
+    "options": [
+      {
+        "text": "A relational database",
+        "verdict": "best",
+        "why": "It keeps exact records with strict rules, so a refund and a payment can never disagree."
+      },
+      {
+        "text": "Only a vector database",
+        "verdict": "poor",
+        "why": "It finds similar things. It is not built to keep exact, consistent facts."
+      },
+      {
+        "text": "A cache (key-value store)",
+        "verdict": "poor",
+        "why": "Fast, but it is a shortcut to data, not the place the data is kept safe."
+      },
+      {
+        "text": "A document database",
+        "verdict": "ok",
+        "why": "It can work, but you lose strict consistency between orders and payments."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "One trusted source of truth, with specialists added only where they help",
+    "example": "Orders and payments live in a relational database. Chat memory sits in a document store. A vector index, inside the relational database or in a managed vector store, holds embeddings that point back to policy documents. A warehouse copy feeds ML training every night."
+  },
+  "worstCase": {
+    "title": "Everything in one vector database, or a new database for every feature",
+    "example": "Order data is copied into a vector store \"for the chatbot\". The copies drift out of date, refunds show the wrong status, and nobody knows which copy is right. Or the team adopts five databases for five small features and cannot run them all."
+  },
+  "route": {
+    "travelling": "Order 48213, and the policy question it triggers",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "AI request",
+            "goes": "The assistant needs order 48213 and a policy paragraph."
+          },
+          {
+            "label": "Relational database",
+            "goes": "The exact order status comes from the source of truth.",
+            "goesWrong": "Order copies are kept in a vector store instead. The copy is days old."
+          },
+          {
+            "label": "Vector index",
+            "goes": "The policy passages closest in meaning are found."
+          },
+          {
+            "label": "Document store",
+            "goes": "Chat memory is loaded for this customer."
+          },
+          {
+            "label": "Answer built",
+            "goes": "Fresh order facts plus the right policy text."
+          },
+          {
+            "label": "Nightly warehouse copy",
+            "goes": "History flows to the warehouse for ML training."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Keep one source of truth for facts. Add specialized stores for search, memory and analytics, and point them back to it."
+}

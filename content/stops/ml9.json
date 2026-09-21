@@ -1,0 +1,125 @@
+{
+  "id": "ml9",
+  "line": 2,
+  "level": "intermediate",
+  "shortTitle": "Forecasting over time",
+  "title": "Forecasting over time",
+  "hook": "Naive baselines, seasonal methods, ML with calendar columns, deep models, and forecast ranges.",
+  "inPlainWords": "A forecast predicts a number in the future from a history with trends, seasons and events. The order of the data matters, so you test by predicting the future from the past.",
+  "useCase": {
+    "title": "Forecast weekly demand for 2,000 products",
+    "story": "Purchasing must order stock four weeks ahead. Sales have weekly and yearly patterns, holidays, promotions, and stockouts that hide the true demand. Some products are new and have almost no history."
+  },
+  "approaches": [
+    {
+      "name": "Naive baseline",
+      "what": "Predict the same as last week, or the same week last year.",
+      "greatWhen": "Always. It is the bar to beat.",
+      "avoidWhen": "Never skip it. It is surprisingly hard to beat.",
+      "example": "Next week equals the same week last year."
+    },
+    {
+      "name": "Seasonal statistical models",
+      "what": "Split history into trend and seasons, then project it forward.",
+      "greatWhen": "Steady products with clear patterns and a long history.",
+      "avoidWhen": "Products with promotions and sudden changes.",
+      "example": "A steady seller with a summer bump."
+    },
+    {
+      "name": "ML with calendar and event columns",
+      "what": "Turn time into columns like week of year, holiday, promotion and price, then use a boosted-tree model.",
+      "greatWhen": "Many products, promotions and outside factors.",
+      "avoidWhen": "Very short histories.",
+      "example": "Add a holiday flag and the price."
+    },
+    {
+      "name": "Deep learning forecasting",
+      "what": "One neural network learns from many series at once.",
+      "greatWhen": "Thousands of related series and lots of data.",
+      "avoidWhen": "Small data, or when you need clear explanations.",
+      "example": "One model that learns from all 2,000 products together."
+    },
+    {
+      "name": "Group-level and cold-start methods",
+      "what": "Forecast at a group level and split down, or borrow the pattern of similar products.",
+      "greatWhen": "New products and noisy small items.",
+      "avoidWhen": "Well-known items with a long history.",
+      "example": "A new umbrella borrows the pattern of similar umbrellas."
+    },
+    {
+      "name": "Ranges, not single numbers",
+      "what": "Forecast a range of likely values.",
+      "greatWhen": "Ordering decisions where misses are costly.",
+      "avoidWhen": "Never a reason to skip.",
+      "example": "\"Between 120 and 180 units\"."
+    }
+  ],
+  "challenge": {
+    "question": "Which set-up gives a trustworthy forecast?",
+    "options": [
+      {
+        "text": "Beat a naive baseline first, add calendar and promotion columns, test by forecasting the future from the past, and report ranges",
+        "verdict": "best",
+        "why": "Every part guards against a common failure."
+      },
+      {
+        "text": "A random train and test split across all weeks",
+        "verdict": "poor",
+        "why": "The model sees weeks after the ones it predicts, so the score is fake."
+      },
+      {
+        "text": "A deep network for every product from day one",
+        "verdict": "ok",
+        "why": "Can win with lots of data, but you still need a baseline and a proper time test."
+      },
+      {
+        "text": "One classic model for every product, with no baseline",
+        "verdict": "ok",
+        "why": "Works sometimes, but you cannot tell if it is any good."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Baseline first, test on the future, forecast ranges",
+    "example": "The team trains on old weeks and forecasts the next four. The boosted-tree model with holiday and promotion columns beats last year's number by a wide margin. Purchasing orders to the middle of the range for steady items and the high end for items where stockouts cost most."
+  },
+  "worstCase": {
+    "title": "Shuffling time and forecasting a single number",
+    "example": "A random split lets the model peek at weeks after the ones it predicts, so the score looks great. In real use the forecast misses the November peak. Ordering from a single number causes both stockouts and overstock."
+  },
+  "route": {
+    "travelling": "Umbrella sales, next four weeks",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Sales history",
+            "goes": "Three years of weekly sales."
+          },
+          {
+            "label": "Clean the history",
+            "goes": "Mark stockout weeks so they are not read as low demand."
+          },
+          {
+            "label": "Add calendar columns",
+            "goes": "Week of year, holidays, promotions and price."
+          },
+          {
+            "label": "Test on the future",
+            "goes": "Train on old weeks, forecast the next four, and compare with the naive baseline.",
+            "goesWrong": "Weeks are shuffled randomly, so the model has already seen the future it is asked to predict."
+          },
+          {
+            "label": "Forecast a range",
+            "goes": "Low, likely and high."
+          },
+          {
+            "label": "Order stock",
+            "goes": "Purchasing orders against the range and the cost of a miss."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Test a forecast by predicting the future from the past, beat a naive baseline first, and give a range."
+}

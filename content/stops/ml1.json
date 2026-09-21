@@ -1,0 +1,121 @@
+{
+  "id": "ml1",
+  "line": 2,
+  "level": "beginner",
+  "shortTitle": "What kind of question?",
+  "title": "What kind of question are you asking?",
+  "hook": "A number, a category, a group, an oddball, a future value, or a recommendation. Name it first.",
+  "inPlainWords": "Before picking any model, name the question. The question type decides the method, the data you need, and how you measure success.",
+  "useCase": {
+    "title": "Five questions ShopEase asks on a Monday",
+    "story": "(1) How many umbrellas will we sell next week? (2) Will this customer cancel? (3) Which customers behave alike? (4) Is this payment suspicious? (5) What should we show this shopper next?"
+  },
+  "approaches": [
+    {
+      "name": "Regression",
+      "what": "Predict a number.",
+      "greatWhen": "The answer is a quantity, like a price, a delivery time, or revenue.",
+      "avoidWhen": "The answer is a yes or no, or a label.",
+      "example": "Estimate delivery time in days."
+    },
+    {
+      "name": "Classification",
+      "what": "Pick one label from a fixed list.",
+      "greatWhen": "Yes or no, or one of several groups.",
+      "avoidWhen": "You need a number.",
+      "example": "Will this customer cancel? Yes or no."
+    },
+    {
+      "name": "Clustering",
+      "what": "Group similar things together without any labels.",
+      "greatWhen": "You are exploring, or looking for segments.",
+      "avoidWhen": "You already have labels.",
+      "example": "Find customers who shop alike."
+    },
+    {
+      "name": "Anomaly detection",
+      "what": "Learn what normal looks like and flag what does not fit.",
+      "greatWhen": "Fraud or faults, where examples of the problem are rare.",
+      "avoidWhen": "You have plenty of labeled examples of the problem. Use classification instead.",
+      "example": "A payment 40 times bigger than usual."
+    },
+    {
+      "name": "Forecasting",
+      "what": "Predict future values from a history that has a calendar pattern.",
+      "greatWhen": "Sales, demand and traffic.",
+      "avoidWhen": "The history is short, or the world just changed.",
+      "example": "Umbrella sales next week, given the season and the weather."
+    },
+    {
+      "name": "Recommendation",
+      "what": "Rank items a person is likely to want.",
+      "greatWhen": "Large catalogs and content libraries.",
+      "avoidWhen": "Very few items or very few users.",
+      "example": "Show this shopper what similar shoppers bought."
+    }
+  ],
+  "challenge": {
+    "question": "Which type of question is \"How many umbrellas will we sell next week?\"",
+    "options": [
+      {
+        "text": "Classification",
+        "verdict": "poor",
+        "why": "The answer is a quantity, not a label."
+      },
+      {
+        "text": "Forecasting",
+        "verdict": "best",
+        "why": "It is a number over time, with weekly and seasonal patterns."
+      },
+      {
+        "text": "Regression on plain rows, ignoring the calendar",
+        "verdict": "ok",
+        "why": "It can work if you add calendar and weather columns, but a forecasting method respects time order."
+      },
+      {
+        "text": "Clustering",
+        "verdict": "poor",
+        "why": "You are not looking for groups."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Name the question first, then choose the method",
+    "example": "The umbrella question becomes forecasting, using last year's weekly sales plus the weather forecast. The cancel question becomes classification. Each gets a fitting method and a fitting way to measure success."
+  },
+  "worstCase": {
+    "title": "Picking a fancy model before naming the question",
+    "example": "A team builds a classifier for umbrella demand by sorting sales into low, medium and high. The warehouse cannot order \"medium\" umbrellas, and the model threw away the numbers it needed."
+  },
+  "route": {
+    "travelling": "\"How many umbrellas will we sell next week?\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "State the question",
+            "goes": "The business wants a number of units per week."
+          },
+          {
+            "label": "Name the question type",
+            "goes": "It is a number over time, so it is forecasting.",
+            "goesWrong": "Someone calls it \"high, medium or low demand\" and picks classification."
+          },
+          {
+            "label": "Pick a fitting method",
+            "goes": "Use a method that respects time order and seasons."
+          },
+          {
+            "label": "Measure in business terms",
+            "goes": "Compare the average miss, in units, with last year's guess."
+          },
+          {
+            "label": "Use it",
+            "goes": "Purchasing orders stock for next week."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "The question type decides the method, the data you need, and how you measure success."
+}

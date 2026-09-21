@@ -1,0 +1,127 @@
+{
+  "id": "rag3",
+  "line": 5,
+  "level": "advanced",
+  "shortTitle": "Fixing bad RAG answers",
+  "title": "Fixing bad RAG answers: a debugging playbook",
+  "hook": "Find whether the fault is the source, the search, the chunks, the prompt or the model, before changing anything.",
+  "inPlainWords": "When a RAG answer is wrong, there are four places it can have gone wrong: the right passage was never in the library, search did not find it, the model ignored it, or the passage itself was wrong. Checking in that order saves weeks of guessing.",
+  "useCase": {
+    "title": "The bot says \"30 days\" and the real answer is 14",
+    "story": "A customer complaint arrives with a screenshot: the bot said opened electronics have a 30-day return window. The current policy says 14 days and is in the library. The team is tempted to switch models. Where should they start?"
+  },
+  "approaches": [
+    {
+      "name": "Change the model",
+      "what": "Try a bigger or different model.",
+      "greatWhen": "Only after the earlier checks pass.",
+      "avoidWhen": "As the first move.",
+      "example": "Swap models and hope."
+    },
+    {
+      "name": "Check the source",
+      "what": "Is the right, current document in the library at all?",
+      "greatWhen": "Always the first check.",
+      "example": "The old 30-day policy PDF is still indexed."
+    },
+    {
+      "name": "Check retrieval",
+      "what": "Did search return the right passage near the top?",
+      "greatWhen": "The second check.",
+      "example": "The 14-day paragraph is ranked fourteenth."
+    },
+    {
+      "name": "Check chunking",
+      "what": "Was the passage cut badly?",
+      "greatWhen": "The document is there but the right text is not found.",
+      "example": "The rule was split from its table."
+    },
+    {
+      "name": "Check the prompt and context",
+      "what": "Did the model see the passage, and was it told to use only that?",
+      "greatWhen": "Retrieval looks fine.",
+      "example": "The prompt lets the model use its own knowledge."
+    },
+    {
+      "name": "Check the answer against the passage",
+      "what": "Did the model follow the passage faithfully?",
+      "greatWhen": "The last check.",
+      "avoidWhen": "Skipping the earlier ones.",
+      "example": "The passage says 14 days, the answer says 30."
+    },
+    {
+      "name": "Add a regression test",
+      "what": "Save this failure as a test case.",
+      "greatWhen": "Always.",
+      "example": "Add the question to the golden set."
+    }
+  ],
+  "challenge": {
+    "question": "The bot quotes 30 days but the real answer is 14. Where do you start?",
+    "options": [
+      {
+        "text": "Check whether the current policy is indexed and whether retrieval returned it, then the prompt, then the model, and add a regression test",
+        "verdict": "best",
+        "why": "It follows the pipeline in order, so each check rules out a cause."
+      },
+      {
+        "text": "Swap to a bigger model",
+        "verdict": "poor",
+        "why": "You would be guessing, and it may not touch the real cause."
+      },
+      {
+        "text": "Rewrite the whole policy document",
+        "verdict": "poor",
+        "why": "The policy was right. The pipeline was wrong."
+      },
+      {
+        "text": "Add \"be accurate\" to the prompt",
+        "verdict": "ok",
+        "why": "It may help a little, but it does not find the cause."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Debug in pipeline order, then lock the fix in",
+    "example": "The team finds both the old 30-day PDF and the new 14-day PDF in the index, and the old one ranks first. They remove it, add date metadata so newer documents win, re-test, and add the question to the golden set so it can never silently return."
+  },
+  "worstCase": {
+    "title": "Guessing at the fix",
+    "example": "The team swaps to a bigger model, then rewrites the prompt, then changes chunk sizes. Each change moves other answers, nobody knows what fixed what, and the old PDF stays in the library."
+  },
+  "route": {
+    "travelling": "Question: \"Return window for opened electronics?\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Reproduce the failure",
+            "goes": "Ask the question and save the retrieved passages."
+          },
+          {
+            "label": "Is the current policy indexed?",
+            "goes": "Both the old 30-day PDF and the new 14-day PDF are present.",
+            "goesWrong": "The team swaps the model straight away, without checking."
+          },
+          {
+            "label": "Did search find the passage?",
+            "goes": "The old PDF ranks first. That is the cause."
+          },
+          {
+            "label": "Fix the source or the ranking",
+            "goes": "Remove the old PDF and add date metadata."
+          },
+          {
+            "label": "Re-test",
+            "goes": "The bot now answers 14 days, with a citation."
+          },
+          {
+            "label": "Add to the golden set",
+            "goes": "The failure becomes a permanent test."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Debug RAG in pipeline order: source, search, chunks, prompt, model. Then turn the failure into a permanent test."
+}

@@ -1,0 +1,107 @@
+{
+  "id": "m1",
+  "line": 1,
+  "level": "beginner",
+  "shortTitle": "Four kinds of smart",
+  "title": "Four ways to make software smart",
+  "hook": "Rules, classic machine learning, deep learning, or a language model. Which one, and when?",
+  "inPlainWords": "AI is the big umbrella: software that acts smart. Machine learning is AI that learns from data. Deep learning is machine learning with large neural networks. Language models are deep learning trained on text.",
+  "useCase": {
+    "title": "Sort 2,000 support emails a day",
+    "story": "ShopEase is an online store. Every morning about 2,000 emails arrive. Each one must go to Billing, Delivery, Returns or Other. You have no labeled data yet and want it live by Friday."
+  },
+  "approaches": [
+    {
+      "name": "Rules",
+      "what": "You write if-then instructions by hand.",
+      "greatWhen": "There are few categories, the keywords are obvious, and you have no data.",
+      "avoidWhen": "Language is messy or changes often.",
+      "example": "If the email contains \"refund\", send it to Returns."
+    },
+    {
+      "name": "Classic machine learning",
+      "what": "A model learns patterns from thousands of examples that already have labels.",
+      "greatWhen": "You already have lots of labeled emails and want something cheap, fast and predictable.",
+      "avoidWhen": "You have no labels, or the categories change every week.",
+      "example": "Train on 5,000 past emails that agents already tagged."
+    },
+    {
+      "name": "Deep learning",
+      "what": "A large neural network trained on huge data finds its own patterns.",
+      "greatWhen": "You have millions of examples, or images, audio and other unusual data.",
+      "avoidWhen": "The data is small. The network memorizes instead of learning.",
+      "example": "Train your own image model on 2 million parcel photos."
+    },
+    {
+      "name": "A language model with a prompt",
+      "what": "A model that is already trained follows written instructions. No training needed.",
+      "greatWhen": "Language is messy, you have no labels, and it must work this week.",
+      "avoidWhen": "Volume is huge and cost per call matters, or you need identical output every time.",
+      "example": "Prompt: \"Classify this email as Billing, Delivery, Returns or Other.\""
+    }
+  ],
+  "challenge": {
+    "question": "You have zero labeled emails and must be live by Friday. What do you start with?",
+    "options": [
+      {
+        "text": "Rules only",
+        "verdict": "ok",
+        "why": "Fine as a day-one baseline, but \"I want my money back\" contains none of the keywords you listed."
+      },
+      {
+        "text": "Train a deep-learning model",
+        "verdict": "poor",
+        "why": "There is no data to train it on, and it would take weeks."
+      },
+      {
+        "text": "A language model with a prompt",
+        "verdict": "best",
+        "why": "It works today with no data. Log every result, and later a cheap classic model can take over the easy 80%."
+      },
+      {
+        "text": "Classic machine learning",
+        "verdict": "poor",
+        "why": "It needs labels you do not have yet. Good later, not on day one."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "The language model labels today, a cheap model takes over later",
+    "example": "\"Parcel says delivered but the box is empty\" goes to Delivery, tagged missing item. After three months the logged labels train a small classic model for the easy emails, and the language model only sees the confusing ones."
+  },
+  "worstCase": {
+    "title": "Rules only, or a neural network from scratch",
+    "example": "A thank-you email saying \"thanks for the refund!\" is sent to Returns because of one keyword. Or a network trained on 300 emails memorizes them and fails on every new one."
+  },
+  "route": {
+    "travelling": "Email: \"Parcel says delivered but the box is empty\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Email arrives",
+            "goes": "The email lands in the shared inbox."
+          },
+          {
+            "label": "Decide the category",
+            "goes": "A prompt lists the four categories and asks the model to pick one.",
+            "goesWrong": "A keyword rule sees the word \"refund\" in a thank-you note and picks Returns."
+          },
+          {
+            "label": "Category chosen",
+            "goes": "Result: Delivery, missing item."
+          },
+          {
+            "label": "Route to a team",
+            "goes": "The ticket goes to the Delivery queue."
+          },
+          {
+            "label": "Log the result",
+            "goes": "The label is saved. It becomes training data later."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Start with the simplest thing that works today, and keep logs so you can swap in something cheaper later."
+}

@@ -1,0 +1,124 @@
+{
+  "id": "ml6",
+  "line": 2,
+  "level": "intermediate",
+  "shortTitle": "Recommendations",
+  "title": "Recommendations: what should we show next?",
+  "hook": "Popular items, similar items, similar people, hybrids, or asking a language model.",
+  "inPlainWords": "There are two kinds of clues: what an item is like, and what people like you did. Good systems mix both and plan for the visitor with no history.",
+  "useCase": {
+    "title": "Suggest products on the ShopEase home page",
+    "story": "50,000 products, 200,000 customers, and lots of clicks and orders. A brand-new visitor arrives with no history at all."
+  },
+  "approaches": [
+    {
+      "name": "Most popular",
+      "what": "Show what most people buy.",
+      "greatWhen": "New visitors with no data.",
+      "avoidWhen": "You want personalization.",
+      "example": "This week's top sellers."
+    },
+    {
+      "name": "Content-based (similar items)",
+      "what": "Recommend items like the ones you liked, using descriptions and tags.",
+      "greatWhen": "New items, or thin behavior history.",
+      "avoidWhen": "You want variety and surprise.",
+      "example": "You bought a blender, so here are similar blenders."
+    },
+    {
+      "name": "Collaborative (people like you)",
+      "what": "Recommend what similar customers bought.",
+      "greatWhen": "You have lots of behavior data.",
+      "avoidWhen": "New visitors or new items with no history. This is the cold-start problem.",
+      "example": "Shoppers like you also bought a milk frother."
+    },
+    {
+      "name": "Hybrid",
+      "what": "Blend popularity, similarity and behavior.",
+      "greatWhen": "Real stores.",
+      "avoidWhen": "A tiny catalog where \"popular\" is enough.",
+      "example": "Popular now, similar to what you clicked, and what your look-alikes bought."
+    },
+    {
+      "name": "Ask a language model",
+      "what": "Describe the shopper in words and ask a model to suggest items.",
+      "greatWhen": "Conversational shopping, explanations, and a chat with a new visitor.",
+      "avoidWhen": "Ranking at large scale. It is slower and costlier, and it may suggest things you do not stock.",
+      "example": "\"I need a gift for a runner under $50.\""
+    },
+    {
+      "name": "Business rules on top",
+      "what": "Filter and re-rank for stock, margin and variety.",
+      "greatWhen": "Always, as the last step.",
+      "example": "Hide out-of-stock items."
+    }
+  ],
+  "challenge": {
+    "question": "A brand-new visitor with no history arrives. What is the best home page approach?",
+    "options": [
+      {
+        "text": "Collaborative filtering only",
+        "verdict": "poor",
+        "why": "There is nothing to compare this visitor with."
+      },
+      {
+        "text": "Popular items plus session clues, growing into a hybrid as history builds",
+        "verdict": "best",
+        "why": "It works on day one and improves as data arrives."
+      },
+      {
+        "text": "Popular items only, forever",
+        "verdict": "ok",
+        "why": "A safe start, but it never personalizes."
+      },
+      {
+        "text": "Let a model invent suggestions from nothing",
+        "verdict": "poor",
+        "why": "It has no data on this visitor and may suggest items you do not sell."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Start with popular and session clues, then grow into a hybrid",
+    "example": "A new visitor sees this week's top sellers. After clicking two running shoes, the page shows similar shoes. After three orders, behavior from look-alike customers joins in. Out-of-stock items are always hidden."
+  },
+  "worstCase": {
+    "title": "One method that ignores the cold start",
+    "example": "Collaborative-only means a new visitor sees a blank shelf, and new products never appear because no one has bought them yet. Meanwhile an ungrounded model suggests a product you do not sell."
+  },
+  "route": {
+    "travelling": "New visitor who just clicked two running shoes",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Visitor arrives",
+            "goes": "No account and no history."
+          },
+          {
+            "label": "Gather clues",
+            "goes": "Two clicks in this session are all we have.",
+            "goesWrong": "Only collaborative filtering is used. There is no history, so nothing is shown."
+          },
+          {
+            "label": "Candidate list",
+            "goes": "Popular items plus items similar to the shoes."
+          },
+          {
+            "label": "Score and rank",
+            "goes": "Blend the clues. Behavior weighs in as history grows."
+          },
+          {
+            "label": "Business rules",
+            "goes": "Remove out-of-stock items and duplicates."
+          },
+          {
+            "label": "Show and learn",
+            "goes": "Clicks feed the next round of suggestions."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Recommendations mix what an item is like with what people like you did. Plan for the visitor with no history."
+}

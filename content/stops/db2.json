@@ -1,0 +1,118 @@
+{
+  "id": "db2",
+  "line": 6,
+  "level": "advanced",
+  "shortTitle": "Asking a database",
+  "title": "Asking a database in plain English",
+  "hook": "Fixed queries, text-to-SQL on safe views, semantic layers, and why full access is dangerous.",
+  "inPlainWords": "Text-to-SQL lets a model turn a question like \"how many refunds last week?\" into a database query. It is powerful, and it needs strong limits, because a model that can write any query can also read or change things it should not.",
+  "useCase": {
+    "title": "Let managers ask \"which products had the most returns last month?\"",
+    "story": "Managers want answers from the orders database without waiting for an analyst. The same database holds customer personal data and payment records that most managers must never see."
+  },
+  "approaches": [
+    {
+      "name": "Pre-written queries behind tools",
+      "what": "Developers write and test a fixed set of queries. The model chooses which one and fills in the inputs.",
+      "greatWhen": "A known set of common questions.",
+      "avoidWhen": "Questions you did not plan for.",
+      "example": "A tool called returns_by_product(month)."
+    },
+    {
+      "name": "Text-to-SQL on safe views",
+      "what": "The model writes a query, but only against approved read-only views, with row and column limits.",
+      "greatWhen": "Flexible analysis with guardrails.",
+      "avoidWhen": "Ambiguous or complicated business definitions.",
+      "example": "Query a returns_summary view that has no personal data."
+    },
+    {
+      "name": "A semantic layer",
+      "what": "Define business terms once, like revenue and return rate, so the model uses the agreed meaning.",
+      "greatWhen": "Consistent numbers across teams.",
+      "avoidWhen": "A tiny project.",
+      "example": "\"Return rate\" always means returned units divided by shipped units."
+    },
+    {
+      "name": "Human-checked queries",
+      "what": "Show the generated query and result to an analyst before it is trusted.",
+      "greatWhen": "High-stakes numbers.",
+      "avoidWhen": "Casual exploration where speed matters.",
+      "example": "An analyst approves a finance query."
+    },
+    {
+      "name": "Full database access for the model",
+      "what": "The model can run any query on the live database.",
+      "greatWhen": "Almost never.",
+      "avoidWhen": "Anything real. It risks data leaks, costly queries and damage.",
+      "example": "A model runs a delete, or exports every customer email."
+    }
+  ],
+  "challenge": {
+    "question": "Managers want flexible answers, but the database holds personal and payment data. What is the safest useful design?",
+    "options": [
+      {
+        "text": "Text-to-SQL limited to read-only approved views, with a semantic layer, row and time limits, and query logs",
+        "verdict": "best",
+        "why": "Flexible for managers, and the database itself enforces the limits."
+      },
+      {
+        "text": "Give the model admin access so it can answer anything",
+        "verdict": "poor",
+        "why": "One clever question could leak or destroy data."
+      },
+      {
+        "text": "Only pre-written queries, with no flexibility",
+        "verdict": "ok",
+        "why": "Very safe, but managers keep asking analysts for anything new."
+      },
+      {
+        "text": "Let the model guess table names from memory",
+        "verdict": "poor",
+        "why": "It will invent tables and get wrong numbers."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Flexible questions, on safe views, with logged queries",
+    "example": "\"Which products had the most returns last month?\" The model writes a query against the returns_summary view. The semantic layer defines return rate, the database enforces read-only access with a time limit, and the query and answer are logged. The manager also sees the query used."
+  },
+  "worstCase": {
+    "title": "A model with the keys to the whole database",
+    "example": "A manager asks to \"export everything about our best customers\". The model runs a query that returns names, emails and card tokens. Another vague question triggers a huge query that slows the live store."
+  },
+  "route": {
+    "travelling": "\"Which products had the most returns last month?\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Manager asks",
+            "goes": "A plain-English question arrives."
+          },
+          {
+            "label": "Model reads the approved schema",
+            "goes": "It sees only the safe views and their business definitions.",
+            "goesWrong": "It sees every table, including personal and payment data."
+          },
+          {
+            "label": "Model writes a query",
+            "goes": "It writes a query against returns_summary."
+          },
+          {
+            "label": "Safety checks",
+            "goes": "Read-only, limited rows and time, no personal columns."
+          },
+          {
+            "label": "Run on a read copy",
+            "goes": "The query runs on a copy so the live store is not slowed."
+          },
+          {
+            "label": "Answer, with the query shown",
+            "goes": "The manager sees the result and the query. Everything is logged."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Let the model write questions, not commands. Give it approved read-only views, agreed definitions, and logs."
+}

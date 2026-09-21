@@ -1,0 +1,125 @@
+{
+  "id": "ai1",
+  "line": 1,
+  "level": "beginner",
+  "shortTitle": "Classic AI: rules and planning",
+  "title": "Classic AI: search, planning and rules",
+  "hook": "Rule bases, search, planners and solvers. When no learning is needed at all.",
+  "inPlainWords": "Before machine learning, AI meant programs that search through options or follow expert rules. Those methods are still the right answer when the rules are known and mistakes are costly.",
+  "useCase": {
+    "title": "Plan tomorrow's delivery for 40 vans and 900 parcels",
+    "story": "Each van has a size limit and a driver shift. Parcels have delivery time windows. ShopEase wants the cheapest set of routes that keeps every promise. Nothing needs predicting: the rules and distances are known."
+  },
+  "approaches": [
+    {
+      "name": "Hand-written rules (expert system)",
+      "what": "Experts write if-then knowledge into a rule base.",
+      "greatWhen": "Rules are clear and stable, and you must explain every decision.",
+      "avoidWhen": "Rules are huge or change constantly.",
+      "example": "If a parcel is fragile and heavy, use the padded van."
+    },
+    {
+      "name": "Search",
+      "what": "Explore possible steps to reach a goal, the way a map app finds a route.",
+      "greatWhen": "There is a clear goal, known moves and known costs.",
+      "avoidWhen": "There are far too many options to try without shortcuts.",
+      "example": "The shortest road from the warehouse to one customer."
+    },
+    {
+      "name": "Heuristic search",
+      "what": "Search guided by a rule of thumb about which options look promising.",
+      "greatWhen": "Big search spaces where a good-enough answer is fine.",
+      "avoidWhen": "You need a guaranteed best answer.",
+      "example": "A route finder that prefers main roads."
+    },
+    {
+      "name": "Constraint solver (optimization)",
+      "what": "State the rules and the goal, and the solver finds the best plan that obeys the rules.",
+      "greatWhen": "Schedules, routes and staff rosters.",
+      "avoidWhen": "The inputs are uncertain or unknown.",
+      "example": "Assign 900 parcels to 40 vans within their time windows."
+    },
+    {
+      "name": "Planning",
+      "what": "Work out an ordered list of actions that reaches a goal.",
+      "greatWhen": "Robots and workflows where actions and their effects are known.",
+      "avoidWhen": "The world changes unpredictably in the middle of the plan.",
+      "example": "Pick, pack, label, load, in the right order."
+    },
+    {
+      "name": "Learning-based approach",
+      "what": "Learn a strategy from data or from a simulator.",
+      "greatWhen": "The rules are unknown but you have lots of examples.",
+      "avoidWhen": "The rules are known. Just compute the answer.",
+      "example": "Predict traffic delays, then feed them to the solver."
+    }
+  ],
+  "challenge": {
+    "question": "The rules and distances are known, and you need the cheapest valid routes. What fits?",
+    "options": [
+      {
+        "text": "A constraint solver",
+        "verdict": "best",
+        "why": "It finds a plan that provably obeys every rule and can be re-run when inputs change."
+      },
+      {
+        "text": "A neural network trained on last year's routes",
+        "verdict": "poor",
+        "why": "It may break time windows or overload vans, and nobody can see why."
+      },
+      {
+        "text": "Ask a language model to plan the routes",
+        "verdict": "poor",
+        "why": "It cannot guarantee that the rules are obeyed."
+      },
+      {
+        "text": "A manager draws the routes by hand",
+        "verdict": "ok",
+        "why": "Fine for five vans. It falls apart at 900 parcels."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Compute what you can compute, and learn only what you cannot",
+    "example": "A solver builds routes that respect every van limit and time window. A small ML model predicts tomorrow's traffic delays, and those predictions feed into the solver as inputs."
+  },
+  "worstCase": {
+    "title": "Learning what you could simply compute",
+    "example": "A neural network trained on last year's routes suggests a plan that overloads two vans and misses ten delivery windows. Nobody can tell why, and there is nothing to fix except more training."
+  },
+  "route": {
+    "travelling": "Tomorrow's 900 parcels and 40 vans",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Parcels, vans, rules",
+            "goes": "Sizes, shifts and time windows become the constraints."
+          },
+          {
+            "label": "Predict delays (ML)",
+            "goes": "A small model estimates traffic for each area."
+          },
+          {
+            "label": "State the goal",
+            "goes": "Minimize total driving, and never break a promise."
+          },
+          {
+            "label": "Solver searches plans",
+            "goes": "It finds the cheapest plan that obeys every rule.",
+            "goesWrong": "A neural network guesses routes with no guarantee that they obey the rules."
+          },
+          {
+            "label": "Check the plan",
+            "goes": "Every rule is verified automatically."
+          },
+          {
+            "label": "Dispatch",
+            "goes": "Drivers receive their routes."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "If the rules are known and must be obeyed, compute the answer. Use learning only for what you cannot compute."
+}

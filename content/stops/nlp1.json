@@ -1,0 +1,125 @@
+{
+  "id": "nlp1",
+  "line": 4,
+  "level": "intermediate",
+  "shortTitle": "Language tasks",
+  "title": "Language tasks beyond chat",
+  "hook": "Labeling, extracting, summarizing, translating and finding similar text. The cheapest good tool for each.",
+  "inPlainWords": "Chat is one use of language models. Many jobs are narrower: label a text, pull out names and numbers, shorten it, translate it, or find similar texts. Naming the task tells you the cheapest good tool.",
+  "useCase": {
+    "title": "Process 30,000 ShopEase tickets a week",
+    "story": "Each week the tickets must be labeled by topic, stripped of order numbers and names, summarized for a manager, and replies translated into five languages. Volume is high and the budget is watched."
+  },
+  "approaches": [
+    {
+      "name": "Rules and patterns",
+      "what": "Match exact patterns like formats and word lists.",
+      "greatWhen": "Order numbers, emails and fixed phrases.",
+      "avoidWhen": "Varied natural language.",
+      "example": "Find \"#\" followed by five digits."
+    },
+    {
+      "name": "Classic text ML",
+      "what": "Count words and train a simple model.",
+      "greatWhen": "Topic labels with plenty of tagged examples, at low cost.",
+      "avoidWhen": "Subtle meaning or few examples.",
+      "example": "A topic classifier trained on 10,000 tagged tickets."
+    },
+    {
+      "name": "Fine-tuned small language model",
+      "what": "Adapt a compact pretrained text model to one task.",
+      "greatWhen": "High volume, one narrow task, and you need speed and low cost.",
+      "avoidWhen": "The task changes every week.",
+      "example": "A small model that tags topics in milliseconds."
+    },
+    {
+      "name": "Prompted large language model",
+      "what": "Describe the task and let a large model do it.",
+      "greatWhen": "Low volume, changing tasks, or several tasks with one model.",
+      "avoidWhen": "Huge volume, where cost and delay add up.",
+      "example": "Summarize a long ticket thread for a manager."
+    },
+    {
+      "name": "Specialized services",
+      "what": "Ready-made services for translation, speech or entity extraction.",
+      "greatWhen": "Standard tasks with good quality.",
+      "avoidWhen": "Domain jargon they do not know, or strict data rules.",
+      "example": "A translation service for five languages."
+    },
+    {
+      "name": "Embeddings and similarity search",
+      "what": "Find texts that are similar in meaning.",
+      "greatWhen": "Finding duplicates and related tickets.",
+      "avoidWhen": "You need a label or a decision.",
+      "example": "Find tickets similar to this one."
+    }
+  ],
+  "challenge": {
+    "question": "Which mix is best for the weekly job?",
+    "options": [
+      {
+        "text": "Rules for order numbers, a small tuned model for topics, a prompted large model for summaries, and a translation service for languages",
+        "verdict": "best",
+        "why": "Each task gets the cheapest tool that does it well."
+      },
+      {
+        "text": "A large prompted model for everything",
+        "verdict": "ok",
+        "why": "Simple to build, but costly and slow at 30,000 tickets."
+      },
+      {
+        "text": "Rules for everything",
+        "verdict": "poor",
+        "why": "Rules cannot summarize or translate."
+      },
+      {
+        "text": "Train a giant model from scratch",
+        "verdict": "poor",
+        "why": "Far too costly, and unnecessary."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Right-size the tool for each language task",
+    "example": "Rules mask order numbers and names. A small model tags topics in milliseconds. A large model summarizes only long, escalated tickets. A translation service handles five languages. The weekly bill is a fraction of the all-large-model option."
+  },
+  "worstCase": {
+    "title": "One big model for every job",
+    "example": "A large model is prompted for every label on all 30,000 tickets. It works, but the bill is huge, responses are slow, and label wording drifts from week to week."
+  },
+  "route": {
+    "travelling": "Ticket: \"Order #48213 lost, third time I'm asking!!\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Ticket arrives",
+            "goes": "One of 30,000 this week."
+          },
+          {
+            "label": "Strip personal details",
+            "goes": "Rules mask the order number and name."
+          },
+          {
+            "label": "Label the topic",
+            "goes": "A small model says Delivery, fast and cheap.",
+            "goesWrong": "A large model is prompted for every label on all 30,000 tickets, and the bill is huge."
+          },
+          {
+            "label": "Summarize for the manager",
+            "goes": "Only long, escalated tickets get a summary."
+          },
+          {
+            "label": "Translate the reply",
+            "goes": "A translation service handles five languages."
+          },
+          {
+            "label": "Log and review",
+            "goes": "Samples are checked for quality."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Name the language task first. Use rules for exact patterns, small models for volume, and large models for flexibility."
+}

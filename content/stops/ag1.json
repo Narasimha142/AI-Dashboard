@@ -1,0 +1,132 @@
+{
+  "id": "ag1",
+  "line": 6,
+  "level": "advanced",
+  "shortTitle": "Agent planning and testing",
+  "title": "Agent planning and testing",
+  "hook": "Planning styles, self-checks, limits, and how to test an agent that takes many steps.",
+  "inPlainWords": "An agent's mistakes add up over many steps. Planning patterns decide how it thinks ahead. Testing an agent means checking the whole path it took, not just the final answer.",
+  "useCase": {
+    "title": "Test a complaint-investigating agent before launch",
+    "story": "ShopEase built an agent that investigates complex complaints across orders, tickets, carrier tracking and policy. It sometimes loops, sometimes takes odd routes, and once refunded the wrong order in a test. How should it plan, and how do you trust it?"
+  },
+  "approaches": [
+    {
+      "name": "React as you go",
+      "what": "Think, act, look at the result, repeat, with no plan up front.",
+      "greatWhen": "Short, uncertain tasks.",
+      "avoidWhen": "Long tasks. It can drift or loop.",
+      "example": "Look up the order, then decide the next step."
+    },
+    {
+      "name": "Plan first, then act",
+      "what": "Write a step list up front, then follow and update it.",
+      "greatWhen": "Longer tasks with clear structure.",
+      "avoidWhen": "Plans go out of date and must be updated when results surprise it.",
+      "example": "Plan: verify order, check carrier, check policy, decide."
+    },
+    {
+      "name": "Reflect and self-check",
+      "what": "The agent reviews its own work before finishing.",
+      "greatWhen": "Catching obvious mistakes.",
+      "avoidWhen": "As the only check. It can approve its own mistakes.",
+      "example": "Re-read the refund amount against the policy."
+    },
+    {
+      "name": "Limits and budgets",
+      "what": "Cap steps, time, cost and allowed actions.",
+      "greatWhen": "Always.",
+      "avoidWhen": "Limits so tight that valid work fails.",
+      "example": "Stop after 15 steps and hand over to a person."
+    },
+    {
+      "name": "Trajectory tests",
+      "what": "Replay realistic cases and check the path taken, the tools called, and the result.",
+      "greatWhen": "Before launch and after every change.",
+      "avoidWhen": "Checking only the final answer.",
+      "example": "Did it verify the order before refunding?"
+    },
+    {
+      "name": "Hostile and awkward test cases",
+      "what": "Test with confusing, hostile or contradictory inputs.",
+      "greatWhen": "Anything that takes real actions.",
+      "avoidWhen": "Testing only the happy path.",
+      "example": "A customer tells it to ignore its rules."
+    },
+    {
+      "name": "Live traces and human review",
+      "what": "Record every step in live use and review samples.",
+      "greatWhen": "After launch.",
+      "avoidWhen": "Recording without ever reviewing.",
+      "example": "Review 50 traces every week."
+    }
+  ],
+  "challenge": {
+    "question": "How do you decide the refund-handling agent is safe to launch?",
+    "options": [
+      {
+        "text": "Replay realistic and hostile cases, check the path as well as the result, enforce step and money limits, gate refunds with approval, and review traces after launch",
+        "verdict": "best",
+        "why": "Each part covers a different way an agent can fail."
+      },
+      {
+        "text": "Try five cases and check the final answers look right",
+        "verdict": "poor",
+        "why": "Too few cases, and the path matters as much as the answer."
+      },
+      {
+        "text": "Trust the agent to check itself",
+        "verdict": "poor",
+        "why": "It can approve its own mistakes."
+      },
+      {
+        "text": "Test many cases but only read the final message",
+        "verdict": "ok",
+        "why": "Good coverage, but you miss wrong routes, loops and hidden costs."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Test the path, not just the answer, and cap what it can do",
+    "example": "A test set of 120 cases includes hostile ones. Each test checks that the agent verified the order before refunding, stayed under 15 steps, and never exceeded the refund limit. Failed traces show exactly where it went wrong. After launch, 50 traces are reviewed every week."
+  },
+  "worstCase": {
+    "title": "Judging an agent by its final message",
+    "example": "The final message says \"Refund issued for order 48213\", which looks right. Nobody notices that it looked up the wrong customer's order, or that it looped 40 times and burned money. The trace would have shown both."
+  },
+  "route": {
+    "travelling": "Complaint: \"My parcel was lost and I was charged twice\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Test case set",
+            "goes": "120 realistic and hostile cases, with the expected path."
+          },
+          {
+            "label": "Run the agent",
+            "goes": "The agent plans, uses tools and reaches a result."
+          },
+          {
+            "label": "Record the trajectory",
+            "goes": "Every step and tool call is logged."
+          },
+          {
+            "label": "Check path and result",
+            "goes": "It verified the order first, stayed within limits, and reached the right outcome.",
+            "goesWrong": "Only the final message is checked. It looks fine."
+          },
+          {
+            "label": "Fix and re-run",
+            "goes": "Failures are fixed and the whole set is re-run."
+          },
+          {
+            "label": "Launch with limits and approvals",
+            "goes": "Caps and approval gates stay on. Live traces are reviewed weekly."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Agents fail in the middle, not just at the end. Test the whole path, cap what they can do, and keep reviewing traces."
+}

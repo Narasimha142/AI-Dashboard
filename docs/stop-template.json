@@ -1,0 +1,102 @@
+{
+  "id": "my-new-stop",
+  "line": 2,
+  "level": "intermediate",
+  "shortTitle": "Short label for the map",
+  "title": "The full title of the stop",
+  "hook": "One sentence on what this stop covers.",
+  "inPlainWords": "Optional. Two or three sentences that explain the idea to a complete beginner.",
+  "useCase": {
+    "title": "A problem at ShopEase, in one line",
+    "story": "Two or three sentences with real numbers and constraints."
+  },
+  "approaches": [
+    {
+      "name": "Approach one",
+      "what": "What it is, in one sentence.",
+      "greatWhen": "When it fits.",
+      "avoidWhen": "When it does not.",
+      "example": "A concrete example."
+    },
+    {
+      "name": "Approach two",
+      "what": "What it is.",
+      "greatWhen": "When it fits.",
+      "avoidWhen": "When it does not.",
+      "example": "A concrete example."
+    },
+    {
+      "name": "Approach three",
+      "what": "What it is.",
+      "greatWhen": "When it fits.",
+      "avoidWhen": "When it does not.",
+      "example": "A concrete example."
+    },
+    {
+      "name": "Approach four",
+      "what": "What it is.",
+      "greatWhen": "When it fits.",
+      "avoidWhen": "When it does not.",
+      "example": "A concrete example."
+    }
+  ],
+  "challenge": {
+    "question": "A question about the use case.",
+    "options": [
+      {
+        "text": "The best option",
+        "verdict": "best",
+        "why": "Why it is the best."
+      },
+      {
+        "text": "An option that works but is not ideal",
+        "verdict": "ok",
+        "why": "What it gets right and what it misses."
+      },
+      {
+        "text": "A tempting but risky option",
+        "verdict": "poor",
+        "why": "What goes wrong."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "What the best approach looks like",
+    "example": "A specific example of it working."
+  },
+  "worstCase": {
+    "title": "What the worst approach looks like",
+    "example": "A specific example of it failing."
+  },
+  "route": {
+    "travelling": "The example that moves along the route",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "First step",
+            "goes": "What happens to the example here."
+          },
+          {
+            "label": "Second step",
+            "goes": "What happens here.",
+            "goesWrong": "What goes wrong here in the worst case."
+          },
+          {
+            "label": "Third step",
+            "goes": "What happens here."
+          },
+          {
+            "label": "Fourth step",
+            "goes": "What happens here."
+          },
+          {
+            "label": "Result",
+            "goes": "How it ends."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "One memorable sentence."
+}

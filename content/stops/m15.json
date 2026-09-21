@@ -1,0 +1,119 @@
+{
+  "id": "m15",
+  "line": 7,
+  "level": "advanced",
+  "shortTitle": "Cost and routing",
+  "title": "Cost, speed and model routing",
+  "hook": "One big model for everything is the expensive default. Route, cache, and trim instead.",
+  "useCase": {
+    "title": "100,000 tickets a day and a rising bill",
+    "story": "The assistant works, but cost and delay grow with volume. Most questions are easy repeats. A few are hard."
+  },
+  "approaches": [
+    {
+      "name": "One biggest model for everything",
+      "what": "Send every request to the strongest model.",
+      "greatWhen": "A prototype.",
+      "avoidWhen": "Real volume.",
+      "example": "Every \"hello\" is priced like a hard case."
+    },
+    {
+      "name": "Model routing",
+      "what": "A cheap model handles easy requests and escalates when unsure.",
+      "greatWhen": "Mixed difficulty.",
+      "avoidWhen": "Everything is hard.",
+      "example": "FAQ goes to a small model. A complex complaint goes to a large one."
+    },
+    {
+      "name": "Caching",
+      "what": "Reuse answers or repeated prompt parts.",
+      "greatWhen": "Many repeated questions.",
+      "avoidWhen": "Every question is unique or personal.",
+      "example": "\"Opening hours?\" is answered once and reused."
+    },
+    {
+      "name": "Shorter prompts, smarter retrieval",
+      "what": "Send only what is needed.",
+      "greatWhen": "Always.",
+      "example": "Send the three best passages, not thirty."
+    },
+    {
+      "name": "A small model trained for one job",
+      "what": "Train a small model to copy a large one on a narrow task.",
+      "greatWhen": "A steady, high-volume, narrow task.",
+      "avoidWhen": "A task that keeps changing.",
+      "example": "The email categorizer from the first stop."
+    },
+    {
+      "name": "Batch processing",
+      "what": "Run non-urgent work later, in bulk, often at lower prices.",
+      "greatWhen": "Overnight reports and bulk summaries.",
+      "avoidWhen": "Live chat.",
+      "example": "Nightly summaries of the day's tickets."
+    }
+  ],
+  "challenge": {
+    "question": "About 70% of questions are simple repeats. What is the best cost move?",
+    "options": [
+      {
+        "text": "Route by difficulty, cache repeats, and trim prompts",
+        "verdict": "best",
+        "why": "Repeats cost almost nothing, easy questions use a cheap model, and only hard ones reach the big one."
+      },
+      {
+        "text": "Switch everything to the smallest model",
+        "verdict": "poor",
+        "why": "Hard cases get shallow, wrong answers."
+      },
+      {
+        "text": "Keep the biggest model and negotiate a better price later",
+        "verdict": "poor",
+        "why": "You keep paying hard-case prices for easy questions."
+      },
+      {
+        "text": "Fine-tune a small model right away",
+        "verdict": "ok",
+        "why": "Can pay off at steady high volume, but routing and caching are quicker wins first."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Route by difficulty, cache repeats, trim prompts",
+    "example": "\"What are your opening hours?\" is served from the cache in milliseconds. Simple questions go to a small model. Only the tricky minority reach the large model. The bill drops while quality on hard cases holds."
+  },
+  "worstCase": {
+    "title": "Biggest model for everything, or smallest for everything",
+    "example": "Every \"hi\" costs as much as a deep analysis and answers feel slow. Or you swap in the tiny model everywhere and hard complaints get shallow, wrong answers."
+  },
+  "route": {
+    "travelling": "\"What are your opening hours?\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Question in",
+            "goes": "The same question was asked 400 times today."
+          },
+          {
+            "label": "Cache check",
+            "goes": "Seen before? Return the saved answer instantly.",
+            "goesWrong": "There is no cache. Every repeat pays for a full model call."
+          },
+          {
+            "label": "Difficulty router",
+            "goes": "Easy goes to a small model. Hard goes to a large model."
+          },
+          {
+            "label": "Chosen model",
+            "goes": "The small model answers in under a second."
+          },
+          {
+            "label": "Log cost and quality",
+            "goes": "Track price and accuracy for each route."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Match model size to task difficulty, and never pay twice for the same answer."
+}

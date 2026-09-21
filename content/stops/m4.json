@@ -1,0 +1,114 @@
+{
+  "id": "m4",
+  "line": 4,
+  "level": "beginner",
+  "shortTitle": "Language models and where to run them",
+  "title": "Language models and where to run them",
+  "hook": "How a language model behaves, and five ways to get one working.",
+  "inPlainWords": "A language model reads text in small pieces and predicts what comes next, over and over. It has a desk, called the context window, and only what fits on the desk is in view. It knows the world in general, not your business, and it can sound sure while being wrong.",
+  "useCase": {
+    "title": "A chat box for general questions",
+    "story": "ShopEase adds a chat widget. On day one it only handles friendly general questions, like \"How do I track a package?\" or \"What does backordered mean?\" How do you run the model?"
+  },
+  "approaches": [
+    {
+      "name": "Hosted API from a model provider",
+      "what": "You send text over the internet and get an answer back. The provider runs the hardware.",
+      "greatWhen": "You are starting out, traffic is unpredictable, and you want top quality fast.",
+      "avoidWhen": "Rules forbid data from leaving your network.",
+      "example": "Your backend calls the API for each chat message."
+    },
+    {
+      "name": "Models inside your cloud account",
+      "what": "The same kind of models, delivered through your existing cloud provider and its security setup.",
+      "greatWhen": "An enterprise with cloud contracts and compliance needs.",
+      "avoidWhen": "A small team that wants the fastest possible start.",
+      "example": "A bank running models inside its own cloud account."
+    },
+    {
+      "name": "Open-weight model you host",
+      "what": "You download a model and run it on your own servers.",
+      "greatWhen": "Data cannot leave, volume is huge and steady, or you need full control.",
+      "avoidWhen": "Nobody on the team can run GPUs and keep them updated.",
+      "example": "A hospital running a model on its own servers."
+    },
+    {
+      "name": "Small model on the device",
+      "what": "A tiny model runs on the phone or laptop.",
+      "greatWhen": "It must work offline, instantly and privately, on simple tasks.",
+      "avoidWhen": "The task needs hard reasoning or long documents.",
+      "example": "A phone keyboard suggesting replies with no internet."
+    },
+    {
+      "name": "A consumer chat app",
+      "what": "People paste text into a chat website.",
+      "greatWhen": "Personal brainstorming, or prototypes with fake data.",
+      "avoidWhen": "Customer data, or anything you must repeat reliably.",
+      "example": "A manager pastes customer emails into a public chat site."
+    }
+  ],
+  "challenge": {
+    "question": "Small team, unpredictable traffic, no privacy blocker. What is the first choice?",
+    "options": [
+      {
+        "text": "Hosted API",
+        "verdict": "best",
+        "why": "Fastest start and no servers to run. Revisit later only if privacy or volume gives you a reason."
+      },
+      {
+        "text": "Host an open model yourself",
+        "verdict": "poor",
+        "why": "You would spend weeks on servers instead of the product."
+      },
+      {
+        "text": "Paste chats into a consumer chat app",
+        "verdict": "poor",
+        "why": "It is not a product, and customer data should not go there."
+      },
+      {
+        "text": "A tiny on-device model",
+        "verdict": "ok",
+        "why": "Cheap and private, but too weak for open-ended questions."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Hosted API first, and move later only with a reason",
+    "example": "The chat message goes to the API with your instructions (\"You are ShopEase's friendly assistant\"). The answer returns in seconds and you pay per use. If privacy or volume changes, revisit self-hosting."
+  },
+  "worstCase": {
+    "title": "Self-hosting too early, or trusting it as a fact machine",
+    "example": "The team rents GPUs, spends a month on setup, then a server outage takes the chat down on Black Friday. Meanwhile the bot cheerfully says \"Yes, we ship to Canada\", because it has no idea you do not."
+  },
+  "route": {
+    "travelling": "Customer: \"What does backordered mean?\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Chat widget",
+            "goes": "The customer types the question."
+          },
+          {
+            "label": "Your backend",
+            "goes": "It adds instructions: \"You are ShopEase's helpful assistant. Be brief.\""
+          },
+          {
+            "label": "Language model",
+            "goes": "The model predicts a helpful answer.",
+            "goesWrong": "Asked \"Do you ship to Canada?\" it has no ShopEase data, so it guesses \"Yes!\""
+          },
+          {
+            "label": "Safety check",
+            "goes": "A basic filter screens out unwanted content."
+          },
+          {
+            "label": "Answer shown",
+            "goes": "\"Backordered means the item is temporarily out of stock...\""
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "A language model is a brilliant general reader that knows nothing about your business. Start hosted, and earn the right to self-host."
+}

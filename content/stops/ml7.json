@@ -1,0 +1,125 @@
+{
+  "id": "ml7",
+  "line": 2,
+  "level": "intermediate",
+  "shortTitle": "Clustering",
+  "title": "Clustering: finding natural groups",
+  "hook": "Hand rules, k-means, hierarchical, density-based and mixtures. Group customers with no labels.",
+  "inPlainWords": "Clustering sorts alike items into groups when nobody has said what the groups are. You choose the method, the number of groups, and which features count as \"alike\".",
+  "useCase": {
+    "title": "Group 50,000 customers for different emails",
+    "story": "ShopEase wants customer segments for marketing. Nobody has labeled them. The columns are spend, visit frequency, product mix, discount use and days since last visit."
+  },
+  "approaches": [
+    {
+      "name": "Hand-made buckets",
+      "what": "Split by simple thresholds, like big spenders and frequent visitors.",
+      "greatWhen": "You want something quick and explainable, with no ML.",
+      "avoidWhen": "Patterns are subtle and the thresholds are arbitrary.",
+      "example": "Spend over $500 and five or more visits is a VIP."
+    },
+    {
+      "name": "K-means",
+      "what": "You pick the number of groups. The method finds a center for each and assigns every customer to the nearest.",
+      "greatWhen": "A fast baseline for roundish, similar-sized groups.",
+      "avoidWhen": "Odd-shaped groups or lots of outliers.",
+      "example": "Five groups from 50,000 customers."
+    },
+    {
+      "name": "Hierarchical clustering",
+      "what": "Merges the most alike customers step by step into a tree of groups.",
+      "greatWhen": "You want to see groups at several levels, with modest data.",
+      "avoidWhen": "Very large data.",
+      "example": "Gift buyers split into corporate gifts and personal gifts."
+    },
+    {
+      "name": "Density-based clustering",
+      "what": "Finds crowded regions and treats lonely points as noise.",
+      "greatWhen": "Odd-shaped groups and outliers.",
+      "avoidWhen": "Groups with very different densities.",
+      "example": "A tight cluster of night-time shoppers, plus scattered oddballs."
+    },
+    {
+      "name": "Overlapping groups (mixtures)",
+      "what": "Gives every customer a probability of belonging to each group.",
+      "greatWhen": "Customers really belong to several segments.",
+      "avoidWhen": "You need firm, single groups.",
+      "example": "A customer is 70% bargain hunter and 30% gift buyer."
+    },
+    {
+      "name": "Embed first, then cluster",
+      "what": "Turn text or images into embeddings, then cluster those.",
+      "greatWhen": "Reviews, tickets and product photos.",
+      "avoidWhen": "Tabular data that is already numeric.",
+      "example": "Group 10,000 reviews by topic."
+    }
+  ],
+  "challenge": {
+    "question": "You need segments marketing can act on, from 50,000 customers with no labels. What is the smart approach?",
+    "options": [
+      {
+        "text": "Cluster on well-chosen, scaled features, compare a few group counts, then name and test the groups",
+        "verdict": "best",
+        "why": "It produces groups people understand, and the test tells you whether they matter."
+      },
+      {
+        "text": "Ask for 50 groups so each is very specific",
+        "verdict": "poor",
+        "why": "Marketing cannot run 50 campaigns, and small groups are mostly noise."
+      },
+      {
+        "text": "Trust whatever the algorithm returns",
+        "verdict": "poor",
+        "why": "Clusters need a human check. They can be meaningless."
+      },
+      {
+        "text": "Only hand-made thresholds",
+        "verdict": "ok",
+        "why": "Explainable and quick, but you may miss real patterns."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Pick sensible features, try a few group counts, then name the groups",
+    "example": "K-means with five groups finds bargain hunters, gift buyers, loyal regulars, new browsers and lapsed customers. Marketing reads a sample from each, names them, and sends different emails. A later test shows which email works for which group."
+  },
+  "worstCase": {
+    "title": "Clustering on unscaled data and trusting the output",
+    "example": "Spend is in dollars and visits are small counts, so spend dominates. The \"clusters\" are just spending bands. Marketing launches five campaigns that are really the same campaign with different discounts."
+  },
+  "route": {
+    "travelling": "50,000 customer records",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Raw customer data",
+            "goes": "Spend, visits, product mix, days since the last visit."
+          },
+          {
+            "label": "Choose and scale features",
+            "goes": "Put the numbers on similar scales.",
+            "goesWrong": "Raw numbers go in as they are. Dollars drown out everything else."
+          },
+          {
+            "label": "Try a few group counts",
+            "goes": "Compare 3, 5 and 8 groups."
+          },
+          {
+            "label": "Look at each group",
+            "goes": "Read a sample of real customers from each group."
+          },
+          {
+            "label": "Name the groups",
+            "goes": "Bargain hunters, gift buyers, loyal regulars and so on."
+          },
+          {
+            "label": "Test with campaigns",
+            "goes": "See which message works for which group."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Clustering only finds groups. People decide whether the groups are meaningful and useful."
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Foundations",
+    "rank": "Data explorer"
+  },
+  {
+    "name": "Machine learning",
+    "rank": "Model builder"
+  },
+  {
+    "name": "Deep learning",
+    "rank": "Network trainer"
+  },
+  {
+    "name": "Language models",
+    "rank": "Prompt crafter"
+  },
+  {
+    "name": "RAG",
+    "rank": "RAG wrangler"
+  },
+  {
+    "name": "Agents",
+    "rank": "Agent tamer"
+  },
+  {
+    "name": "Production",
+    "rank": "AI architect"
+  }
+]

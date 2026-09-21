@@ -1,0 +1,139 @@
+{
+  "id": "emb1",
+  "line": 5,
+  "level": "beginner",
+  "shortTitle": "Embeddings and vector search",
+  "title": "Embeddings and vector search",
+  "hook": "Exact, keyword, vector and hybrid search, and where to keep the vectors.",
+  "inPlainWords": "An embedding turns text, an image, or a product into a list of numbers so that similar meanings land close together. Vector search finds the closest ones. It finds meaning, not exact words.",
+  "useCase": {
+    "title": "Let customers search for \"something warm for a windy hike\"",
+    "story": "ShopEase has 50,000 products. Customers type natural phrases, not product names. Search must also handle exact codes like XR-2040-B."
+  },
+  "approaches": [
+    {
+      "name": "Exact match (database query)",
+      "what": "Match exact fields and codes.",
+      "greatWhen": "IDs, codes and filters.",
+      "avoidWhen": "Natural phrases.",
+      "example": "Find product XR-2040-B."
+    },
+    {
+      "name": "Keyword search",
+      "what": "Match words and their close forms, ranked by how rare and relevant they are.",
+      "greatWhen": "Names, codes and jargon.",
+      "avoidWhen": "Different words that mean the same thing.",
+      "example": "\"Jacket\" finds \"jacket\", but not \"windbreaker\"."
+    },
+    {
+      "name": "Vector (semantic) search",
+      "what": "Embed the query and the products, then return the nearest by meaning.",
+      "greatWhen": "Natural phrases, synonyms and several languages.",
+      "avoidWhen": "Exact codes and rare names.",
+      "example": "\"Warm for a windy hike\" finds insulated windproof jackets."
+    },
+    {
+      "name": "Hybrid search",
+      "what": "Run keyword and vector search together and merge the results.",
+      "greatWhen": "Real catalogs with both codes and phrases.",
+      "avoidWhen": "Tiny catalogs.",
+      "example": "Codes are found by keyword and intent by vector."
+    },
+    {
+      "name": "Where to keep the vectors",
+      "what": "A vector index inside your existing database, or a dedicated vector store.",
+      "greatWhen": "Inside your database means fewer moving parts. A dedicated store suits huge scale.",
+      "avoidWhen": "A separate store as the only copy of the data.",
+      "example": "Product embeddings sitting next to the product table."
+    },
+    {
+      "name": "Choosing and refreshing embeddings",
+      "what": "Pick an embedding model, and re-embed when the model or the data changes.",
+      "greatWhen": "Always plan for it.",
+      "avoidWhen": "Mixing vectors from different models in one index.",
+      "example": "Re-embed new products every night."
+    }
+  ],
+  "challenge": {
+    "question": "Customers type \"something warm for a windy hike\", and also exact codes like XR-2040-B. What search setup fits?",
+    "options": [
+      {
+        "text": "Hybrid: vector for meaning, keyword for codes, with filters like in-stock",
+        "verdict": "best",
+        "why": "Each method covers the other's weakness."
+      },
+      {
+        "text": "Keyword search only",
+        "verdict": "ok",
+        "why": "Great for codes, but it misses \"windbreaker\" for \"windy\"."
+      },
+      {
+        "text": "Vector search only",
+        "verdict": "ok",
+        "why": "Understands phrases, but may return look-alike codes."
+      },
+      {
+        "text": "Exact match only",
+        "verdict": "poor",
+        "why": "Nobody types a product's exact name for a vague need."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Hybrid search with filters, and a plan for refreshing embeddings",
+    "example": "\"Something warm for a windy hike\" finds insulated windproof jackets by meaning. \"XR-2040-B\" is found by keyword. Filters hide out-of-stock items. New products are embedded overnight, so search stays fresh."
+  },
+  "worstCase": {
+    "title": "Vector-only, mixed models and stale vectors",
+    "example": "A search for XR-2040-B returns similar-looking codes. Half the catalog was embedded with an old model and half with a new one, so distances mean nothing. New products never appear because nobody re-embedded them."
+  },
+  "route": {
+    "travelling": "Query: \"something warm for a windy hike\"",
+    "lanes": [
+      {
+        "name": "Lane 1: prepare once",
+        "steps": [
+          {
+            "label": "Product texts",
+            "goes": "50,000 product descriptions."
+          },
+          {
+            "label": "Embedding model",
+            "goes": "One model turns every product into a list of numbers.",
+            "goesWrong": "Half the catalog was embedded with an old model and half with a new one."
+          },
+          {
+            "label": "Two indexes",
+            "goes": "A vector index and a keyword index, with metadata like stock and price."
+          }
+        ]
+      },
+      {
+        "name": "Lane 2: every search",
+        "steps": [
+          {
+            "label": "Customer query",
+            "goes": "The customer types a natural phrase."
+          },
+          {
+            "label": "Embed the query",
+            "goes": "It is turned into numbers with the same model."
+          },
+          {
+            "label": "Search both ways",
+            "goes": "Vector finds meaning. Keyword finds codes."
+          },
+          {
+            "label": "Merge and filter",
+            "goes": "Results are combined and out-of-stock items are hidden."
+          },
+          {
+            "label": "Show results",
+            "goes": "Insulated windproof jackets appear first."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Embeddings find meaning, keywords find exact words and codes. Real search uses both, with one embedding model kept up to date."
+}

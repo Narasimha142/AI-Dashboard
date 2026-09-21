@@ -1,0 +1,131 @@
+{
+  "id": "fd2",
+  "line": 1,
+  "level": "beginner",
+  "shortTitle": "AI's built-in limits",
+  "title": "What AI gets wrong: its built-in limits",
+  "hook": "Hallucination, bias, brittleness and overconfidence, and the design habits that handle each.",
+  "inPlainWords": "AI systems are pattern-finders, not truth-finders. They can sound sure and be wrong, copy the biases in their examples, and fail on cases that differ from what they saw. Good design assumes these limits and builds around them.",
+  "useCase": {
+    "title": "Summarize warranty terms for customers",
+    "story": "ShopEase wants an assistant to boil a 20-page warranty document down to a few sentences for customers. A wrong summary could promise coverage the company does not give, and customers act on what it says."
+  },
+  "approaches": [
+    {
+      "name": "Trust the output",
+      "what": "Publish what the model says.",
+      "greatWhen": "Never, for anything with consequences.",
+      "avoidWhen": "Any customer-facing or legal content.",
+      "example": "The summary says \"covers water damage\" though the warranty does not."
+    },
+    {
+      "name": "Ground it in the source",
+      "what": "Give the model the real text and tell it to use only that.",
+      "greatWhen": "Summaries, question answering and extraction.",
+      "avoidWhen": "The source itself is wrong or missing.",
+      "example": "Summarize only from the warranty PDF."
+    },
+    {
+      "name": "Make it quote and cite",
+      "what": "Require each claim to point to the exact sentence it used.",
+      "greatWhen": "Anything a person will check.",
+      "avoidWhen": "Citations are shown but never checked.",
+      "example": "Each claim links to a clause."
+    },
+    {
+      "name": "Verify with rules or tools",
+      "what": "Check facts automatically.",
+      "greatWhen": "Numbers, dates and names.",
+      "avoidWhen": "Open-ended judgement.",
+      "example": "Compare quoted durations with the document."
+    },
+    {
+      "name": "Human review",
+      "what": "A person checks before it goes out.",
+      "greatWhen": "The stakes are high.",
+      "avoidWhen": "Reviewing everything at scale, when sampling would do.",
+      "example": "A specialist approves the summary template."
+    },
+    {
+      "name": "Narrow the scope and allow \"I don't know\"",
+      "what": "Limit what it answers, and let it decline.",
+      "greatWhen": "Always.",
+      "avoidWhen": "Forcing it to always answer.",
+      "example": "If the clause is not found, say so."
+    },
+    {
+      "name": "Test on known hard cases",
+      "what": "Keep a set of tricky examples and re-run it after every change.",
+      "greatWhen": "Always.",
+      "example": "Warranties with exceptions and fine print."
+    }
+  ],
+  "challenge": {
+    "question": "A wrong warranty summary could cost real money. What is the best design?",
+    "options": [
+      {
+        "text": "Ground it in the document, require quoted clauses, check numbers automatically, allow \"I don't know\", and have a specialist review the template",
+        "verdict": "best",
+        "why": "Each layer catches a different kind of error."
+      },
+      {
+        "text": "Ship the summary the model writes",
+        "verdict": "poor",
+        "why": "Fluent and wrong is exactly the risk."
+      },
+      {
+        "text": "Ask the model to double-check itself, then ship",
+        "verdict": "ok",
+        "why": "It helps a little, but it can repeat its own mistake."
+      },
+      {
+        "text": "Use a bigger model and trust it",
+        "verdict": "poor",
+        "why": "Bigger models still make confident mistakes."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Ground it, make it cite, check what you can, and allow \"I don't know\"",
+    "example": "The assistant summarizes only from the warranty text, quotes each clause, and a script compares durations with the source. Missing details become \"not stated in the document\". A specialist reviews the template and a sample each month."
+  },
+  "worstCase": {
+    "title": "Fluent, confident and wrong",
+    "example": "The model writes a friendly summary that says water damage is covered for a year. The real warranty excludes it after 30 days. Customers rely on the summary, claims are refused, and complaints follow."
+  },
+  "route": {
+    "travelling": "Warranty clause: water damage is excluded after 30 days",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Warranty text",
+            "goes": "The real document is supplied to the model."
+          },
+          {
+            "label": "Model drafts a summary",
+            "goes": "It uses only that text and quotes each clause.",
+            "goesWrong": "The model summarizes from its general knowledge of warranties."
+          },
+          {
+            "label": "Automatic fact check",
+            "goes": "Durations and exclusions are compared with the source."
+          },
+          {
+            "label": "Say \"not stated\"",
+            "goes": "Missing details are marked instead of guessed."
+          },
+          {
+            "label": "Specialist review",
+            "goes": "A person approves the template and a sample."
+          },
+          {
+            "label": "Publish with the source link",
+            "goes": "Customers can read the original clause."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "AI can be fluent and wrong. Ground it, make it cite, check what you can automatically, and let it say \"I don't know\"."
+}

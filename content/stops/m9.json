@@ -1,0 +1,114 @@
+{
+  "id": "m9",
+  "line": 6,
+  "level": "intermediate",
+  "shortTitle": "Tools and MCP",
+  "title": "Tools, and how to connect them",
+  "hook": "From no tools, to function calling, to MCP servers. The model decides, your code does.",
+  "inPlainWords": "A tool is a function the model can ask your software to run, like \"look up order\" or \"issue refund\". The model asks. Your code does the work and returns the result.",
+  "useCase": {
+    "title": "Answer \"Where is my order #48213?\"",
+    "story": "The answer lives in the order system, not in any document, and it changes hourly."
+  },
+  "approaches": [
+    {
+      "name": "No tools",
+      "what": "The model answers only from text it has seen.",
+      "greatWhen": "General chat.",
+      "avoidWhen": "Any live data. It will guess.",
+      "example": "The bot says \"It should arrive soon!\" for every order."
+    },
+    {
+      "name": "Hard-coded lookup",
+      "what": "Your code detects order numbers and always calls the order system.",
+      "greatWhen": "One or two fixed tasks.",
+      "avoidWhen": "Many possible actions.",
+      "example": "If the message has # and digits, call the order API."
+    },
+    {
+      "name": "Tool calling (function calling)",
+      "what": "You describe tools. The model chooses which to call and with what inputs. Your code runs them.",
+      "greatWhen": "Several tools and flexible questions.",
+      "avoidWhen": "Tools that can do harm without checks.",
+      "example": "Tools: get_order_status, get_return_policy."
+    },
+    {
+      "name": "MCP servers",
+      "what": "Tools are packaged behind a shared standard, so any compatible AI app can use them.",
+      "greatWhen": "Many tools, several apps, or reuse across teams.",
+      "avoidWhen": "One tiny internal script.",
+      "example": "An \"orders\" server used by the chat bot, an internal assistant and a coding tool."
+    },
+    {
+      "name": "Screen control",
+      "what": "The model clicks through screens like a person.",
+      "greatWhen": "Old software with no API.",
+      "avoidWhen": "Anything that has an API. It is slower and more fragile.",
+      "example": "Filling in a form on a legacy carrier website."
+    }
+  ],
+  "challenge": {
+    "question": "The bot must answer live order status accurately. What do you add?",
+    "options": [
+      {
+        "text": "A read-only order lookup tool",
+        "verdict": "best",
+        "why": "Live data comes from the source, and read-only means it cannot change anything by mistake."
+      },
+      {
+        "text": "Paste the order database into the prompt",
+        "verdict": "poor",
+        "why": "Huge, stale immediately, and a privacy problem."
+      },
+      {
+        "text": "Fine-tune on past orders",
+        "verdict": "poor",
+        "why": "Old orders do not tell you where today's parcel is."
+      },
+      {
+        "text": "A screen-control agent on the admin site",
+        "verdict": "ok",
+        "why": "It can work, but it is slow and fragile when a proper API exists."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "A real lookup tool with limited permissions",
+    "example": "\"Where is order 48213?\" The model calls get_order_status(48213), gets \"Out for delivery, arriving today\", and tells the customer exactly that. The tool is read-only, so it cannot alter anything."
+  },
+  "worstCase": {
+    "title": "Letting it guess, or giving it a tool with too much power",
+    "example": "With no tool, the bot says \"Should arrive in 3 to 5 days!\" for an order that was already delivered. Or an all-powerful admin tool lets a confused model cancel the wrong order."
+  },
+  "route": {
+    "travelling": "\"Where is my order #48213?\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Customer question",
+            "goes": "The customer asks about order 48213."
+          },
+          {
+            "label": "Model picks a tool",
+            "goes": "It chooses get_order_status with 48213.",
+            "goesWrong": "There is no tool available, so the model guesses \"3 to 5 days\"."
+          },
+          {
+            "label": "Your code runs it",
+            "goes": "It calls the order system with read-only access."
+          },
+          {
+            "label": "Result comes back",
+            "goes": "\"Out for delivery, ETA today 6pm.\""
+          },
+          {
+            "label": "Model replies",
+            "goes": "\"Your order is out for delivery and should arrive by 6pm.\""
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "The model decides. Your code does. Give every tool the least power it needs."
+}

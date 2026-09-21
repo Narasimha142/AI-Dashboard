@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The AI Line: learn AI from zero to agents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#/map" aria-label="The AI Line, home map">
+      <svg width="34" height="22" viewBox="0 0 34 22" aria-hidden="true"><path d="M3 11H31" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".35"/><path d="M3 11H20" stroke="#fff" stroke-width="5" stroke-linecap="round"/><circle cx="24" cy="11" r="6" fill="#14203A" stroke="#fff" stroke-width="4"/></svg>
+      The AI Line
+    </a>
+    <nav class="nav" id="nav" aria-label="Sections">
+      <a href="#/map" data-nav="map">Map</a>
+      <a href="#/picture" data-nav="picture">Big picture</a>
+      <a href="#/lab" data-nav="lab">Design lab</a>
+    </nav>
+    <div class="stats">
+      <span class="badge"><b id="pts">0</b> points</span>
+      <span class="badge"><b id="dn">0</b> of <span id="tot">41</span> stops</span>
+      <button class="iconbtn" id="theme" type="button" aria-label="Switch light or dark theme">Theme</button>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1"><div class="wrap" id="view"></div></main>
+<noscript><div class="wrap"><p>This learning dashboard needs JavaScript.</p></div></noscript>
+<script src="js/app.js"></script>
+</body>
+</html>

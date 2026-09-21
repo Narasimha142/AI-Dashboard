@@ -1,0 +1,125 @@
+{
+  "id": "ml14",
+  "line": 2,
+  "level": "advanced",
+  "shortTitle": "Cause and effect",
+  "title": "Cause and effect: did it actually work?",
+  "hook": "Correlation, A/B tests, comparison groups, matching, and finding who really responds.",
+  "inPlainWords": "A model can show that two things move together without showing that one causes the other. To know whether a discount caused a sale, you need a comparison that would have looked the same without the discount.",
+  "useCase": {
+    "title": "Did the 10% coupon email cause more purchases?",
+    "story": "Customers who received the coupon email bought 30% more than those who did not. But the coupon was sent mostly to loyal customers who already buy a lot. The team wants to know the real effect, and who benefits most."
+  },
+  "approaches": [
+    {
+      "name": "Compare the groups as they are",
+      "what": "Compare buyers who got the coupon with those who did not.",
+      "greatWhen": "Never as proof.",
+      "avoidWhen": "The groups differ in ways that matter.",
+      "example": "The coupon group bought 30% more, but they were the loyal ones."
+    },
+    {
+      "name": "Randomized A/B test",
+      "what": "Randomly choose who gets the coupon.",
+      "greatWhen": "You control who gets what.",
+      "avoidWhen": "Randomizing is unethical, illegal or impractical.",
+      "example": "Randomly hold back 10% of customers."
+    },
+    {
+      "name": "Before and after",
+      "what": "Compare the same customers before and after.",
+      "greatWhen": "A quick sanity check.",
+      "avoidWhen": "Seasons and trends also change.",
+      "example": "Sales rose after the campaign, and they rise every December."
+    },
+    {
+      "name": "Comparison group over time",
+      "what": "Compare the change in one group with the change in a similar untreated group.",
+      "greatWhen": "You cannot randomize, but a similar group exists.",
+      "avoidWhen": "The groups were already on different trends.",
+      "example": "A coupon region against a similar no-coupon region."
+    },
+    {
+      "name": "Matching or adjusting",
+      "what": "Compare customers who look alike except for the coupon.",
+      "greatWhen": "You have rich data on why people got it.",
+      "avoidWhen": "Hidden differences remain.",
+      "example": "Match on past spend, region and visits."
+    },
+    {
+      "name": "Uplift modeling",
+      "what": "Model who changes behavior because of the treatment.",
+      "greatWhen": "You have randomized data and want to target well.",
+      "avoidWhen": "You have no experiment data.",
+      "example": "Find customers who buy only if they get the coupon."
+    }
+  ],
+  "challenge": {
+    "question": "How do you find the coupon's true effect, and who it works on?",
+    "options": [
+      {
+        "text": "Randomly hold back a group in the next send, compare, then model who responds most",
+        "verdict": "best",
+        "why": "Randomness makes the groups comparable, so the difference is caused by the coupon."
+      },
+      {
+        "text": "Compare coupon and no-coupon customers from last month",
+        "verdict": "poor",
+        "why": "Loyal customers got the coupon, so the comparison is unfair."
+      },
+      {
+        "text": "Treat the model's top predictors as causes",
+        "verdict": "poor",
+        "why": "Prediction is not causation."
+      },
+      {
+        "text": "Compare before and after only",
+        "verdict": "ok",
+        "why": "A useful sanity check, but seasons and trends confuse it."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "A fair comparison, then target who responds",
+    "example": "A random 10% hold-out shows the coupon adds 4% more purchases, not 30%. An uplift model finds that occasional buyers respond strongly while loyal customers would have bought anyway. Future coupons go to the responders and margin improves."
+  },
+  "worstCase": {
+    "title": "Mistaking correlation for cause",
+    "example": "The team sees 30% more purchases among coupon recipients and sends the coupon to everyone. Most would have bought anyway, so margin falls while sales barely change."
+  },
+  "route": {
+    "travelling": "Customer 7731: loyal, buys monthly",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Choose who is eligible",
+            "goes": "All active customers."
+          },
+          {
+            "label": "Randomize",
+            "goes": "A coin flip decides who gets the coupon.",
+            "goesWrong": "The coupon goes to the loyal customers who already buy."
+          },
+          {
+            "label": "Send and wait",
+            "goes": "Two weeks of purchases are recorded."
+          },
+          {
+            "label": "Compare the groups",
+            "goes": "The extra sales are caused by the coupon, not by who got it."
+          },
+          {
+            "label": "Model who responds",
+            "goes": "An uplift model finds who really changes behavior."
+          },
+          {
+            "label": "Target and re-test",
+            "goes": "Send to responders, and keep testing."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Correlation shows what moves together. Only a fair comparison, ideally a randomized one, shows what a change causes."
+}

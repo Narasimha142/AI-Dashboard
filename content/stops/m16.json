@@ -1,0 +1,117 @@
+{
+  "id": "m16",
+  "line": 7,
+  "level": "intermediate",
+  "shortTitle": "Photos and voice",
+  "title": "Photos and voice notes",
+  "hook": "Text-only, OCR, vision models, specialist models, speech. Pick by what the picture must tell you.",
+  "useCase": {
+    "title": "\"My blender arrived broken\", with a photo",
+    "story": "Customers send photos and voice notes. The bot must judge the damage, read the label, and extract the serial number."
+  },
+  "approaches": [
+    {
+      "name": "Ignore the photo",
+      "what": "Work from text only.",
+      "greatWhen": "The photo adds nothing.",
+      "avoidWhen": "The photo carries the key information.",
+      "example": "The bot asks the customer to describe the damage."
+    },
+    {
+      "name": "OCR, then text",
+      "what": "Read printed text out of the image, then treat it as normal text.",
+      "greatWhen": "Labels, receipts and documents.",
+      "avoidWhen": "Judging damage or scenes.",
+      "example": "Read the serial number from the sticker."
+    },
+    {
+      "name": "Vision-capable language model",
+      "what": "The model looks at the image directly.",
+      "greatWhen": "Judging damage, scenes and mixed content.",
+      "avoidWhen": "Precise measurements, or very blurry images.",
+      "example": "\"Is the glass jar cracked?\""
+    },
+    {
+      "name": "Specialist vision model",
+      "what": "A model trained for one visual job.",
+      "greatWhen": "Millions of images, one narrow job, and speed.",
+      "avoidWhen": "Varied questions.",
+      "example": "A defect detector on a packing line."
+    },
+    {
+      "name": "Speech to text, then text",
+      "what": "Transcribe the voice note, then process it like any message.",
+      "greatWhen": "Voice notes and calls.",
+      "avoidWhen": "Noisy audio you never check.",
+      "example": "A voice note is transcribed and classified."
+    }
+  ],
+  "challenge": {
+    "question": "A customer sends a photo of a cracked blender jar. What is the best approach?",
+    "options": [
+      {
+        "text": "Ignore the photo and ask for a description",
+        "verdict": "poor",
+        "why": "The photo already has the answer."
+      },
+      {
+        "text": "A vision model to judge the damage, OCR for the sticker, and a person for low-confidence cases",
+        "verdict": "best",
+        "why": "Each tool does the job it is best at, with a safety net."
+      },
+      {
+        "text": "Train a custom defect model from scratch",
+        "verdict": "poor",
+        "why": "No data and no time for a first version."
+      },
+      {
+        "text": "OCR only",
+        "verdict": "ok",
+        "why": "Great for the sticker, blind to the crack."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "A vision model for judgement, OCR for exact text, a person for edge cases",
+    "example": "Photo in. The model says \"glass jar visibly cracked at the base\". OCR reads serial BL-2291 from the sticker and matches it to the order. The refund workflow starts, flagged for a quick human check."
+  },
+  "worstCase": {
+    "title": "Trusting a blurry photo without a check",
+    "example": "A dark, blurry photo. The model confidently says \"no damage\" and the refund is denied. Or it reads serial BL-2291 as BL-2281, which belongs to a different customer's order."
+  },
+  "route": {
+    "travelling": "A photo of a blender with a cracked jar",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Photo upload",
+            "goes": "The customer attaches a picture."
+          },
+          {
+            "label": "Quality check",
+            "goes": "Is it sharp and bright enough to use?",
+            "goesWrong": "A blurry photo goes straight to the model."
+          },
+          {
+            "label": "Vision model and OCR",
+            "goes": "One judges the damage. The other reads the serial sticker."
+          },
+          {
+            "label": "Match to order",
+            "goes": "The serial matches order 48213."
+          },
+          {
+            "label": "Confidence gate",
+            "goes": "High confidence continues. Low confidence goes to a person."
+          },
+          {
+            "label": "Refund workflow",
+            "goes": "It continues into the refund flow from the workflow stop."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Match the tool to the job: OCR for exact text, a vision model for judgement, specialists for volume, and a person when confidence is low."
+}

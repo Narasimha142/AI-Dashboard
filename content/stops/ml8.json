@@ -1,0 +1,124 @@
+{
+  "id": "ml8",
+  "line": 2,
+  "level": "intermediate",
+  "shortTitle": "Anomaly detection",
+  "title": "Anomaly detection: spotting the odd one",
+  "hook": "Thresholds, statistics, isolation, reconstruction and supervised models. Rare problems that keep changing.",
+  "inPlainWords": "Anomaly detection learns what normal looks like and flags what does not fit. It is the tool when problems are rare and look different each time.",
+  "useCase": {
+    "title": "Spot suspicious orders and failing scanners",
+    "story": "About 0.1% of ShopEase orders are fraudulent, and the tricks keep changing. Warehouse scanners also occasionally drift and misread labels. Few confirmed examples exist."
+  },
+  "approaches": [
+    {
+      "name": "Fixed thresholds",
+      "what": "Flag anything above or below a set limit.",
+      "greatWhen": "Simple, well-understood limits.",
+      "avoidWhen": "What counts as normal changes with the season and the customer.",
+      "example": "Flag orders above $2,000."
+    },
+    {
+      "name": "Statistical comparison",
+      "what": "Flag values far from the typical range for that customer or group.",
+      "greatWhen": "One or two measures with stable patterns.",
+      "avoidWhen": "Many measures that interact.",
+      "example": "This customer normally spends $60. Today is $900."
+    },
+    {
+      "name": "Isolation-style methods",
+      "what": "Randomly split the data. Oddballs get isolated in fewer splits.",
+      "greatWhen": "Many columns, no labels, and you want speed.",
+      "avoidWhen": "Anomalies that hide inside normal-looking clusters.",
+      "example": "An order with an unusual mix of device, address and timing."
+    },
+    {
+      "name": "Reconstruction (autoencoder)",
+      "what": "Learn to rebuild normal data. Bad rebuilds signal anomalies.",
+      "greatWhen": "Complex data like sensor streams and images.",
+      "avoidWhen": "Small data, where simpler methods work.",
+      "example": "Scanner readings that rebuild poorly."
+    },
+    {
+      "name": "Supervised classification",
+      "what": "Train on labeled fraud versus normal.",
+      "greatWhen": "You have plenty of labeled examples of the problem.",
+      "avoidWhen": "Labels are few, or new tricks appear that the model has never seen.",
+      "example": "Known fraud patterns from past chargebacks."
+    },
+    {
+      "name": "Detectors plus human review",
+      "what": "Combine detectors with a review queue and feedback.",
+      "greatWhen": "Always in production.",
+      "example": "Analysts confirm or dismiss alerts, and the results feed back."
+    }
+  ],
+  "challenge": {
+    "question": "Fraud is rare, keeps changing, and you have few confirmed examples. What is the best start?",
+    "options": [
+      {
+        "text": "An unsupervised detector plus rules, with a review queue that creates labels for later models",
+        "verdict": "best",
+        "why": "It catches new tricks now, and every review makes a future supervised model better."
+      },
+      {
+        "text": "A supervised model trained on the 40 confirmed cases",
+        "verdict": "poor",
+        "why": "Too few and too old. It will only catch copies of past fraud."
+      },
+      {
+        "text": "One fixed dollar threshold",
+        "verdict": "ok",
+        "why": "Easy, but it misses small fraud and flags every big genuine order."
+      },
+      {
+        "text": "Ask a language model to eyeball each order",
+        "verdict": "poor",
+        "why": "Slow, costly, and no better than the detectors."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Layer detectors, and turn reviews into labels",
+    "example": "An isolation-style detector flags the strangest 0.5% of orders. Analysts review them and confirm about 1 in 6. After six months those confirmed cases train a supervised model for known tricks, while the unsupervised layer keeps catching new ones."
+  },
+  "worstCase": {
+    "title": "One rigid rule, or a model trained on a handful of old cases",
+    "example": "A $2,000 threshold misses many small fraudulent orders and flags every big genuine order at Christmas. Or a model trained on 40 old cases catches copies of those and nothing new."
+  },
+  "route": {
+    "travelling": "Order 88213: $940, new device, foreign address",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Order arrives",
+            "goes": "A new order enters the system."
+          },
+          {
+            "label": "Learn what normal looks like",
+            "goes": "The detector knows normal patterns for orders like this."
+          },
+          {
+            "label": "Score how odd it is",
+            "goes": "The oddness score is high."
+          },
+          {
+            "label": "Compare with a threshold",
+            "goes": "The score is above the review line.",
+            "goesWrong": "A fixed $2,000 limit lets this $940 fraudulent order pass."
+          },
+          {
+            "label": "Analyst review",
+            "goes": "A person checks the flagged order."
+          },
+          {
+            "label": "Feed back the result",
+            "goes": "Confirmed fraud becomes a label for later models."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "When problems are rare and keep changing, learn what normal is, flag the odd, and let reviews create labels."
+}

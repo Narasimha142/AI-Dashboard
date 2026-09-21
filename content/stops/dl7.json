@@ -1,0 +1,132 @@
+{
+  "id": "dl7",
+  "line": 3,
+  "level": "intermediate",
+  "shortTitle": "Vision and speech tasks",
+  "title": "Computer vision and speech tasks",
+  "hook": "Classification, detection, segmentation, OCR, and speech tasks. Name the task before choosing the model.",
+  "inPlainWords": "Vision and speech are families of tasks, not one thing. Naming the exact task tells you what to label and which model to use.",
+  "useCase": {
+    "title": "Turn photos and voice notes into ticket details",
+    "story": "Customers send a photo of a damaged parcel, a photo of a receipt, and a voice note describing the problem. ShopEase wants to know: is it damaged, where, what does the receipt say, and what did the customer say?"
+  },
+  "approaches": [
+    {
+      "name": "Image classification",
+      "what": "Give the whole image one label.",
+      "greatWhen": "A yes or no question, like damaged or not.",
+      "avoidWhen": "You need to know where.",
+      "example": "Parcel photo: damaged."
+    },
+    {
+      "name": "Object detection",
+      "what": "Find objects and draw boxes around them.",
+      "greatWhen": "You need location and counts.",
+      "avoidWhen": "You need exact outlines.",
+      "example": "A box around the dented corner."
+    },
+    {
+      "name": "Segmentation",
+      "what": "Label every pixel by what it belongs to.",
+      "greatWhen": "Exact outlines and areas.",
+      "avoidWhen": "Simple yes or no questions.",
+      "example": "Outline the crushed area to estimate its size."
+    },
+    {
+      "name": "OCR and document reading",
+      "what": "Read printed or handwritten text and layout.",
+      "greatWhen": "Receipts, labels and forms.",
+      "avoidWhen": "Judging what a scene shows.",
+      "example": "Read the total from a receipt."
+    },
+    {
+      "name": "Speech to text",
+      "what": "Turn audio into written words.",
+      "greatWhen": "Voice notes and calls.",
+      "avoidWhen": "Very noisy audio that no one checks.",
+      "example": "Transcribe a 30-second voice note."
+    },
+    {
+      "name": "Other speech tasks",
+      "what": "Detect the language, tell speakers apart, or generate speech.",
+      "greatWhen": "Call centers and voice assistants.",
+      "avoidWhen": "Cloning a real person's voice without consent.",
+      "example": "Detect that a voice note is in Hindi."
+    },
+    {
+      "name": "Multimodal model",
+      "what": "One model reads image, text and audio together.",
+      "greatWhen": "Mixed inputs and flexible questions.",
+      "avoidWhen": "A high-volume, single narrow task.",
+      "example": "\"What is wrong in this photo?\""
+    }
+  ],
+  "challenge": {
+    "question": "ShopEase needs to know where a parcel is damaged and roughly how badly. Which task?",
+    "options": [
+      {
+        "text": "Detection to find the damage, and segmentation to size it",
+        "verdict": "best",
+        "why": "Location and size are exactly what those tasks give."
+      },
+      {
+        "text": "Image classification",
+        "verdict": "ok",
+        "why": "It only says damaged or not damaged, with no location."
+      },
+      {
+        "text": "OCR",
+        "verdict": "poor",
+        "why": "OCR reads text. It does not judge damage."
+      },
+      {
+        "text": "Speech to text",
+        "verdict": "poor",
+        "why": "That is for audio, not photos."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Name the exact task, then pick tools per task",
+    "example": "Detection boxes the dent, segmentation measures how big it is, OCR reads the receipt, and speech to text transcribes the voice note. The results merge into one ticket, and low-confidence items go to a person."
+  },
+  "worstCase": {
+    "title": "One general model for everything, unchecked",
+    "example": "A single general model is asked to do all four jobs from a blurry photo and a noisy voice note. It misreads the receipt total and hears \"not broken\" as \"now broken\". The ticket is wrong and nobody notices."
+  },
+  "route": {
+    "travelling": "A damaged-parcel photo, a receipt photo and a voice note",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Customer uploads",
+            "goes": "Three files arrive together."
+          },
+          {
+            "label": "Split by task",
+            "goes": "Each file is sent to the right task.",
+            "goesWrong": "Everything goes to one general model in a single step."
+          },
+          {
+            "label": "Vision: detect and size",
+            "goes": "Detection finds the dent and segmentation sizes it."
+          },
+          {
+            "label": "OCR reads the receipt",
+            "goes": "The total and date are extracted."
+          },
+          {
+            "label": "Speech to text",
+            "goes": "The voice note is transcribed."
+          },
+          {
+            "label": "Merge and check confidence",
+            "goes": "Results are combined. Low confidence goes to a person."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Name the exact vision or speech task first. It decides the labels, the model and the checks."
+}

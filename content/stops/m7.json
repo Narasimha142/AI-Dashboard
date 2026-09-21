@@ -1,0 +1,143 @@
+{
+  "id": "m7",
+  "line": 5,
+  "level": "intermediate",
+  "shortTitle": "RAG architecture",
+  "title": "RAG architecture, two lanes",
+  "hook": "Naive, hybrid, reranking, query rewriting, graph and agentic RAG. When each one earns its place.",
+  "inPlainWords": "RAG has two lanes. One is a prepare-once lane that turns your documents into a searchable library. The other runs for every question: find the right pages, then let the model write the answer from them.",
+  "useCase": {
+    "title": "A help center with 5,000 articles, product codes and tables",
+    "story": "Customers ask things like \"Will the XR-2040-B charger work with the 2024 tablet?\" The articles contain exact product codes and compatibility tables."
+  },
+  "approaches": [
+    {
+      "name": "Naive RAG",
+      "what": "Turn text into meaning-numbers (embeddings) and fetch the three most similar chunks.",
+      "greatWhen": "A prototype on clean, small documents.",
+      "avoidWhen": "Exact codes and names matter.",
+      "example": "It finds articles about chargers in general, but misses the exact code."
+    },
+    {
+      "name": "Hybrid search",
+      "what": "Run a keyword search and a meaning search together, then merge the results.",
+      "greatWhen": "Product codes, names and jargon mixed with natural questions.",
+      "avoidWhen": "A tiny knowledge base.",
+      "example": "Keywords catch \"XR-2040-B\" and meaning catches \"works with tablets\"."
+    },
+    {
+      "name": "Reranking",
+      "what": "A second, more careful pass reorders the top 20 results so the best five go to the model.",
+      "greatWhen": "Results are relevant but poorly ordered.",
+      "avoidWhen": "The time budget is razor thin.",
+      "example": "The compatibility table jumps from ninth place to first."
+    },
+    {
+      "name": "Query rewriting",
+      "what": "Clean up or split the question before searching.",
+      "greatWhen": "Chatty, vague or multi-part questions.",
+      "avoidWhen": "Questions that are already precise.",
+      "example": "\"Does it work with the new one?\" becomes \"XR-2040-B compatible with 2024 tablet\"."
+    },
+    {
+      "name": "Graph RAG",
+      "what": "Store relationships, like product to accessory to compatible device, and search along them.",
+      "greatWhen": "Questions about connections that span many documents.",
+      "avoidWhen": "Simple lookups. It is heavy to build.",
+      "example": "\"Which accessories work with everything in the Starter Bundle?\""
+    },
+    {
+      "name": "Agentic RAG",
+      "what": "The model decides what to search, reads the results, and searches again.",
+      "greatWhen": "Multi-step questions that need several lookups.",
+      "avoidWhen": "Simple questions. It is slower and costlier.",
+      "example": "Compare three products across three documents."
+    }
+  ],
+  "challenge": {
+    "question": "Users ask about exact product codes and also in natural language. What is the best RAG setup?",
+    "options": [
+      {
+        "text": "Naive meaning-only search",
+        "verdict": "ok",
+        "why": "A fine baseline, but it can miss exact codes."
+      },
+      {
+        "text": "Hybrid search, then reranking, with cited sources",
+        "verdict": "best",
+        "why": "Keywords catch exact codes, meaning catches the intent, the reranker orders them, and citations let people check."
+      },
+      {
+        "text": "Graph RAG first",
+        "verdict": "poor",
+        "why": "It is heavy to build for what is really a lookup problem."
+      },
+      {
+        "text": "Agentic RAG for every question",
+        "verdict": "ok",
+        "why": "Powerful, but slower and costlier. Keep it for multi-step questions."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Hybrid search, reranking, and cited sources",
+    "example": "\"Will XR-2040-B work with the 2024 tablet?\" Keyword search catches the exact code, meaning search catches \"compatible with tablets\", the reranker puts the compatibility table first, and the answer links the table."
+  },
+  "worstCase": {
+    "title": "Naive chunks, no citations, no testing",
+    "example": "The table was cut in half, so \"Compatible: Yes\" sits apart from its header. Search returns the XR-2040-A article. The bot answers confidently about the wrong product, and with no citation nobody notices until a customer complains."
+  },
+  "route": {
+    "travelling": "\"Will XR-2040-B work with the 2024 tablet?\"",
+    "lanes": [
+      {
+        "name": "Lane 1: prepare once",
+        "steps": [
+          {
+            "label": "Documents",
+            "goes": "5,000 help articles, PDFs and tables."
+          },
+          {
+            "label": "Split into chunks",
+            "goes": "Cut by headings, with tables kept whole.",
+            "goesWrong": "Cut every 500 characters. The table header and its \"Yes\" land in different chunks."
+          },
+          {
+            "label": "Make embeddings",
+            "goes": "Each chunk becomes meaning-numbers."
+          },
+          {
+            "label": "Two indexes",
+            "goes": "Stored in a keyword index and a meaning index."
+          }
+        ]
+      },
+      {
+        "name": "Lane 2: every question",
+        "steps": [
+          {
+            "label": "Rewrite question",
+            "goes": "Cleaned to \"XR-2040-B compatible with 2024 tablet\"."
+          },
+          {
+            "label": "Hybrid search",
+            "goes": "Finds 20 candidates using both kinds of search."
+          },
+          {
+            "label": "Rerank",
+            "goes": "A careful second look keeps the best five."
+          },
+          {
+            "label": "Model writes",
+            "goes": "\"Answer only from these passages, and cite them.\""
+          },
+          {
+            "label": "Answer and sources",
+            "goes": "Yes, compatible. See the compatibility table."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "RAG quality depends at least as much on the search side (chunking, hybrid, reranking) as on the model."
+}

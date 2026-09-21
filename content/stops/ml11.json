@@ -1,0 +1,136 @@
+{
+  "id": "ml11",
+  "line": 2,
+  "level": "intermediate",
+  "shortTitle": "Tuning a model",
+  "title": "Tuning a model: settings and search",
+  "hook": "Defaults, manual tweaks, grid, random and smarter search, and when to stop.",
+  "inPlainWords": "Most models have settings you choose before training, like how deep a tree may grow. Tuning means trying settings and keeping the best, judged on data the model did not learn from. The biggest gains usually come from better data and features, not from endless tuning.",
+  "useCase": {
+    "title": "Squeeze more accuracy from the cancellation model",
+    "story": "The boosted-tree cancellation model scores 86% on the exam set. The team has three weeks and a modest computer budget. Settings include how many trees, how deep they grow, and how fast it learns. Should they keep tuning, and how?"
+  },
+  "approaches": [
+    {
+      "name": "Start with the defaults",
+      "what": "Use the library's sensible starting settings.",
+      "greatWhen": "Always. It gives a baseline.",
+      "avoidWhen": "Never skip it. It may already be enough.",
+      "example": "Default settings score 85%."
+    },
+    {
+      "name": "Manual tweaks",
+      "what": "Change one setting by hand and re-check.",
+      "greatWhen": "You want to learn how the model reacts.",
+      "avoidWhen": "Many settings interact and you get lost.",
+      "example": "Try depth 4, then depth 6."
+    },
+    {
+      "name": "Grid search",
+      "what": "Try every combination from a fixed list.",
+      "greatWhen": "Few settings and cheap models.",
+      "avoidWhen": "Many settings. The cost explodes.",
+      "example": "3 depths by 3 speeds by 3 tree counts is 27 runs."
+    },
+    {
+      "name": "Random search",
+      "what": "Try random combinations within sensible ranges.",
+      "greatWhen": "Many settings. It usually finds good areas faster than a grid.",
+      "avoidWhen": "You must guarantee full coverage.",
+      "example": "40 random combinations in one day."
+    },
+    {
+      "name": "Smarter search",
+      "what": "Use earlier results to choose the next try.",
+      "greatWhen": "Each training run is expensive.",
+      "avoidWhen": "Runs are cheap, and random search is enough.",
+      "example": "A tool proposes new settings based on past runs."
+    },
+    {
+      "name": "Automated tuning (AutoML)",
+      "what": "A tool tunes and compares models for you.",
+      "greatWhen": "Small teams and first baselines.",
+      "avoidWhen": "You must understand and control every step.",
+      "example": "Upload the table and let it search."
+    },
+    {
+      "name": "Improve the data and features instead",
+      "what": "Better inputs instead of better settings.",
+      "greatWhen": "Often the biggest gain.",
+      "avoidWhen": "Never ignore it.",
+      "example": "Add days_since_last_visit."
+    }
+  ],
+  "challenge": {
+    "question": "The model scores 86% and there are three weeks left. What is the smartest use of the time?",
+    "options": [
+      {
+        "text": "Improve features first, then run a random or smarter search with a time limit, judged on a validation slice and tested once on the final exam",
+        "verdict": "best",
+        "why": "Data first, then a bounded search, with an honest final score."
+      },
+      {
+        "text": "Run a giant grid search over every setting",
+        "verdict": "poor",
+        "why": "The cost explodes and gains are small."
+      },
+      {
+        "text": "Tune until the exam score is perfect, reusing the same exam every time",
+        "verdict": "poor",
+        "why": "The search memorizes the exam, so the score is fake."
+      },
+      {
+        "text": "Stop and ship with no comparison",
+        "verdict": "ok",
+        "why": "Cheap, but you never learn if it could be better."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Data first, a bounded search, and one honest final test",
+    "example": "New features lift the score from 85% to 87%. A one-day random search of 40 tries, judged on a validation slice, finds settings worth another point. A single final test on the untouched exam gives 88%, which holds up live."
+  },
+  "worstCase": {
+    "title": "Tuning against the final exam",
+    "example": "Every try is scored on the same exam set. After 500 tries the exam score is 93%, but the search has learned the exam's quirks. Live accuracy is 84%, and the team cannot work out why."
+  },
+  "route": {
+    "travelling": "Cancellation model, 86% on the exam set",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Baseline with defaults",
+            "goes": "85% with the default settings."
+          },
+          {
+            "label": "Improve features",
+            "goes": "New columns lift it to 87%."
+          },
+          {
+            "label": "Set a search budget",
+            "goes": "Random search, 40 tries, one day."
+          },
+          {
+            "label": "Score tries on validation data",
+            "goes": "Each try is judged on a slice kept apart from the final exam.",
+            "goesWrong": "Every try is judged on the final exam, so the search memorizes the exam."
+          },
+          {
+            "label": "Pick the best settings",
+            "goes": "Keep the top-scoring combination."
+          },
+          {
+            "label": "Test once on the final exam",
+            "goes": "One honest score: 88%."
+          },
+          {
+            "label": "Record the settings",
+            "goes": "Save them with the model version."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Fix the data first, then search settings with a budget, and keep the final exam untouched until the end."
+}

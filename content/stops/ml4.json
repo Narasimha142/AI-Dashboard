@@ -1,0 +1,125 @@
+{
+  "id": "ml4",
+  "line": 2,
+  "level": "intermediate",
+  "shortTitle": "Scoring a model",
+  "title": "Scoring a model: which number matters",
+  "hook": "Accuracy can lie when outcomes are rare. Choose the score by the cost of each mistake.",
+  "inPlainWords": "There are two kinds of mistakes: a false alarm (flagged, but fine) and a miss (a real problem, not flagged). Which one hurts more decides the score you should watch.",
+  "useCase": {
+    "title": "A fraud alert on 100,000 payments",
+    "story": "About 100 of them are fraud. False alarms annoy customers and cost review time. Misses cost real money."
+  },
+  "approaches": [
+    {
+      "name": "Accuracy",
+      "what": "The share of all answers that were right.",
+      "greatWhen": "Outcomes are fairly balanced.",
+      "avoidWhen": "Outcomes are rare. Saying \"never fraud\" scores 99.9%.",
+      "example": "99,900 right out of 100,000."
+    },
+    {
+      "name": "Precision",
+      "what": "Of the payments we flagged, how many were truly fraud?",
+      "greatWhen": "False alarms are expensive.",
+      "avoidWhen": "Missing real cases is worse.",
+      "example": "40 flagged, 30 real: three in four."
+    },
+    {
+      "name": "Recall",
+      "what": "Of all the real fraud, how much did we flag?",
+      "greatWhen": "Misses are expensive.",
+      "avoidWhen": "False alarms would flood the team.",
+      "example": "Caught 30 of 100 frauds: three in ten."
+    },
+    {
+      "name": "A balance of both (F-score)",
+      "what": "One number that drops if either precision or recall is poor.",
+      "greatWhen": "You need a single number to compare models.",
+      "avoidWhen": "The two mistakes have very different costs.",
+      "example": "Comparing two candidate models quickly."
+    },
+    {
+      "name": "Cost in money",
+      "what": "Put a price on each kind of mistake and add it up.",
+      "greatWhen": "You know, or can estimate, the costs.",
+      "avoidWhen": "You have no idea of the costs yet.",
+      "example": "A miss costs $200 and a false alarm costs $3 in review time."
+    },
+    {
+      "name": "Choosing the threshold",
+      "what": "Decide how sure the model must be before it flags something.",
+      "greatWhen": "Any model that outputs a score.",
+      "avoidWhen": "Never set once and forget.",
+      "example": "Flag above 70% risk, or above 40% during holiday spikes."
+    }
+  ],
+  "challenge": {
+    "question": "Fraud is 0.1% of payments. A model that says \"never fraud\" is 99.9% accurate. What should lead your scoring?",
+    "options": [
+      {
+        "text": "Accuracy",
+        "verdict": "poor",
+        "why": "It rewards the model for doing nothing."
+      },
+      {
+        "text": "Precision and recall, weighed by the cost of false alarms versus misses",
+        "verdict": "best",
+        "why": "It measures what actually matters: fraud caught, and customers annoyed."
+      },
+      {
+        "text": "Recall alone",
+        "verdict": "ok",
+        "why": "You will catch fraud, but you could flag thousands of good customers."
+      },
+      {
+        "text": "Precision alone",
+        "verdict": "ok",
+        "why": "A few obvious frauds get caught and the rest are missed."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Price the mistakes, then tune the threshold",
+    "example": "A miss costs $200 and a false alarm costs $3, so the team accepts many false alarms to catch more fraud. They set the threshold to catch 8 in 10 frauds while keeping reviews manageable, and re-tune before holidays."
+  },
+  "worstCase": {
+    "title": "Reporting accuracy on a rare event",
+    "example": "The dashboard shows 99.9% and the boss is thrilled. The model never flagged a single payment. Fraud losses keep growing for a whole quarter."
+  },
+  "route": {
+    "travelling": "Payment 88213: $940, new device, foreign address",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Payment arrives",
+            "goes": "A new payment enters the system."
+          },
+          {
+            "label": "Model gives a risk score",
+            "goes": "Risk: 82%."
+          },
+          {
+            "label": "Compare with the threshold",
+            "goes": "The threshold is 70%, so the payment is flagged.",
+            "goesWrong": "The threshold stays at a default that ignores the cost of misses, so this risky payment passes."
+          },
+          {
+            "label": "Review queue",
+            "goes": "An analyst checks flagged payments."
+          },
+          {
+            "label": "Log the outcome",
+            "goes": "Confirmed fraud and false alarms are recorded."
+          },
+          {
+            "label": "Re-tune monthly",
+            "goes": "Costs and the threshold are reviewed."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Pick the score by the cost of each mistake, not because it looks good."
+}

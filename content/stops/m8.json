@@ -1,0 +1,121 @@
+{
+  "id": "m8",
+  "line": 5,
+  "level": "intermediate",
+  "shortTitle": "Chunking",
+  "title": "Chunking: how to cut documents",
+  "hook": "A chunk is what the search can return. Cut it badly and everything after it suffers.",
+  "inPlainWords": "A chunk is one piece of a document that search can hand back. Too small and it loses context. Too big and the match gets watered down.",
+  "useCase": {
+    "title": "A returns-policy PDF with headings, lists and a fee table",
+    "story": "Search should return the exact rule with enough context to be understood, including the table row that gives the restocking fee."
+  },
+  "approaches": [
+    {
+      "name": "Fixed size",
+      "what": "Cut every N characters, no matter what.",
+      "greatWhen": "Uniform plain text and a quick start.",
+      "avoidWhen": "Structured documents. It cuts sentences and tables in half.",
+      "example": "Every 500 characters."
+    },
+    {
+      "name": "By paragraph or sentence",
+      "what": "Split where the writing naturally breaks.",
+      "greatWhen": "Articles and emails.",
+      "avoidWhen": "Long sections whose heading carries the meaning.",
+      "example": "Each paragraph is a chunk."
+    },
+    {
+      "name": "By structure",
+      "what": "Follow the document's own outline: headings, sections and tables.",
+      "greatWhen": "Manuals, policies and wikis.",
+      "avoidWhen": "Documents that have no structure.",
+      "example": "Each heading with its content is one chunk, and tables stay whole."
+    },
+    {
+      "name": "Overlap",
+      "what": "Repeat the end of one chunk at the start of the next.",
+      "greatWhen": "Meaning may straddle the cut.",
+      "avoidWhen": "It adds duplicates and cost.",
+      "example": "Repeat the last two sentences."
+    },
+    {
+      "name": "Small to find, big to read",
+      "what": "Search on small chunks, but hand the model the surrounding section.",
+      "greatWhen": "You need precise matching and full context.",
+      "avoidWhen": "Simple FAQs.",
+      "example": "Match one sentence, then send its whole section."
+    },
+    {
+      "name": "Add metadata",
+      "what": "Tag each chunk with product, date and document type so you can filter.",
+      "greatWhen": "Mixed or changing content.",
+      "avoidWhen": "A single tiny document.",
+      "example": "Only search Returns documents updated this year."
+    }
+  ],
+  "challenge": {
+    "question": "Which chunking keeps the fee table intact and gives useful context?",
+    "options": [
+      {
+        "text": "Fixed 500-character slices",
+        "verdict": "poor",
+        "why": "It will cut the table apart."
+      },
+      {
+        "text": "By heading, tables kept whole, small overlap, plus metadata",
+        "verdict": "best",
+        "why": "It follows the document's meaning and lets you filter by date and type."
+      },
+      {
+        "text": "One chunk per whole PDF",
+        "verdict": "poor",
+        "why": "Too big. Matches get watered down and prompts get huge."
+      },
+      {
+        "text": "Sentence chunks, but send the surrounding section to the model",
+        "verdict": "ok",
+        "why": "A strong technique, but more setup than this simple document needs."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Structure-aware chunks with metadata",
+    "example": "The \"Opened electronics\" chunk keeps its heading and the whole fee table. Metadata says doc=Returns, updated=this month. A question about restocking fees returns that chunk, complete."
+  },
+  "worstCase": {
+    "title": "Blind slicing",
+    "example": "A fixed cut lands between \"Restocking fee:\" and \"10%\". One chunk says \"Restocking fee:\" with no number, and the next starts with \"10%\" and no label. The bot says \"The fee is 15%\", which comes from another product line."
+  },
+  "route": {
+    "travelling": "Returns Policy PDF, 12 pages",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "The PDF",
+            "goes": "Headings, bullet lists and one fee table."
+          },
+          {
+            "label": "Read the structure",
+            "goes": "Detect headings, lists and tables."
+          },
+          {
+            "label": "Cut by sections",
+            "goes": "One chunk per section, and the table stays in one piece.",
+            "goesWrong": "Blind 500-character cuts split the fee table in two."
+          },
+          {
+            "label": "Add metadata",
+            "goes": "Tag: doc=Returns, updated=this month."
+          },
+          {
+            "label": "Index",
+            "goes": "The chunks are ready for search."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Chunk by meaning, not by length. Keep tables whole, and tag chunks so you can filter."
+}

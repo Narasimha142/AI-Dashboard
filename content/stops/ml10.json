@@ -1,0 +1,125 @@
+{
+  "id": "ml10",
+  "line": 2,
+  "level": "intermediate",
+  "shortTitle": "Explainability and fairness",
+  "title": "Explainability and fairness",
+  "hook": "Explaining single decisions, checking groups, and keeping a human path for appeals.",
+  "inPlainWords": "A model can be accurate and still unfair, or impossible to explain. Explainability asks \"why this decision?\". Fairness asks \"does it treat groups of people differently in ways we cannot justify?\"",
+  "useCase": {
+    "title": "Decide who is offered \"buy now, pay later\"",
+    "story": "ShopEase offers buy-now-pay-later to some customers. A model scores who to approve. Declined customers ask why, regulators may ask for evidence, and the team worries the model treats some groups worse."
+  },
+  "approaches": [
+    {
+      "name": "Inherently readable models",
+      "what": "Use a model whose logic can be read directly, like a small tree or a linear model.",
+      "greatWhen": "Stakes are high and the loss in accuracy is small.",
+      "avoidWhen": "Accuracy drops a lot.",
+      "example": "Approve if on-time payments are high and the balance is low."
+    },
+    {
+      "name": "Global explanations",
+      "what": "Show which factors matter most across all decisions.",
+      "greatWhen": "Checking the model makes sense overall.",
+      "avoidWhen": "You need the reason for one person's decision.",
+      "example": "Payment history matters most, then income stability."
+    },
+    {
+      "name": "Explanations for one decision",
+      "what": "Show the top reasons behind a single decision.",
+      "greatWhen": "Explaining an individual decline.",
+      "avoidWhen": "Treating the reasons as proof of cause.",
+      "example": "Declined mainly because of two late payments last quarter."
+    },
+    {
+      "name": "What-if hints (counterfactuals)",
+      "what": "Show the smallest change that would flip the decision.",
+      "greatWhen": "Telling people what they could do.",
+      "avoidWhen": "Suggesting changes that are unrealistic.",
+      "example": "Approved if the current balance were $200 lower."
+    },
+    {
+      "name": "Fairness checks by group",
+      "what": "Compare approval rates and error rates across groups.",
+      "greatWhen": "Any decision about people.",
+      "avoidWhen": "Using only overall accuracy.",
+      "example": "Compare false declines by age band and region."
+    },
+    {
+      "name": "Fixes for gaps",
+      "what": "Reduce unfair signals, rebalance data, adjust thresholds, or add human review.",
+      "greatWhen": "A gap is found and cannot be justified.",
+      "avoidWhen": "Deleting one column while close stand-ins, like postcode, remain.",
+      "example": "Review borderline declines with a person."
+    }
+  ],
+  "challenge": {
+    "question": "Customers are declined and ask why, and someone asks whether some groups are treated worse. What is the strongest approach?",
+    "options": [
+      {
+        "text": "Explain each decision, test error rates by group, review the gaps, and keep a human appeal path",
+        "verdict": "best",
+        "why": "It answers the customer, the auditor and the team."
+      },
+      {
+        "text": "Rely on high overall accuracy",
+        "verdict": "poor",
+        "why": "A model can be 92% accurate and still treat one group badly."
+      },
+      {
+        "text": "Delete the sensitive column and call it fair",
+        "verdict": "poor",
+        "why": "Close stand-ins, like postcode, can carry the same signal."
+      },
+      {
+        "text": "Publish the model's internals",
+        "verdict": "ok",
+        "why": "Transparent, but that is not the same as explaining a decision or checking fairness."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Explain each decision, test by group, and keep a human appeal",
+    "example": "A declined customer sees the two main reasons and a \"what would change this\" hint. A monthly report compares false declines across groups. A gap found for one region is traced to a data problem and fixed, and borderline cases go to a person."
+  },
+  "worstCase": {
+    "title": "A black box judged only on overall accuracy",
+    "example": "The model is 92% accurate overall but wrongly declines one group twice as often. Nobody can explain individual decisions, complaints pile up, and the company cannot show it ever checked."
+  },
+  "route": {
+    "travelling": "Customer 7731 asks: \"Why was I declined?\"",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Decision made",
+            "goes": "The model scores the application."
+          },
+          {
+            "label": "Top reasons for this decision",
+            "goes": "Two late payments last quarter are the main reason.",
+            "goesWrong": "No reasons are recorded. The team says \"the model decided\"."
+          },
+          {
+            "label": "What-if hint",
+            "goes": "A lower current balance would flip the result."
+          },
+          {
+            "label": "Fairness report by group",
+            "goes": "False declines are compared across groups every month."
+          },
+          {
+            "label": "Investigate gaps",
+            "goes": "Any gap is traced to its cause and fixed."
+          },
+          {
+            "label": "Human appeal path",
+            "goes": "A person can review and override the decision."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Accuracy is not enough for decisions about people. Explain each one, test across groups, and keep a human path."
+}

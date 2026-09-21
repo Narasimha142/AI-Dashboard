@@ -1,0 +1,125 @@
+{
+  "id": "dl3",
+  "line": 3,
+  "level": "advanced",
+  "shortTitle": "Adapting a big model",
+  "title": "Adapting a big model to your needs",
+  "hook": "Prompting, examples, light fine-tuning, full fine-tuning, distillation, preference tuning.",
+  "inPlainWords": "Changing a big model's behavior is a ladder, from cheapest to costliest. Stop at the first rung that passes your tests.",
+  "useCase": {
+    "title": "Make replies sound like ShopEase and follow the policy format",
+    "story": "Replies must use ShopEase's friendly voice, always end with a next step, and follow a fixed layout. You have 300 approved past replies."
+  },
+  "approaches": [
+    {
+      "name": "Instructions in the prompt",
+      "what": "Describe the voice and layout in words.",
+      "greatWhen": "Always the first step.",
+      "avoidWhen": "The rules are too subtle to describe.",
+      "example": "\"Friendly, brief, end with a next step.\""
+    },
+    {
+      "name": "Examples in the prompt",
+      "what": "Show three to five approved replies.",
+      "greatWhen": "A quick way to transfer style.",
+      "avoidWhen": "Prompts get long and costly with too many rules.",
+      "example": "Paste three sample replies."
+    },
+    {
+      "name": "Light fine-tuning",
+      "what": "Train a small add-on layer instead of the whole model.",
+      "greatWhen": "A consistent style or format, with hundreds to thousands of examples.",
+      "avoidWhen": "You need new facts. Use RAG instead.",
+      "example": "Train an add-on with the 300 approved replies."
+    },
+    {
+      "name": "Full fine-tuning",
+      "what": "Update all of the model's weights.",
+      "greatWhen": "You have lots of data, a big budget, and a need for deep specialization.",
+      "avoidWhen": "Small data. It risks forgetting other skills, and costs a lot.",
+      "example": "A lab training a specialist medical model."
+    },
+    {
+      "name": "Distillation",
+      "what": "Train a small model to copy a big model's answers.",
+      "greatWhen": "A steady, high-volume, narrow task where cost and delay matter.",
+      "avoidWhen": "The task keeps changing.",
+      "example": "A small model writes replies at a fraction of the cost."
+    },
+    {
+      "name": "Preference tuning",
+      "what": "Teach the model which of two answers people prefer.",
+      "greatWhen": "Improving tone and helpfulness.",
+      "avoidWhen": "You have little feedback data.",
+      "example": "Agents pick the better of two draft replies."
+    }
+  ],
+  "challenge": {
+    "question": "You have 300 approved replies. What is the smart order of attack?",
+    "options": [
+      {
+        "text": "Full fine-tuning right away",
+        "verdict": "poor",
+        "why": "Expensive and risky for 300 examples."
+      },
+      {
+        "text": "Instructions and examples first, then light fine-tuning only if your test set still fails",
+        "verdict": "best",
+        "why": "You climb only as far as you need to, and you measure at each step."
+      },
+      {
+        "text": "Fine-tune the policy facts into the model",
+        "verdict": "poor",
+        "why": "Facts change. Keep them in retrieval."
+      },
+      {
+        "text": "Skip prompting and go straight to light fine-tuning",
+        "verdict": "ok",
+        "why": "It can work, but you may never have needed it."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Climb the cheapest rung that passes your test",
+    "example": "Instructions and three examples get 85% of replies approved. Light fine-tuning on 300 replies lifts it to 95%. Policy facts stay in RAG, so a policy change needs no retraining."
+  },
+  "worstCase": {
+    "title": "Fine-tuning first, on messy examples, for facts",
+    "example": "A full fine-tune on 200 replies of mixed quality. The model copies a careless agent's typos, forgets how to follow other instructions, and still quotes last year's policy."
+  },
+  "route": {
+    "travelling": "Draft reply to a late-parcel complaint",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Write instructions",
+            "goes": "Voice, layout and the next-step rule, in words."
+          },
+          {
+            "label": "Add a few examples",
+            "goes": "Three approved replies show the voice."
+          },
+          {
+            "label": "Test on a review set",
+            "goes": "85% of 100 test replies are approved."
+          },
+          {
+            "label": "Light fine-tune if needed",
+            "goes": "Train an add-on with 300 approved replies. Now 95% are approved.",
+            "goesWrong": "A full fine-tune runs on 200 messy replies, with no test set."
+          },
+          {
+            "label": "Keep facts in RAG",
+            "goes": "Policy text is retrieved, not baked in."
+          },
+          {
+            "label": "Deploy and monitor",
+            "goes": "Track approval rates over time."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Change behavior with the cheapest tool that passes your tests. Facts stay in retrieval, not in the weights."
+}

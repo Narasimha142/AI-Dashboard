@@ -1,0 +1,126 @@
+{
+  "id": "fd1",
+  "line": 1,
+  "level": "beginner",
+  "shortTitle": "How a model learns",
+  "title": "How a model learns: the vocabulary",
+  "hook": "Examples, features, labels, guess, error and adjust. Then: how often should it learn again?",
+  "inPlainWords": "A model is a pattern-finder. You show it many examples, it adjusts itself until its guesses get less wrong, and then you use it on new cases. Every AI term you meet names one part of that loop: examples, features, labels, the guess, the error, the adjustment.",
+  "useCase": {
+    "title": "Teach a program to flag \"late delivery\" complaints",
+    "story": "ShopEase wants software that flags emails complaining about late parcels. An agent has already tagged 3,000 past emails as late-delivery or not. Customers keep inventing new ways to say it, and fresh tags arrive every week. How and when should the program learn?"
+  },
+  "approaches": [
+    {
+      "name": "Train once, then freeze",
+      "what": "Learn from a fixed set of examples, then use the model without changing it.",
+      "greatWhen": "The problem is stable and you need predictable behavior.",
+      "avoidWhen": "The world changes, and so does the language.",
+      "example": "Train on 3,000 emails and ship for a year."
+    },
+    {
+      "name": "Retrain on a schedule",
+      "what": "Re-run the learning every month on fresh examples.",
+      "greatWhen": "The world drifts slowly and fresh tags keep arriving.",
+      "avoidWhen": "No new labeled examples flow in.",
+      "example": "A monthly retrain that includes the latest tagged complaints."
+    },
+    {
+      "name": "Learn continuously",
+      "what": "Update the model as each new example arrives.",
+      "greatWhen": "Data changes fast and feedback is instant and reliable.",
+      "avoidWhen": "Feedback is noisy. Bad or hostile data can poison the model.",
+      "example": "A spam filter that updates when users report messages."
+    },
+    {
+      "name": "Use a pretrained model with no training",
+      "what": "Skip training. Call a model that others built and describe the task in words.",
+      "greatWhen": "You have no labeled data and need a quick start.",
+      "avoidWhen": "You need behavior tuned to your own data.",
+      "example": "Ask a language model: \"Is this email about a late delivery?\""
+    },
+    {
+      "name": "Fine-tune a pretrained model",
+      "what": "Start from a model that already knows language and train it a little on your emails.",
+      "greatWhen": "You have some labeled data and want higher accuracy.",
+      "avoidWhen": "You have almost no labels.",
+      "example": "Adapt a text model with the 3,000 tagged emails."
+    }
+  ],
+  "challenge": {
+    "question": "Customers invent new slang for late parcels every season, and you get fresh tags weekly. Which approach fits?",
+    "options": [
+      {
+        "text": "Train once and freeze it forever",
+        "verdict": "poor",
+        "why": "New slang will slip past it and nobody will notice."
+      },
+      {
+        "text": "Retrain monthly on fresh tags and check on a hidden exam set before each release",
+        "verdict": "best",
+        "why": "It keeps up with change, and the exam stops a bad model from shipping."
+      },
+      {
+        "text": "Let it learn from every email automatically, with no checks",
+        "verdict": "poor",
+        "why": "Mistakes and hostile messages become training data."
+      },
+      {
+        "text": "Use a pretrained model with no training and never measure it",
+        "verdict": "ok",
+        "why": "A fine quick start, but you cannot tell if it is any good."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Know each part of the loop, and match learning to how fast the world changes",
+    "example": "The team names the parts. The 3,000 tagged emails are the examples. The words and counts in each email are the features. \"Late\" or \"not late\" is the label. The model guesses, is compared with the tag, and adjusts. It is retrained monthly and checked on hidden emails before release."
+  },
+  "worstCase": {
+    "title": "Training once and forgetting it",
+    "example": "The flagger works well at launch. Six months later customers write \"still hasn't turned up\" and \"lost in the void\", which it never saw. It quietly misses more and more late-delivery emails, and nobody notices because nothing is monitored."
+  },
+  "route": {
+    "travelling": "3,000 tagged complaint emails",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Examples with answers",
+            "goes": "Each email is paired with its tag: late or not late."
+          },
+          {
+            "label": "Turn into features",
+            "goes": "Words and counts become numbers the model can read."
+          },
+          {
+            "label": "Model guesses",
+            "goes": "It predicts late or not late for each email."
+          },
+          {
+            "label": "Compare with the tag",
+            "goes": "The gap between the guess and the tag is the error."
+          },
+          {
+            "label": "Adjust and repeat",
+            "goes": "The model nudges itself to be less wrong, many times over."
+          },
+          {
+            "label": "Test on hidden emails",
+            "goes": "It is checked on emails it has never seen."
+          },
+          {
+            "label": "Use on new emails",
+            "goes": "New emails get a flag in milliseconds. This step is called prediction, or inference."
+          },
+          {
+            "label": "Refresh on a schedule",
+            "goes": "Retrain monthly as new tags arrive.",
+            "goesWrong": "Nobody refreshes or monitors it. New slang slips past and quality quietly falls."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Every AI term names one part of one loop: examples, features, guess, error, adjust. Then decide how often the loop runs again."
+}

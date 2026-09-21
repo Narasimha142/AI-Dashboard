@@ -1,0 +1,125 @@
+{
+  "id": "ml2",
+  "line": 2,
+  "level": "intermediate",
+  "shortTitle": "Choosing a model for a table",
+  "title": "Choosing a model for a table",
+  "hook": "Simple, tree-based, ensembles, neighbors, or a neural network. What table data usually wants.",
+  "inPlainWords": "You do not need the hardest model. You need the right one. For rows and columns, start simple, then try tree-based ensembles.",
+  "useCase": {
+    "title": "Predict which of 20,000 customers will cancel",
+    "story": "Columns: months as a customer, orders, support tickets, average basket, days since last visit. The answer is known for past customers: cancelled or stayed. Managers also want to know the reasons."
+  },
+  "approaches": [
+    {
+      "name": "Simple linear model (logistic regression)",
+      "what": "Adds up weighted clues into a score.",
+      "greatWhen": "You want a baseline, clear explanations, or you have small data.",
+      "avoidWhen": "Patterns interact in complicated ways.",
+      "example": "Each extra support ticket raises the cancel risk a little."
+    },
+    {
+      "name": "Decision tree",
+      "what": "A flowchart of yes or no questions learned from data.",
+      "greatWhen": "You must show the rules to non-technical people.",
+      "avoidWhen": "On its own it memorizes the data.",
+      "example": "Many tickets and no visit for 60 days means likely to cancel."
+    },
+    {
+      "name": "Random forest",
+      "what": "Many trees vote on the answer.",
+      "greatWhen": "You want strong results with few settings to tune.",
+      "avoidWhen": "You need a tiny, very fast model.",
+      "example": "200 trees vote on whether a customer cancels."
+    },
+    {
+      "name": "Gradient boosting",
+      "what": "Trees built one after another, each one fixing the last one's mistakes.",
+      "greatWhen": "You want the best accuracy on a table. It is often the winner.",
+      "avoidWhen": "You will not spend time tuning it, or you cannot guard against overfitting.",
+      "example": "The usual top performer for cancellation risk."
+    },
+    {
+      "name": "Nearest neighbors",
+      "what": "Find the most similar past customers and copy their outcome.",
+      "greatWhen": "Data is small and similarity is meaningful.",
+      "avoidWhen": "Data is large or has many columns. It is slow and touchy.",
+      "example": "Customers like this one mostly stayed."
+    },
+    {
+      "name": "Neural network",
+      "what": "Layers of learned features.",
+      "greatWhen": "Text, images, or huge data.",
+      "avoidWhen": "Small tables. It is usually no better, and harder to explain.",
+      "example": "A neural network on 20,000 rows."
+    }
+  ],
+  "challenge": {
+    "question": "You need good accuracy and a way to explain the main reasons to managers. What is the smart path?",
+    "options": [
+      {
+        "text": "Start with a simple baseline, then try boosted trees, and explain the top reasons per customer",
+        "verdict": "best",
+        "why": "The baseline tells you what \"good\" means, boosted trees usually win on tables, and the reasons keep managers on board."
+      },
+      {
+        "text": "Go straight to a neural network",
+        "verdict": "poor",
+        "why": "No baseline to compare, more effort, and harder to explain."
+      },
+      {
+        "text": "One single deep decision tree",
+        "verdict": "ok",
+        "why": "Easy to read, but it tends to memorize the data."
+      },
+      {
+        "text": "Nearest neighbors",
+        "verdict": "poor",
+        "why": "Slow on this size, and it gives no clear reasons."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Baseline first, then boosted trees, explained with top reasons",
+    "example": "A simple model gets a fair score and clear reasons. Boosted trees beat it. Managers see the top three reasons for each flagged customer: many tickets, a long gap since the last visit, and a shrinking basket."
+  },
+  "worstCase": {
+    "title": "The fanciest model first, with no baseline",
+    "example": "A deep network scores 91% and nobody knows if that is good, because a simple model would have scored 90%. It is slower, costlier, and cannot explain why a loyal customer was flagged."
+  },
+  "route": {
+    "travelling": "Customer 3021: 14 months, 3 tickets, no visit for 70 days",
+    "lanes": [
+      {
+        "steps": [
+          {
+            "label": "Customer table",
+            "goes": "20,000 customers, each marked cancelled or stayed."
+          },
+          {
+            "label": "Simple baseline",
+            "goes": "A quick model is 84% right. That is the number to beat."
+          },
+          {
+            "label": "Try stronger models",
+            "goes": "Boosted trees reach 89%.",
+            "goesWrong": "The team skips the baseline and trains a deep network. There is nothing to compare it with."
+          },
+          {
+            "label": "Compare on the exam set",
+            "goes": "Pick the best on data none of the models saw."
+          },
+          {
+            "label": "Explain the top reasons",
+            "goes": "Three tickets and 70 days away drive this customer's risk."
+          },
+          {
+            "label": "Serve and watch",
+            "goes": "Risk scores go to the retention team every week."
+          }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Beat a simple baseline before reaching for anything fancy. On tables, tree-based ensembles usually win."
+}
