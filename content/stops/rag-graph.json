@@ -1,0 +1,100 @@
+{
+  "id": "rag-graph",
+  "line": 5,
+  "level": "advanced",
+  "shortTitle": "Graph RAG",
+  "title": "Graph RAG: retrieving through relationships, not just similarity",
+  "hook": "When the answer depends on how things connect, not just what they say, a graph of entities and relationships can find what plain similarity search misses.",
+  "inPlainWords": "Graph RAG represents entities like suppliers, products and orders as nodes connected by relationships, and answers questions by walking those connections instead of just matching similar text.",
+  "useCase": {
+    "title": "\"Which orders does the delayed shipment affect?\"",
+    "story": "A shipment delay traces through a supplier, the products it feeds, the warehouses that stock them, and the customer orders waiting on them. The facts live in separate records connected by relationships, not in one passage of text."
+  },
+  "approaches": [
+    {
+      "name": "Plain vector search over documents",
+      "what": "Retrieve passages most similar to the question.",
+      "greatWhen": "The answer sits inside one document or a few similar ones.",
+      "avoidWhen": "The answer depends on following a chain of relationships across records.",
+      "example": "Search returns the supplier's page, but not the orders it affects."
+    },
+    {
+      "name": "Build a knowledge graph, retrieve by traversal",
+      "what": "Represent entities as nodes and their relationships as edges, then walk the graph from a known starting point.",
+      "greatWhen": "Relationships between entities matter as much as the entities' own text.",
+      "avoidWhen": "The data doesn't naturally have clear entities and relationships, or is too small to justify building and maintaining a graph.",
+      "example": "Start at the delayed shipment, walk to its supplier, then to products, then to affected orders."
+    },
+    {
+      "name": "Combine graph traversal with vector search",
+      "what": "Use the graph to find the relevant entities, then use vector search within just those entities' documents for supporting detail.",
+      "greatWhen": "You need both the structural connections and the nuanced text about each one.",
+      "avoidWhen": "Keeping both systems in sync is more maintenance than the team can support.",
+      "example": "Graph finds the four affected orders, vector search finds each order's specific customer note."
+    },
+    {
+      "name": "Extract relationships at answer time, without a persistent graph",
+      "what": "Have the model read connected documents and reason about relationships on the fly.",
+      "greatWhen": "The relationships are rare enough that maintaining a graph isn't worth it.",
+      "avoidWhen": "The same relationship queries come up often, since this repeats the reasoning work every time.",
+      "example": "The model reads the supplier and product records fresh each time and reasons through the chain by hand."
+    },
+    {
+      "name": "Keep plain RAG and answer partially",
+      "what": "Skip relationship retrieval, state what's known, and route the rest to a person.",
+      "greatWhen": "This kind of multi-entity question is rare.",
+      "avoidWhen": "It's a common support pattern, since customers get repeatedly incomplete answers.",
+      "example": "The bot names the delayed supplier but tells the customer to contact support for affected orders."
+    }
+  ],
+  "challenge": {
+    "question": "Customers regularly ask which orders are affected when a supplier is delayed, a question that needs following supplier to product to warehouse to order relationships. What's the strongest fit?",
+    "options": [
+      {
+        "text": "Build a knowledge graph of these entities and their relationships, traverse it from the delayed shipment outward, and add vector search for supporting text",
+        "verdict": "best",
+        "why": "The question is fundamentally about relationships, which is exactly what a graph represents and traversal answers directly."
+      },
+      {
+        "text": "Keep plain vector search over documents",
+        "verdict": "poor",
+        "why": "Similarity search finds documents that read alike, not entities connected several hops away."
+      },
+      {
+        "text": "Have the model reason about relationships fresh from raw documents every time",
+        "verdict": "ok",
+        "why": "Works occasionally but repeats expensive reasoning for a question pattern that recurs often."
+      },
+      {
+        "text": "Tell customers to contact support for this question",
+        "verdict": "poor",
+        "why": "Acceptable only if the question is rare, but this one is common enough to be worth solving."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "A graph that answers relationship questions directly",
+    "example": "The team models suppliers, products, warehouses and orders as a graph. A delay on one supplier traverses in milliseconds to the four affected orders, and vector search adds the specific delivery note for each."
+  },
+  "worstCase": {
+    "title": "Building a graph nobody needed",
+    "example": "The team spends two months building and maintaining a full knowledge graph for a question pattern that comes up twice a year, while common single-document questions get no attention."
+  },
+  "route": {
+    "travelling": "Question: \"Which orders does the delayed shipment affect?\"",
+    "lanes": [
+      {
+        "steps": [
+          { "label": "Try plain document search", "goes": "Returns the supplier's page.", "goesWrong": "No connected orders are surfaced; the question goes unanswered." },
+          { "label": "Start at the known entity", "goes": "The delayed shipment, tied to one supplier." },
+          { "label": "Traverse to products", "goes": "The graph shows which products that supplier feeds." },
+          { "label": "Traverse to warehouses", "goes": "Shows which warehouses stock those products." },
+          { "label": "Traverse to open orders", "goes": "Four orders are waiting on that stock." },
+          { "label": "Add supporting text", "goes": "Vector search pulls each order's delivery note." },
+          { "label": "Answer with the full chain", "goes": "The bot lists all four affected orders and why." }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Reach for a graph when the question is about how things connect, not just what a document says, and pair it with vector search for the supporting detail."
+}

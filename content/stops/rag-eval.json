@@ -1,0 +1,99 @@
+{
+  "id": "rag-eval",
+  "line": 5,
+  "level": "advanced",
+  "shortTitle": "Evaluating RAG quality",
+  "title": "Evaluating RAG: measuring retrieval, not just the final answer",
+  "hook": "A good final answer can hide bad retrieval, and a good retrieval can hide a bad final answer; measure both separately.",
+  "inPlainWords": "To know whether a RAG system is actually working, measure how often search finds the right passage, and separately, how often the model's answer is faithful to what it found.",
+  "useCase": {
+    "title": "The bot 'seems fine' but nobody has measured it",
+    "story": "The support assistant has been live for two months. The team gets occasional complaints but no real numbers: how often does search find the right passage, how often does the model use it correctly, and how would they know if a change made things better or worse?"
+  },
+  "approaches": [
+    {
+      "name": "Judge only the final answer by eye",
+      "what": "Read the customer-facing text and decide if it looks right.",
+      "greatWhen": "As a first, rough smoke test on a handful of examples.",
+      "avoidWhen": "Used as the only method at scale, since it hides whether the failure is retrieval or generation and doesn't scale to hundreds of changes.",
+      "example": "A reviewer skims 10 answers and calls it \"fine.\""
+    },
+    {
+      "name": "Measure retrieval separately, with a labeled set",
+      "what": "Build a set of questions with the known-correct passage for each, then measure how often and how high that passage is retrieved.",
+      "greatWhen": "You want to isolate retrieval problems from generation problems.",
+      "avoidWhen": "No team member is available to label the correct passages at first.",
+      "example": "91% of 50 labeled questions retrieve the right passage in the top 3."
+    },
+    {
+      "name": "Measure faithfulness: did the answer only use what was retrieved",
+      "what": "Check whether the final answer's claims are supported by the retrieved passages.",
+      "greatWhen": "Retrieval already looks fine but answers are still sometimes wrong.",
+      "avoidWhen": "Skipped before retrieval quality is confirmed, since errors get misattributed.",
+      "example": "96% of answers are fully supported by what was retrieved."
+    },
+    {
+      "name": "Run a golden question set before every change",
+      "what": "A fixed set of representative questions with known-good answers, re-run automatically whenever the pipeline changes.",
+      "greatWhen": "Always, as a regression gate.",
+      "avoidWhen": "Never skip; without it, fixes silently break other questions.",
+      "example": "Every pull request re-runs the same 50 questions and reports any score that drops."
+    },
+    {
+      "name": "Sample real traffic for ongoing feedback",
+      "what": "Periodically review a sample of live conversations for accuracy, not just the golden set.",
+      "greatWhen": "Golden sets go stale and miss real, evolving customer phrasing.",
+      "avoidWhen": "Relying on it alone instead of a golden set, since sampling is slower to catch regressions.",
+      "example": "A weekly review of 100 real conversations surfaces a new phrasing the golden set never covered."
+    }
+  ],
+  "challenge": {
+    "question": "The team wants to know whether a chunking change improved or hurt the assistant. What should they measure?",
+    "options": [
+      {
+        "text": "Retrieval accuracy against a labeled question set, faithfulness of answers to retrieved passages, and results on a golden question set before and after the change",
+        "verdict": "best",
+        "why": "Separates retrieval quality from generation quality and catches regressions automatically."
+      },
+      {
+        "text": "Read 10 new answers and see if they look right",
+        "verdict": "poor",
+        "why": "Too small a sample, and doesn't separate the cause of any problem found."
+      },
+      {
+        "text": "Only measure how fast responses come back",
+        "verdict": "poor",
+        "why": "Speed says nothing about whether answers are correct."
+      },
+      {
+        "text": "Wait for customer complaints to tell you",
+        "verdict": "ok",
+        "why": "Real signal eventually, but slow, incomplete and reactive rather than catching regressions before launch."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Numbers before and after every change",
+    "example": "Before changing chunk size, the team runs the golden set: 91% retrieval accuracy, 96% faithfulness. After the change: 95% and 97%. The change ships with evidence, not a guess."
+  },
+  "worstCase": {
+    "title": "Shipping on vibes",
+    "example": "The team changes the prompt because a few answers looked odd. Retrieval accuracy quietly drops from 91% to 78% because nobody was measuring it, and complaints rise for a month before anyone notices."
+  },
+  "route": {
+    "travelling": "A proposed change to chunk size",
+    "lanes": [
+      {
+        "steps": [
+          { "label": "Build a labeled question set", "goes": "50 real questions, each with the correct passage marked." },
+          { "label": "Measure retrieval accuracy", "goes": "91% of questions retrieve the correct passage in the top 3." },
+          { "label": "Measure faithfulness", "goes": "96% of answers are fully supported by what was retrieved." },
+          { "label": "Make the change", "goes": "Chunk size is adjusted to keep tables intact." },
+          { "label": "Re-run the same measurements", "goes": "Retrieval rises to 95%, faithfulness to 97%.", "goesWrong": "The team skips re-measuring and ships based on a few answers looking fine." },
+          { "label": "Ship with evidence", "goes": "The change goes live with before-and-after numbers on record." }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Measure retrieval accuracy and answer faithfulness separately, on a fixed question set, before and after every change; don't judge RAG by reading a few answers."
+}

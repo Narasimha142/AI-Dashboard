@@ -1,0 +1,98 @@
+{
+  "id": "rag-rerank",
+  "line": 5,
+  "level": "intermediate",
+  "shortTitle": "Reranking search results",
+  "title": "Reranking: a second, smarter pass over search results",
+  "hook": "First-pass search is fast but rough; a reranker re-scores the top candidates so the best passage actually reaches the model.",
+  "inPlainWords": "Reranking runs a slower, more careful model over a shortlist of candidates that a fast first search already narrowed down, to fix the order before the model reads them.",
+  "useCase": {
+    "title": "The right passage is found, but ranked ninth",
+    "story": "For the return-window question, initial search returns 20 candidate passages. The correct paragraph is in there, but it's ranked ninth, and the assistant only reads the top 3. It never sees the right answer."
+  },
+  "approaches": [
+    {
+      "name": "Use only the first-pass ranking",
+      "what": "Pass the top few results straight from search to the model, with no second pass.",
+      "greatWhen": "The latency budget is very tight and first-pass ranking is already reliable.",
+      "avoidWhen": "Search often ranks the right passage just outside the top few.",
+      "example": "The assistant misses answers ranked only a few spots too low to be read."
+    },
+    {
+      "name": "Add a cross-encoder reranker",
+      "what": "A second, slower model reads each candidate together with the question and re-scores it.",
+      "greatWhen": "First-pass recall is fine but precision at the very top is weak.",
+      "avoidWhen": "Latency budget can't afford scoring dozens of candidates per request.",
+      "example": "Re-score the top 20 candidates, keep the top 3."
+    },
+    {
+      "name": "Widen the first pass, then rerank fewer",
+      "what": "Retrieve more candidates cheaply, then rerank only that shortlist down to a handful.",
+      "greatWhen": "The correct passage is often present but outside the model's read window.",
+      "avoidWhen": "Candidate retrieval itself, not ranking, is the slow part.",
+      "example": "Retrieve 50 broadly, rerank down to 3."
+    },
+    {
+      "name": "Blend multiple signals before reranking",
+      "what": "Combine keyword match, recency and vector similarity into one score.",
+      "greatWhen": "Exact codes or dates matter alongside meaning.",
+      "avoidWhen": "A single signal already dominates the task.",
+      "example": "Boost passages that literally contain the product code the customer typed."
+    },
+    {
+      "name": "Cache reranked results for repeat questions",
+      "what": "Store the reranked order for common, recurring queries.",
+      "greatWhen": "Many customers ask near-identical questions.",
+      "avoidWhen": "Content changes often, so caches would need constant invalidation.",
+      "example": "The top return-policy question is answered from cache in milliseconds."
+    }
+  ],
+  "challenge": {
+    "question": "First-pass search returns the correct passage, but it's ranked ninth out of twenty, and the model only reads the top three. What fixes this most directly?",
+    "options": [
+      {
+        "text": "Retrieve a wider first-pass set, then add a reranker that reads each candidate against the question and re-scores it",
+        "verdict": "best",
+        "why": "It fixes the actual cause: the ranking signal, not the amount retrieved."
+      },
+      {
+        "text": "Ask the model to read more candidates",
+        "verdict": "ok",
+        "why": "It might surface the answer, but costs more per request and doesn't fix the ranking itself."
+      },
+      {
+        "text": "Switch to a different first-pass search method entirely",
+        "verdict": "poor",
+        "why": "A costly rebuild when a smaller second pass would fix it."
+      },
+      {
+        "text": "Rewrite the source document",
+        "verdict": "poor",
+        "why": "The passage is correct and present; the problem is ranking, not content."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Two passes, cheap first, careful second",
+    "example": "Search retrieves 50 broad candidates fast, a reranker scores them against the exact question, and the return-window paragraph rises from ninth to first. The model reads it and answers correctly."
+  },
+  "worstCase": {
+    "title": "Reranking too much, too slow",
+    "example": "The team reranks all 5,000 documents on every request instead of a narrowed shortlist. Answers are accurate but take 9 seconds, and customers abandon the chat before it responds."
+  },
+  "route": {
+    "travelling": "Question: \"Return window for opened electronics?\"",
+    "lanes": [
+      {
+        "steps": [
+          { "label": "Broad first-pass search", "goes": "Retrieve the top 50 candidates fast, by rough similarity." },
+          { "label": "Rerank the shortlist", "goes": "A second model scores each of the 50 against the exact question.", "goesWrong": "The team reranks the entire 5,000-document library instead of the shortlist." },
+          { "label": "Reorder by the new score", "goes": "The 14-day paragraph rises from ninth to first." },
+          { "label": "Read only the top few", "goes": "The model reads the top 3 reranked passages." },
+          { "label": "Answer with citation", "goes": "The bot answers 14 days, citing the right paragraph." }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Retrieve broadly and cheaply, then rerank a small shortlist carefully; reranking everything is slow, and reranking nothing loses answers ranked just out of reach."
+}

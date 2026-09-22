@@ -1,0 +1,99 @@
+{
+  "id": "ag-eval",
+  "line": 6,
+  "level": "advanced",
+  "shortTitle": "Evaluating agents",
+  "title": "Evaluating agents: beyond a single pass/fail check",
+  "hook": "An agent can reach the right final answer through a wasteful, risky or lucky path; evaluate the path, not just the destination.",
+  "inPlainWords": "Judging an agent only by whether the final answer was correct can hide a risky or wasteful route it took to get there. Grade the steps it took, not just where it ended up.",
+  "useCase": {
+    "title": "The refund agent got the right answer, twice, two different ways",
+    "story": "On a test complaint, the agent correctly refunds the order. On a near-identical complaint, it correctly refunds the order too, but only after calling the wrong customer's account first, then course-correcting. Same final grade, very different risk."
+  },
+  "approaches": [
+    {
+      "name": "Grade only the final output",
+      "what": "Check whether the end result, like a refund amount, matches expectations.",
+      "greatWhen": "As a fast first filter across many test cases.",
+      "avoidWhen": "Used alone, since it can't tell a clean run from a risky one that happened to land right.",
+      "example": "Both runs above pass, hiding the wrong-account call."
+    },
+    {
+      "name": "Grade the trajectory, step by step",
+      "what": "Check the sequence of tool calls and decisions the agent made, not just the ending.",
+      "greatWhen": "The path matters for cost, risk or compliance, not just correctness.",
+      "avoidWhen": "The task is simple enough that any working path is equally fine.",
+      "example": "The wrong-account call shows up as a flagged step, even though the final refund was correct."
+    },
+    {
+      "name": "Test with adversarial and edge-case scenarios",
+      "what": "Deliberately include ambiguous, conflicting or malicious inputs in the test set.",
+      "greatWhen": "The agent has access to real actions, like refunds or account changes, where a bad path has real cost.",
+      "avoidWhen": "Skip this only for read-only, low-stakes agents.",
+      "example": "A complaint with an intentionally ambiguous order number."
+    },
+    {
+      "name": "Track cost and step count, not just correctness",
+      "what": "Measure how many tool calls, how much time and how much it cost to reach the answer.",
+      "greatWhen": "The same task could be solved in 2 steps or 12, and that difference matters.",
+      "avoidWhen": "Cost is negligible and step count doesn't affect risk.",
+      "example": "One path resolves a complaint in 3 tool calls; another takes 11 for the same outcome, at 4x the cost."
+    },
+    {
+      "name": "Re-run tests after every prompt or tool change",
+      "what": "Treat the agent's test set like a regression suite, run automatically before shipping any change.",
+      "greatWhen": "Always.",
+      "avoidWhen": "Never skip; small prompt tweaks can quietly change the agent's whole path.",
+      "example": "A one-line prompt edit is tested against the full trajectory suite before merging."
+    }
+  ],
+  "challenge": {
+    "question": "Two test complaints both end in a correct refund, but one path included an unnecessary wrong-account lookup. What does grading only the final output miss?",
+    "options": [
+      {
+        "text": "Whether the trajectory itself was safe and efficient, not just whether the ending was correct",
+        "verdict": "best",
+        "why": "A correct ending can hide a risky or wasteful path; trajectory-level grading catches what output-only grading can't."
+      },
+      {
+        "text": "Nothing; if the final answer is correct, the path doesn't matter",
+        "verdict": "poor",
+        "why": "The wrong-account call is a real risk, touching the wrong customer's data, even though it didn't change the final result this time."
+      },
+      {
+        "text": "Whether the response was worded politely",
+        "verdict": "ok",
+        "why": "Tone matters for quality, but it's a separate concern from the safety and efficiency of the agent's actions."
+      },
+      {
+        "text": "Whether the test suite has enough test cases",
+        "verdict": "ok",
+        "why": "Test coverage matters generally, but doesn't address what this specific pair of runs reveals."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Trajectory grading catches the risky path",
+    "example": "The evaluation flags the wrong-account lookup even though the refund was correct, the team traces it to an ambiguous tool description, fixes it, and re-running confirms both test cases now take the clean path."
+  },
+  "worstCase": {
+    "title": "A risky habit hiding behind correct answers",
+    "example": "Only final outputs are graded. The wrong-account lookup pattern ships to production, and a month later it touches a real customer's account on a genuinely ambiguous case, with no correct final answer to hide it that time."
+  },
+  "route": {
+    "travelling": "Two near-identical refund complaints",
+    "lanes": [
+      {
+        "steps": [
+          { "label": "Run both test cases", "goes": "Both end in a correct refund for the right order." },
+          { "label": "Grade final output only", "goes": "Both pass; they look identical.", "goesWrong": "The evaluation stops here, so the risky path in test case two ships unnoticed." },
+          { "label": "Grade the trajectory", "goes": "Test case two shows an extra call to the wrong customer's account." },
+          { "label": "Trace the cause", "goes": "An ambiguous tool description let the agent guess wrong before correcting." },
+          { "label": "Fix and re-test", "goes": "The tool description is clarified; both cases now take the clean path." },
+          { "label": "Add to the regression suite", "goes": "This scenario runs automatically before every future change." }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Grade the agent's trajectory, cost and safety, not just whether the final answer happens to be correct; a right answer can hide a risky path."
+}

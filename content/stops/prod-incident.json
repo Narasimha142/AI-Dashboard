@@ -1,0 +1,98 @@
+{
+  "id": "prod-incident",
+  "line": 7,
+  "level": "advanced",
+  "shortTitle": "Incident response for AI failures",
+  "title": "Incident response for AI failures: when the assistant misbehaves live",
+  "hook": "AI failures don't always throw an error; a model can be confidently wrong, so incident response needs a way to detect that, not just a crash to watch for.",
+  "inPlainWords": "Because an AI system can fail by being confidently wrong instead of crashing, incident response needs monitoring on outcomes, not just uptime, plus a fast way to fall back to something safer.",
+  "useCase": {
+    "title": "The assistant starts giving a wrong refund amount, live",
+    "story": "A provider-side model update silently changes behavior. For three hours, the assistant occasionally miscalculates refund amounts on a specific order type before anyone notices, because nothing crashed and no error was logged."
+  },
+  "approaches": [
+    {
+      "name": "Wait for customer complaints to surface it",
+      "what": "Rely on support tickets or reviews to reveal a problem.",
+      "avoidWhen": "Always avoid relying on this alone, since it's slow and undercounts silent failures.",
+      "example": "The miscalculation runs for three hours before the first complaint arrives."
+    },
+    {
+      "name": "Monitor outcome metrics, not just system health",
+      "what": "Track business-level signals, like refund amounts issued, answer confidence and citation rate, alongside standard uptime and error-rate monitoring.",
+      "greatWhen": "Always, for any AI feature with real consequences.",
+      "avoidWhen": "Never skip; a \"healthy\" system with no crashes and low latency can still be confidently wrong.",
+      "example": "A sudden jump in average refund amount triggers an alert with no error ever logged."
+    },
+    {
+      "name": "Have a kill switch or fallback ready",
+      "what": "A fast way to disable the AI feature or fall back to a simpler, safer path, like a fixed rule or a human queue.",
+      "greatWhen": "Always, prepared before an incident, not designed during one.",
+      "avoidWhen": "Never skip preparing this in advance.",
+      "example": "One flag reroutes refund calculation to the old, simple rule within seconds."
+    },
+    {
+      "name": "Run a blameless post-incident review",
+      "what": "After the fact, document what happened, why detection was slow or fast, and what changes to make, without focusing on blaming an individual.",
+      "greatWhen": "Always, after any real incident.",
+      "avoidWhen": "Never skip; without it, the same failure mode repeats.",
+      "example": "The write-up covers the timeline, the detection gap, and a follow-up task, with no names attached to blame."
+    },
+    {
+      "name": "Pre-define severity levels and an on-call path",
+      "what": "Agree in advance what counts as a minor versus severe AI incident, and who gets paged for each.",
+      "greatWhen": "Always, before the first real incident happens.",
+      "avoidWhen": "Never improvise this during a live incident.",
+      "example": "A wrong-refund pattern is pre-classified as severe, paging the on-call engineer automatically."
+    }
+  ],
+  "challenge": {
+    "question": "A provider-side model update causes wrong refund amounts for three hours, with no crash and no error logged, until a customer complains. What would have caught it sooner?",
+    "options": [
+      {
+        "text": "Monitoring outcome metrics like refund amounts and confidence, with an alert on unusual shifts, not just system health and error rates",
+        "verdict": "best",
+        "why": "The failure was confidently wrong, not crashed; only outcome-level monitoring would have flagged the unusual shift."
+      },
+      {
+        "text": "Waiting for more customer complaints to confirm the pattern",
+        "verdict": "poor",
+        "why": "This is what happened, and it took three hours; it's not a detection method, it's the absence of one."
+      },
+      {
+        "text": "Increasing the error-rate alert threshold",
+        "verdict": "poor",
+        "why": "There was no error to threshold on; the system reported as healthy throughout."
+      },
+      {
+        "text": "Adding more logging detail to existing error logs",
+        "verdict": "ok",
+        "why": "More detail helps investigate after the fact, but doesn't add detection for a failure that never triggers an error in the first place."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Outcome monitoring catches a silent failure",
+    "example": "An alert fires when average refund amount shifts outside its normal range, 12 minutes after the provider update, letting the team switch to the fallback path before most customers are affected."
+  },
+  "worstCase": {
+    "title": "Three hours of silent wrong answers",
+    "example": "No outcome monitoring exists. The first signal is a customer complaint three hours in, by which point hundreds of refunds may be affected, and the team has no fast way to disable the feature while they investigate."
+  },
+  "route": {
+    "travelling": "A provider-side model update, live in production",
+    "lanes": [
+      {
+        "steps": [
+          { "label": "Update happens silently", "goes": "The model provider updates behavior with no announcement." },
+          { "label": "Outcome metrics shift", "goes": "Average refund amount moves outside its normal range." },
+          { "label": "Alert fires", "goes": "The on-call engineer is paged within minutes.", "goesWrong": "No outcome monitoring exists, so nothing fires until a customer complains three hours later." },
+          { "label": "Flip the kill switch", "goes": "The refund calculation falls back to the simpler, tested rule." },
+          { "label": "Investigate the cause", "goes": "The team traces it to the provider's silent update." },
+          { "label": "Run a blameless review", "goes": "Findings: add a canary check on provider updates, going forward." }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Monitor outcomes, not just uptime and errors, and have a fallback ready before the incident; a model can fail silently and confidently, with nothing to alert on unless you're watching the right thing."
+}

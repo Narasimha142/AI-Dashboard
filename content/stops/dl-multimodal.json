@@ -1,0 +1,99 @@
+{
+  "id": "dl-multimodal",
+  "line": 3,
+  "level": "advanced",
+  "shortTitle": "Fusing vision and text",
+  "title": "Multimodal models: combining vision and text",
+  "hook": "Combining images and text needs a plan for where they meet: early, late, or through a shared space; the choice changes cost, accuracy and what breaks.",
+  "inPlainWords": "A multimodal model reasons over more than one kind of input, like an image and its text description together, instead of handling each separately.",
+  "useCase": {
+    "title": "Does the photo match the product it's tagged to?",
+    "story": "Sellers upload a product photo and a text description. Some listings have mismatched photos: a phone case pictured under a charger's title. The system needs to reason about both the image and the text together to catch this."
+  },
+  "approaches": [
+    {
+      "name": "Text-only, ignore the image",
+      "what": "Check only against the text description and category.",
+      "greatWhen": "Images are unreliable or unavailable, or the mismatch is always describable in text alone.",
+      "avoidWhen": "The mismatch is specifically about what's visible in the photo, as it is here.",
+      "example": "Never catches a photo that clearly shows the wrong product."
+    },
+    {
+      "name": "Two separate models, combined late",
+      "what": "An image classifier and a text classifier run independently, then their outputs are compared afterward.",
+      "greatWhen": "You want to reuse existing single-modality models with minimal change.",
+      "avoidWhen": "The task needs the two modalities to inform each other during reasoning, not just be compared after the fact.",
+      "example": "Image says \"charger,\" text says \"phone case\": a simple mismatch flag, but no deeper reasoning."
+    },
+    {
+      "name": "A shared embedding space",
+      "what": "Separate encoders for image and text, trained so matching image-text pairs land close together in the same vector space.",
+      "greatWhen": "You need a fast, scalable way to check whether an image and text are consistent, across huge catalogs.",
+      "avoidWhen": "You need the model to explain the mismatch in detail, not just flag it.",
+      "example": "Embed the photo and the title; a low similarity score flags a likely mismatch."
+    },
+    {
+      "name": "Early fusion in one model",
+      "what": "A single model takes both image and text as input from the start and reasons jointly, able to describe what's wrong, not just flag it.",
+      "greatWhen": "You need explanation, nuance, or reasoning that spans both modalities together.",
+      "avoidWhen": "Cost and latency budgets are tight and a cheaper shared-embedding check would catch most cases.",
+      "example": "The model outputs: \"the photo shows a charger, but the title says phone case.\""
+    },
+    {
+      "name": "Route by confidence: cheap check first",
+      "what": "Use the shared-embedding check for every listing, and only send low-confidence cases to the heavier joint-reasoning model.",
+      "greatWhen": "Catalog scale makes running the expensive model on everything too costly.",
+      "avoidWhen": "Near-perfect accuracy is required on every single item regardless of cost.",
+      "example": "2 million listings get the cheap check; only the 4,000 flagged as uncertain reach the expensive model."
+    }
+  ],
+  "challenge": {
+    "question": "The catalog has millions of listings, and most photo-text pairs match fine. A small fraction are true mismatches that need an explanation for the seller. What's the strongest approach?",
+    "options": [
+      {
+        "text": "Check every listing with a fast shared-embedding similarity score, and send only low-confidence cases to a heavier joint-reasoning multimodal model for an explanation",
+        "verdict": "best",
+        "why": "Matches cost to scale: cheap for the millions that are fine, expensive reasoning only where it's actually needed."
+      },
+      {
+        "text": "Run the expensive joint-reasoning model on every listing",
+        "verdict": "ok",
+        "why": "Would work, but is far more costly than needed given most listings already match."
+      },
+      {
+        "text": "Check text only, ignore the photo",
+        "verdict": "poor",
+        "why": "Misses the exact kind of mismatch, a wrong photo, that the check exists to catch."
+      },
+      {
+        "text": "Compare two independent single-modality model outputs with no shared space or joint reasoning",
+        "verdict": "ok",
+        "why": "Catches obvious category mismatches but gives no similarity score to route on and no explanation for sellers."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Cheap check at scale, explanation where it matters",
+    "example": "A shared-embedding check runs on all 2 million listings in minutes, flags 4,000 as low-confidence, and only those go to the heavier model, which explains each mismatch clearly enough for a seller to fix it."
+  },
+  "worstCase": {
+    "title": "All-or-nothing multimodal reasoning",
+    "example": "The team runs the expensive joint-reasoning model on every listing every night. The compute bill grows far past the value caught, and the team quietly stops running the check on the full catalog, missing new mismatches."
+  },
+  "route": {
+    "travelling": "A phone case photo tagged as a charger listing",
+    "lanes": [
+      {
+        "steps": [
+          { "label": "Text-only check first", "goes": "Text alone says \"phone case\" and passes.", "goesWrong": "The mismatched photo is never checked, and the wrong image stays live." },
+          { "label": "Encode the photo", "goes": "The image encoder produces a vector for the photo." },
+          { "label": "Encode the title and description", "goes": "The text encoder produces a vector for the listing text." },
+          { "label": "Compare in shared space", "goes": "Similarity is low: the vectors point in different directions." },
+          { "label": "Route to deeper reasoning", "goes": "Low-confidence pairs go to the joint multimodal model." },
+          { "label": "Explain and flag", "goes": "The model states the photo shows a charger, title says phone case, and the listing is held for the seller." }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Fuse vision and text in a shared space for cheap, catalog-wide checks, and reserve full joint reasoning for the fraction that needs an explanation."
+}

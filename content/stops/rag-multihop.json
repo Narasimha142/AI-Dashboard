@@ -1,0 +1,99 @@
+{
+  "id": "rag-multihop",
+  "line": 5,
+  "level": "advanced",
+  "shortTitle": "Multi-hop and agentic RAG",
+  "title": "Multi-hop and agentic RAG: when one search isn't enough",
+  "hook": "Some questions need several searches that depend on each other's answers, not one lookup.",
+  "inPlainWords": "When a question needs facts that depend on each other, one search pass can't find them all. The model needs to search, read what it found, and search again based on that.",
+  "useCase": {
+    "title": "\"Can I return the gift my sister ordered, to my address?\"",
+    "story": "Answering needs the sister's order (a lookup by name), that order's return policy (depends on the product category), and whether returns can ship to a different address than the buyer's (a separate policy). No single search returns all three."
+  },
+  "approaches": [
+    {
+      "name": "One search, one answer (standard RAG)",
+      "what": "A single retrieval pass feeds the model once.",
+      "greatWhen": "The question maps to one clear passage.",
+      "avoidWhen": "The question needs facts that depend on each other.",
+      "example": "Fails on the gift-return question because no single passage has all three facts."
+    },
+    {
+      "name": "Fixed multi-step pipeline",
+      "what": "A hard-coded sequence of lookups: order, then category, then policy.",
+      "greatWhen": "The question pattern is common and known in advance.",
+      "avoidWhen": "The number or order of lookups varies by question.",
+      "example": "A \"gift return\" flow hard-coded for this one case."
+    },
+    {
+      "name": "Agentic RAG: the model plans its own searches",
+      "what": "The model decides what to search next based on what it's already found, looping until it has enough.",
+      "greatWhen": "Question shapes vary and can't all be pre-coded.",
+      "avoidWhen": "Latency and cost per question must stay low and predictable, or oversight of what it searches is hard to add.",
+      "example": "The model searches the order, then the category, then the address policy, then answers."
+    },
+    {
+      "name": "Decompose the question first, then run standard RAG per part",
+      "what": "Split the question into sub-questions up front, retrieve for each separately, then combine.",
+      "greatWhen": "Sub-questions can be identified without needing earlier answers.",
+      "avoidWhen": "Later searches truly depend on earlier results, as in this chain.",
+      "example": "Works for independent sub-questions, but not this dependent one."
+    },
+    {
+      "name": "Cap the loop and log every step",
+      "what": "Whichever method is used, bound the number of search rounds and record each one.",
+      "greatWhen": "Always, with agentic or multi-step retrieval.",
+      "avoidWhen": "Never skip this.",
+      "example": "A 6-round cap with a full log of every search made."
+    }
+  ],
+  "challenge": {
+    "question": "Answering \"Can I return my sister's gift to my address?\" needs the order, then its category-specific return policy, then a separate address-change policy, each depending on the last. What approach fits?",
+    "options": [
+      {
+        "text": "Let the model plan and run each search based on what the previous one found, with a capped number of rounds and a log of each step",
+        "verdict": "best",
+        "why": "The searches genuinely depend on each other, which is exactly what agentic, bounded, logged retrieval is for."
+      },
+      {
+        "text": "One search pass over all documents",
+        "verdict": "poor",
+        "why": "No single passage contains the order, category-specific policy and address policy together."
+      },
+      {
+        "text": "A fixed three-step pipeline hard-coded for this exact scenario",
+        "verdict": "ok",
+        "why": "Works for this case but breaks the moment the question shape changes slightly."
+      },
+      {
+        "text": "Ask the customer to look up each fact themselves",
+        "verdict": "poor",
+        "why": "Defeats the purpose of having an assistant."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Bounded, logged, multi-step search",
+    "example": "The model looks up the order, reads the product category, searches the category's return policy, separately searches the address-change policy, then combines all three into one answer, in four logged search rounds."
+  },
+  "worstCase": {
+    "title": "An unbounded loop",
+    "example": "The model keeps searching for a fact that doesn't exist in the library, running 40 rounds before timing out, and the customer waits a full minute for no answer."
+  },
+  "route": {
+    "travelling": "Question: \"Can I return my sister's gift to my address?\"",
+    "lanes": [
+      {
+        "steps": [
+          { "label": "Look up the order", "goes": "Finds the order under the sister's name." },
+          { "label": "Read the product category", "goes": "The item is opened electronics." },
+          { "label": "Search the category's policy", "goes": "A 14-day window applies." },
+          { "label": "Search the address policy", "goes": "Returns can ship to a different address with an ID match." },
+          { "label": "Combine and answer", "goes": "The bot explains both rules together, with citations." },
+          { "label": "Cap and log", "goes": "Every round is logged; a 6-round cap prevents endless loops.", "goesWrong": "No cap is set, and a harder question sends the model into 40 rounds of fruitless search." }
+        ]
+      }
+    ]
+  },
+  "takeaway": "When facts depend on each other, let the model search in rounds instead of once, but always cap the rounds and log every step."
+}

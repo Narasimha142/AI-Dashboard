@@ -1,0 +1,99 @@
+{
+  "id": "lm-eval",
+  "line": 4,
+  "level": "advanced",
+  "shortTitle": "Evaluating and benchmarking LLMs",
+  "title": "Evaluating and benchmarking language models for your task",
+  "hook": "A leaderboard score says how a model does on someone else's questions; only your own test set says how it does on yours.",
+  "inPlainWords": "Public leaderboards are a starting filter, not a decision. To know if a model is right for your assistant, test it on your own real questions, scored the same way, alongside cost and speed.",
+  "useCase": {
+    "title": "A new model claims to beat the one you use",
+    "story": "A new model release tops the public leaderboards. It's tempting to switch the support assistant to it immediately. But the leaderboards test general knowledge and reasoning, not ShopEase's policy questions, tone and citation format."
+  },
+  "approaches": [
+    {
+      "name": "Trust public leaderboards alone",
+      "what": "Pick the model with the best public benchmark score.",
+      "greatWhen": "As a first filter to narrow a long list of candidates.",
+      "avoidWhen": "Used as the final decision, since public benchmarks don't test your specific task, tone or data.",
+      "example": "A model tops a general reasoning leaderboard but has never seen ShopEase's policy format."
+    },
+    {
+      "name": "Build a task-specific golden set",
+      "what": "A fixed set of real questions from your domain, each with a known-good answer, scored the same way across every candidate model.",
+      "greatWhen": "Comparing models for a specific, recurring task.",
+      "avoidWhen": "Skipped entirely; without it, comparisons are just impressions.",
+      "example": "100 real support questions with graded reference answers."
+    },
+    {
+      "name": "Score with automatic checks plus human or model-graded judgment",
+      "what": "Use automatic checks like citation presence and length, plus human or LLM-judge scoring on quality and tone.",
+      "greatWhen": "Automatic checks alone can't capture whether an answer is genuinely helpful and on-brand.",
+      "avoidWhen": "Relying only on automatic pass or fail metrics for anything subjective.",
+      "example": "Automatic check for citation presence, human rating for tone and helpfulness."
+    },
+    {
+      "name": "Test cost and latency alongside quality",
+      "what": "Measure price per response and response time under real load, not just accuracy.",
+      "greatWhen": "Always, since the model that scores best on quality alone may be too slow or expensive for the volume.",
+      "avoidWhen": "Never skip this.",
+      "example": "A model that's 2% more accurate but 5 times the cost and 3 times the latency."
+    },
+    {
+      "name": "Re-test regularly, not once",
+      "what": "Providers update models silently; rerun the same golden set periodically and after any provider-side change.",
+      "greatWhen": "Always, for any model in production.",
+      "avoidWhen": "Never treat one evaluation as permanent.",
+      "example": "The golden set reruns automatically the week after every provider release."
+    }
+  ],
+  "challenge": {
+    "question": "A new model tops the public leaderboards. How should the team decide whether to switch the support assistant to it?",
+    "options": [
+      {
+        "text": "Run it against a task-specific golden set of real support questions, scoring accuracy, citation use and tone, plus cost and latency at expected volume",
+        "verdict": "best",
+        "why": "Only a test on your actual task, with your actual constraints, tells you if it's really better for you."
+      },
+      {
+        "text": "Switch immediately, since it wins the public leaderboards",
+        "verdict": "poor",
+        "why": "Leaderboard tasks are not the same as policy questions answered with citations and brand tone."
+      },
+      {
+        "text": "Have one team member try it for a day and give a gut impression",
+        "verdict": "ok",
+        "why": "Better than nothing, but too small and unstructured to trust for a production switch."
+      },
+      {
+        "text": "Never switch models once one is chosen",
+        "verdict": "poor",
+        "why": "Model quality and pricing keep changing; refusing to ever re-evaluate leaves gains on the table."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "A golden set settles it with numbers",
+    "example": "The new model scores 94% on the golden set versus the current model's 91%, at similar cost and latency. The team switches with confidence, and keeps the golden set to catch future regressions."
+  },
+  "worstCase": {
+    "title": "Switching on leaderboard hype",
+    "example": "The team switches based on the public leaderboard alone. The new model is worse at following the citation format, support tickets asking \"where did that come from\" rise, and the team has no numbers to know why until customers complain."
+  },
+  "route": {
+    "travelling": "A new model release, versus the one in production",
+    "lanes": [
+      {
+        "steps": [
+          { "label": "Shortlist from public benchmarks", "goes": "Narrows dozens of models to a handful of candidates." },
+          { "label": "Run the task-specific golden set", "goes": "100 real support questions, scored the same way for each model." },
+          { "label": "Score citation use and tone", "goes": "Automatic checks plus human ratings on quality." },
+          { "label": "Measure cost and latency", "goes": "Price and speed at expected daily volume." },
+          { "label": "Compare to the current model", "goes": "New model: 94% quality, similar cost. Wins on the numbers.", "goesWrong": "The team skips this comparison and switches on leaderboard rank alone." },
+          { "label": "Schedule a re-check", "goes": "The same golden set reruns after any provider update." }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Public leaderboards narrow the list; a task-specific golden set, scored for accuracy, tone, cost and latency, makes the actual decision."
+}

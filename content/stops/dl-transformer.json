@@ -1,0 +1,99 @@
+{
+  "id": "dl-transformer",
+  "line": 3,
+  "level": "intermediate",
+  "shortTitle": "How transformers pay attention",
+  "title": "Inside a transformer: what attention actually does",
+  "hook": "Attention lets every part of the input weigh every other part, which is why transformers handle long, tangled context so much better than older networks.",
+  "inPlainWords": "Attention lets a network directly connect any two points in a sequence, no matter how far apart, instead of carrying information step by step and risking it fading over distance.",
+  "useCase": {
+    "title": "Why does the model connect \"it\" to the right thing?",
+    "story": "A product review says: \"The charger stopped working after the case got wet, so I returned it.\" The classifier correctly flags the charger, not the case, as the returned item. Understanding attention explains how the network keeps track of what \"it\" refers to across a long sentence."
+  },
+  "approaches": [
+    {
+      "name": "Process word by word in order (recurrent networks)",
+      "what": "Read one token at a time, carrying a summary forward.",
+      "greatWhen": "Sequences are short and order matters strictly.",
+      "avoidWhen": "Sequences are long, since early information fades by the time the network reaches the end.",
+      "example": "By the tenth word, \"case\" has faded and \"it\" gets attached to the wrong noun."
+    },
+    {
+      "name": "Look at nearby words only (convolutional networks)",
+      "what": "Scan fixed-size local windows across the sequence.",
+      "greatWhen": "Local patterns matter more than distant relationships, and speed matters.",
+      "avoidWhen": "The connection you need spans far apart in the sequence.",
+      "example": "A window of 5 words never sees both \"case\" and \"it\" together."
+    },
+    {
+      "name": "Let every word attend to every other word (self-attention)",
+      "what": "Each token computes how relevant every other token is to it, and blends information accordingly, regardless of distance.",
+      "greatWhen": "Relationships can be far apart in the sequence, or the important connection isn't known in advance.",
+      "avoidWhen": "Sequences get extremely long, since attention's cost grows fast with length.",
+      "example": "\"It\" directly attends to \"charger\" with a high weight, wherever it sits in the sentence."
+    },
+    {
+      "name": "Limit attention to a fixed window, cheaply (sparse or windowed attention)",
+      "what": "Attend broadly but not to literally every token, to control cost on long sequences.",
+      "greatWhen": "Sequences are long and full attention's cost is too high, but distant connections still matter sometimes.",
+      "avoidWhen": "The task truly needs any-to-any connections and cost isn't the limiting factor.",
+      "example": "A long review only attends within nearby paragraphs, missing a callback in the first line."
+    },
+    {
+      "name": "Add explicit position information",
+      "what": "Since attention alone doesn't know word order, add signals for where each token sits in the sequence.",
+      "greatWhen": "Always, in any transformer.",
+      "avoidWhen": "Never skip; without it, word order would be invisible to the model.",
+      "example": "Without it, \"the case damaged the charger\" and \"the charger damaged the case\" would look identical."
+    }
+  ],
+  "challenge": {
+    "question": "A sentence uses \"it\" to refer to a noun mentioned ten words earlier. Which mechanism keeps track of that connection regardless of the distance?",
+    "options": [
+      {
+        "text": "Self-attention, where every token can weigh and connect to every other token directly",
+        "verdict": "best",
+        "why": "This is exactly the problem attention solves: direct, distance-independent connections between tokens."
+      },
+      {
+        "text": "A recurrent network reading word by word",
+        "verdict": "poor",
+        "why": "Information from ten words back has typically faded by the time it reaches \"it\"."
+      },
+      {
+        "text": "A fixed small local window",
+        "verdict": "poor",
+        "why": "A nearby-words-only window won't span a ten-word gap."
+      },
+      {
+        "text": "Ignoring word order entirely",
+        "verdict": "ok",
+        "why": "Attention alone doesn't encode order either, which is why position information is added separately; order still matters."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Attention finds the right connection at any distance",
+    "example": "In a 40-word review, attention gives a high weight from \"it\" directly back to \"charger\", correctly flagging the charger as the returned item, no matter how many words sit between them."
+  },
+  "worstCase": {
+    "title": "Losing track over distance",
+    "example": "A recurrent network summarizes the sentence step by step, and by the time it reaches \"it\", the summary has drifted, misattributing the return to the wrong product."
+  },
+  "route": {
+    "travelling": "\"The charger stopped working after the case got wet, so I returned it.\"",
+    "lanes": [
+      {
+        "steps": [
+          { "label": "Turn words into tokens", "goes": "Each word becomes a token with a starting representation." },
+          { "label": "Add position information", "goes": "Each token also carries where it sits in the sentence." },
+          { "label": "Every token looks at every other", "goes": "\"It\" computes a relevance score against every other token.", "goesWrong": "A recurrent reading carries only a fading summary instead, losing the connection by this point." },
+          { "label": "Weight and blend", "goes": "\"It\" blends in mostly from \"charger\", weighted highest." },
+          { "label": "Pass through more layers", "goes": "The connection sharpens across several attention layers." },
+          { "label": "Classify the review", "goes": "The charger, not the case, is flagged as returned." }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Self-attention lets any token connect directly to any other, which is why transformers keep track of relationships that older, order-by-order networks lose over distance."
+}

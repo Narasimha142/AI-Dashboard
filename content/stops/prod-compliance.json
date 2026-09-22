@@ -1,0 +1,98 @@
+{
+  "id": "prod-compliance",
+  "line": 7,
+  "level": "intermediate",
+  "shortTitle": "Compliance for regulated industries",
+  "title": "Compliance for regulated industries: what changes when rules apply",
+  "hook": "Finance, health and other regulated areas add hard requirements, like explainability, audit trails and approvals, that a general-purpose assistant doesn't need by default.",
+  "inPlainWords": "When an AI feature touches a regulated area like payments or health data, requirements such as record-keeping, human sign-off and explainability stop being optional and start being things you must prove, not just claim.",
+  "useCase": {
+    "title": "The assistant now helps with payment disputes, not just returns",
+    "story": "ShopEase is adding an assistant feature for payment and chargeback disputes, which touches financial regulation. What was optional for general support, like explanations, audit logs and human sign-off, becomes required, and the team must show evidence, not just claim compliance."
+  },
+  "approaches": [
+    {
+      "name": "Treat it like any other assistant feature",
+      "what": "Ship with the same guardrails as the general support bot.",
+      "avoidWhen": "Always avoid this once financial, health or similarly regulated data or decisions are involved.",
+      "example": "Shipping a payment-dispute feature with no audit log, discovered only during a regulator's request."
+    },
+    {
+      "name": "Map which specific rules apply before building",
+      "what": "Identify the actual regulations and requirements that apply to this specific feature and region, not a general sense of \"compliance.\"",
+      "greatWhen": "Always, as the first step.",
+      "avoidWhen": "Never skip; building first and mapping rules after means expensive rework.",
+      "example": "Identifying which disclosure and record-keeping rules apply to payment dispute handling in each region ShopEase operates."
+    },
+    {
+      "name": "Add an audit trail for every decision",
+      "what": "Log what data was used, what the model output, and what the final decision was, retained for the required period.",
+      "greatWhen": "Any regulated decision path.",
+      "avoidWhen": "Never skip for regulated features.",
+      "example": "Every dispute decision logs the input, the model's reasoning summary, and who approved it."
+    },
+    {
+      "name": "Require human sign-off above a threshold",
+      "what": "Automate routine cases, but require a qualified person to approve anything above a defined risk or value threshold.",
+      "greatWhen": "Regulations require accountability to a specific person, or errors carry real financial or legal cost.",
+      "avoidWhen": "The threshold is set so low it defeats automation, or so high that risky cases slip through.",
+      "example": "Disputes under $50 auto-resolve; anything above requires a named reviewer's approval."
+    },
+    {
+      "name": "Build in explainability, not just an answer",
+      "what": "The system must be able to state which facts and rules led to a decision, not just produce one.",
+      "greatWhen": "Regulations or customers have a right to an explanation.",
+      "avoidWhen": "Never skip where such a right exists.",
+      "example": "A denied dispute cites the specific policy clause and transaction detail that led to the decision."
+    }
+  ],
+  "challenge": {
+    "question": "The team is extending the assistant to payment disputes, a regulated area. What should happen before writing any code?",
+    "options": [
+      {
+        "text": "Map the specific rules that apply to payment dispute handling in each region, then design audit trails, sign-off thresholds and explainability around them",
+        "verdict": "best",
+        "why": "Regulated features have concrete, specific requirements; discovering them after building risks expensive rework or real violations."
+      },
+      {
+        "text": "Ship using the same guardrails as the general support assistant, and adjust later if needed",
+        "verdict": "poor",
+        "why": "General-purpose guardrails are unlikely to meet specific regulatory requirements for financial decisions."
+      },
+      {
+        "text": "Add a generic disclaimer to every response",
+        "verdict": "poor",
+        "why": "A disclaimer doesn't satisfy audit trail, sign-off or explainability requirements."
+      },
+      {
+        "text": "Ask legal to review after the feature is built",
+        "verdict": "ok",
+        "why": "Legal review is necessary, but doing it only after building risks finding a blocking requirement too late."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Rules mapped before a line of code",
+    "example": "The team identifies the specific disclosure, record-keeping and sign-off requirements for each region up front, designs the audit trail and approval threshold around them, and legal review confirms compliance before launch, not after."
+  },
+  "worstCase": {
+    "title": "Rework after the fact",
+    "example": "The feature ships with the general assistant's guardrails. A compliance review three months in finds no audit trail exists for dispute decisions, and the feature is pulled while logging is retrofitted under a regulator's deadline."
+  },
+  "route": {
+    "travelling": "The new payment-dispute assistant feature",
+    "lanes": [
+      {
+        "steps": [
+          { "label": "Identify the regulated scope", "goes": "Payment disputes fall under financial regulation in each region." },
+          { "label": "Map the specific requirements", "goes": "Disclosure, record-keeping and sign-off rules are listed.", "goesWrong": "The team skips this step and builds with the general assistant's guardrails instead." },
+          { "label": "Design the audit trail", "goes": "Every decision logs its inputs, reasoning summary and approver." },
+          { "label": "Set a human sign-off threshold", "goes": "Disputes above a set value require a qualified person's approval." },
+          { "label": "Build explainability in", "goes": "The system states which facts and rules led to each decision." },
+          { "label": "Legal review before launch", "goes": "Compliance confirms the design meets the mapped requirements." }
+        ]
+      }
+    ]
+  },
+  "takeaway": "In regulated areas, map the specific rules first, then design audit trails, sign-off thresholds and explainability around them; don't retrofit compliance after building."
+}

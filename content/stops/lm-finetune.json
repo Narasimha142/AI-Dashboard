@@ -1,0 +1,99 @@
+{
+  "id": "lm-finetune",
+  "line": 4,
+  "level": "advanced",
+  "shortTitle": "Fine-tuning, SFT and RLHF",
+  "title": "Fine-tuning a language model: SFT, RLHF and when to bother",
+  "hook": "Fine-tuning changes how a model behaves by default; most problems are solved more cheaply with a good prompt or RAG first.",
+  "inPlainWords": "Fine-tuning continues training a model on your own examples so a behavior becomes its default, instead of something you have to ask for in every prompt. It's a bigger investment than prompting, worth it only for a clear, recurring gap.",
+  "useCase": {
+    "title": "The support bot's tone is close, but not quite ShopEase",
+    "story": "Prompting gets the assistant most of the way, but it still occasionally writes overly formal apologies unlike ShopEase's brand voice, and misses house-style formatting for order summaries. Should the team fine-tune a model?"
+  },
+  "approaches": [
+    {
+      "name": "Prompting and RAG first",
+      "what": "Fix behavior through instructions and retrieved context, with no training.",
+      "greatWhen": "The behavior gap can be described in words and shown with a few examples in the prompt.",
+      "avoidWhen": "The same correction has to be repeated in every prompt and still doesn't stick.",
+      "example": "Adding brand-voice examples to the system prompt fixes most of the tone issue for free."
+    },
+    {
+      "name": "Supervised fine-tuning (SFT)",
+      "what": "Continue training the model on examples of the exact input-output pairs you want, so the behavior becomes default.",
+      "greatWhen": "The desired behavior is consistent, well-defined, and you have or can create enough quality examples.",
+      "avoidWhen": "You have fewer than a few hundred good examples, or requirements change weekly.",
+      "example": "A few thousand labeled order summaries in the house format."
+    },
+    {
+      "name": "Reinforcement learning from human feedback (RLHF) or preference tuning",
+      "what": "Train the model to prefer outputs people rate higher, rather than matching one fixed example per input.",
+      "greatWhen": "\"Better versus worse\" is easier for people to judge than to write out ahead of time, like tone and helpfulness.",
+      "avoidWhen": "The team lacks a reliable way to compare outputs at scale, since noisy preferences train an unreliable model.",
+      "example": "Raters compare two apology drafts and pick the better one, repeated thousands of times."
+    },
+    {
+      "name": "Parameter-efficient fine-tuning (adapters)",
+      "what": "Train a small add-on to the model instead of updating all its weights, far cheaper and faster.",
+      "greatWhen": "You want the behavior change without the cost of full fine-tuning, or need multiple specialized variants.",
+      "avoidWhen": "A full-weight fine-tune is required to change deep behavior.",
+      "example": "A lightweight adapter for house style, swapped in only for order-summary tasks."
+    },
+    {
+      "name": "Don't fine-tune; wait for a better base model",
+      "what": "Skip training, accept the current gap, and reassess as base models improve.",
+      "greatWhen": "The gap is minor and new model releases keep narrowing it.",
+      "avoidWhen": "The gap directly affects customer trust today.",
+      "example": "The team notes the issue, checks it again after the next model upgrade, and skips training for now."
+    }
+  ],
+  "challenge": {
+    "question": "Prompting fixes most of the tone problem, but the formal-apology issue persists across many rewordings of the system prompt. What's the right next step?",
+    "options": [
+      {
+        "text": "Collect a few hundred to a few thousand examples of the corrected tone and run supervised fine-tuning",
+        "verdict": "best",
+        "why": "A consistent, well-defined behavior gap that prompting alone can't close is exactly what SFT is for, once enough examples exist."
+      },
+      {
+        "text": "Immediately run full RLHF with a new reward model",
+        "verdict": "ok",
+        "why": "Could work, but RLHF needs comparison-based feedback and is heavier to set up; SFT with clear examples is the simpler first step for a well-defined gap."
+      },
+      {
+        "text": "Keep rewording the prompt indefinitely",
+        "verdict": "poor",
+        "why": "The use case already shows this isn't converging."
+      },
+      {
+        "text": "Switch to a completely different base model",
+        "verdict": "poor",
+        "why": "Untested, and doesn't address the specific, describable gap found."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "SFT closes a specific, well-defined gap",
+    "example": "The team collects 2,000 corrected apology and order-summary examples, fine-tunes, and the formal-tone issue drops from 1 in 5 responses to under 1 in 100, without needing brand-voice text in every prompt."
+  },
+  "worstCase": {
+    "title": "Fine-tuning without enough examples",
+    "example": "The team fine-tunes on 40 examples. The model overfits to those exact phrasings, gets worse at handling questions slightly different from the examples, and nobody notices until complaints rise."
+  },
+  "route": {
+    "travelling": "The recurring \"overly formal apology\" pattern",
+    "lanes": [
+      {
+        "steps": [
+          { "label": "Try prompting and RAG first", "goes": "Brand-voice examples in the prompt fix most cases.", "goesWrong": "The team skips straight to fine-tuning without trying the cheaper fix first." },
+          { "label": "Measure what remains", "goes": "1 in 5 apologies is still too formal, consistently." },
+          { "label": "Collect labeled examples", "goes": "2,000 corrected examples of the right tone." },
+          { "label": "Run supervised fine-tuning", "goes": "The model is retrained to default to the corrected tone." },
+          { "label": "Test on held-out examples", "goes": "The formal-tone rate drops to under 1 in 100." },
+          { "label": "Watch for regressions elsewhere", "goes": "Other behaviors are checked against the golden set before shipping." }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Try prompting and RAG first; reach for fine-tuning only for a well-defined, recurring behavior gap, and only with enough quality examples to avoid overfitting."
+}

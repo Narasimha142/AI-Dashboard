@@ -1,0 +1,97 @@
+{
+  "id": "rag-vecdb",
+  "line": 5,
+  "level": "intermediate",
+  "shortTitle": "Choosing a vector database",
+  "title": "Choosing where vectors live: a vector database",
+  "hook": "Match the storage choice to your scale, ops team and existing stack, not to whichever tool is loudest this year.",
+  "inPlainWords": "A vector database stores embeddings so you can search by meaning instead of exact words. You can add this to a database you already run, use a dedicated service built for it, run a small library inside your app, or self-host a search cluster. The right one depends on your scale and who will operate it.",
+  "useCase": {
+    "title": "50,000 articles need a place for their vectors",
+    "story": "The help center RAG system is moving from a prototype to production. The team must decide where embeddings live: added to the database they already run, a dedicated managed service, an in-process library, or a self-hosted search engine. Each has different costs, ops burden and limits."
+  },
+  "approaches": [
+    {
+      "name": "Add a vector index to the database you already run",
+      "what": "Extend the relational or document store you already operate with vector search.",
+      "greatWhen": "The team already runs that database, volume is moderate, and one system is simpler than adding another.",
+      "avoidWhen": "Vector volume is very large or you need specialized index tuning the extension doesn't offer.",
+      "example": "Vectors sit next to orders and customers, one connection, one backup."
+    },
+    {
+      "name": "A managed vector database service",
+      "what": "A dedicated cloud service purpose-built for vector search.",
+      "greatWhen": "Scale, uptime and index tuning matter more than avoiding a new vendor.",
+      "avoidWhen": "Data cannot leave your premises, or the team has no spare capacity to run a new integration.",
+      "example": "Millions of vectors, filtered search, a strict latency budget."
+    },
+    {
+      "name": "An embedded, in-process library",
+      "what": "A library that runs inside your application and stores its index on local disk.",
+      "greatWhen": "Data is small to medium, the app is a single process, and cost matters most.",
+      "avoidWhen": "Multiple app servers need to share one live, frequently updated index.",
+      "example": "A prototype serving from one server, with no separate service to run."
+    },
+    {
+      "name": "A self-hosted search engine with vector support",
+      "what": "Run your own cluster of a search engine that also supports vector search.",
+      "greatWhen": "The team already operates a search cluster and wants full control.",
+      "avoidWhen": "Nobody on the team is available to operate the cluster.",
+      "example": "The same cluster already used for full-text search and logs."
+    },
+    {
+      "name": "Re-embed on every request instead of storing vectors",
+      "what": "Skip storage entirely and recompute embeddings each time they're needed.",
+      "avoidWhen": "Always, once the same content is searched more than once.",
+      "example": "Every query recomputes embeddings for the whole library, wasting time and money."
+    }
+  ],
+  "challenge": {
+    "question": "You already run a relational database for orders and customers. Your RAG system has 50,000 chunks and moderate query volume. Where should embeddings live first?",
+    "options": [
+      {
+        "text": "Add a vector index to the database you already run",
+        "verdict": "best",
+        "why": "Fewer moving parts, one backup and access path, plenty for this scale. You can migrate later with real evidence."
+      },
+      {
+        "text": "A managed vector database service",
+        "verdict": "ok",
+        "why": "It will work, but adds a new vendor, connection and bill before there's evidence you need its extra scale."
+      },
+      {
+        "text": "An embedded library on a single server",
+        "verdict": "poor",
+        "why": "Multiple app servers can't reliably share one on-disk index, and updates can be lost across restarts."
+      },
+      {
+        "text": "Re-embed every document on every request",
+        "verdict": "poor",
+        "why": "Wastes money and time recomputing something that should be stored once."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Start with what you run, migrate only with evidence",
+    "example": "The team adds a vector index next to the existing tables, ships in a week, and only evaluates a dedicated vector service a year later when query volume grows 20x and filtered search gets slow."
+  },
+  "worstCase": {
+    "title": "A new vendor before there's a real need",
+    "example": "The team adopts a dedicated vector service on day one for a 50,000-chunk dataset, spends two sprints wiring a new connection, auth and monitoring, and pays for capacity it uses a tenth of."
+  },
+  "route": {
+    "travelling": "50,000 help-center chunks, needing a home for their vectors",
+    "lanes": [
+      {
+        "steps": [
+          { "label": "Count what you actually have", "goes": "50,000 chunks today, growing slowly." },
+          { "label": "Check what you already run", "goes": "The team already operates a relational database with spare capacity.", "goesWrong": "The team skips this check and starts evaluating vendors first." },
+          { "label": "Add a vector index there", "goes": "One migration, one connection, indexes built in minutes." },
+          { "label": "Load test at real volume", "goes": "Latency stays inside budget at expected traffic." },
+          { "label": "Set a re-check trigger", "goes": "The team agrees to reconsider only if volume or latency crosses a stated line." }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Start vector storage with what you already operate; move to a dedicated service only when a real number proves you've outgrown it."
+}

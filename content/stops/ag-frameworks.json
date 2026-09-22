@@ -1,0 +1,98 @@
+{
+  "id": "ag-frameworks",
+  "line": 6,
+  "level": "intermediate",
+  "shortTitle": "Agent frameworks and patterns",
+  "title": "Agent frameworks: orchestration patterns and when you need one",
+  "hook": "A framework can save you from rebuilding common plumbing, but it also adds a layer you don't fully control; know what problem you actually have before reaching for one.",
+  "inPlainWords": "Agent frameworks come in different shapes: a graph of steps you can inspect, a set of roles that hand off to each other, or a lighter library for composing prompts and tools. Pick the shape that matches your actual pain, not the most popular name.",
+  "useCase": {
+    "title": "Should the team build the agent loop from scratch, or use a framework?",
+    "story": "The complaint-investigating agent needs to call tools, keep state across steps, and sometimes hand off between specialized roles. A team member suggests adopting a popular agent framework. Another argues a few hundred lines of custom code would be simpler and easier to debug."
+  },
+  "approaches": [
+    {
+      "name": "Hand-rolled loop",
+      "what": "Write the core loop yourself: the model proposes an action, code executes it, the result goes back in, repeat until done.",
+      "greatWhen": "The pattern is simple, and the team wants full visibility into every step for debugging.",
+      "avoidWhen": "The system grows many tools, roles and edge cases, and the hand-rolled plumbing starts duplicating what frameworks already solved.",
+      "example": "A 200-line loop that's easy to read and step through."
+    },
+    {
+      "name": "A graph or state-machine orchestrator",
+      "what": "A framework that lets you define the agent's steps and transitions explicitly, as a graph, so control flow is visible and steppable.",
+      "greatWhen": "The workflow has clear states and transitions you want to see and control precisely, especially with loops or branches.",
+      "avoidWhen": "The workflow is simple linear steps that don't need explicit state management.",
+      "example": "A graph with nodes for \"investigate,\" \"decide,\" \"escalate,\" and explicit edges between them."
+    },
+    {
+      "name": "A role-based multi-agent framework",
+      "what": "A framework built around defining multiple agents with roles that hand off or collaborate, with built-in coordination.",
+      "greatWhen": "The task genuinely splits into distinct roles that benefit from separate prompts and tools.",
+      "avoidWhen": "One well-prompted agent already handles the task, since splitting adds coordination overhead for no benefit.",
+      "example": "A \"reader\" role and a \"decider\" role handing off, after a single agent kept conflating the two jobs."
+    },
+    {
+      "name": "A code-first chaining library",
+      "what": "A lighter framework focused on composing prompts, tools and calls as code, without full graph or multi-agent machinery.",
+      "greatWhen": "You want reusable building blocks, like prompt templates and tool wrappers, without adopting a heavier orchestration model.",
+      "avoidWhen": "You need explicit state and control flow visibility that a chaining library doesn't provide.",
+      "example": "A shared tool wrapper is reused across three small agent scripts, with no shared state machine needed."
+    },
+    {
+      "name": "Evaluate by what breaks, not by popularity",
+      "what": "Choose based on your actual pain point, such as debugging visibility, role separation, or reusable plumbing, not which framework is trending.",
+      "greatWhen": "Always.",
+      "avoidWhen": "Never skip this check.",
+      "example": "The team names the exact plumbing problem before comparing any framework's feature list."
+    }
+  ],
+  "challenge": {
+    "question": "The agent's control flow has grown to include loops, branches and an escalation path that's getting hard to trace in a hand-rolled loop. What should guide the next step?",
+    "options": [
+      {
+        "text": "Move to a graph or state-machine orchestrator that makes the states and transitions explicit and steppable, since the actual pain is invisible control flow",
+        "verdict": "best",
+        "why": "It directly addresses the stated problem, tracing loops and branches, rather than adding machinery for a different problem."
+      },
+      {
+        "text": "Adopt a role-based multi-agent framework because it's popular",
+        "verdict": "poor",
+        "why": "The problem described is control-flow visibility, not a need for multiple specialized roles; this doesn't fix the actual pain."
+      },
+      {
+        "text": "Keep extending the hand-rolled loop indefinitely",
+        "verdict": "ok",
+        "why": "Possible, but the team already reports it's getting hard to trace, and a purpose-built tool for exactly this problem exists."
+      },
+      {
+        "text": "Rewrite everything in a code-first chaining library",
+        "verdict": "poor",
+        "why": "Chaining libraries help reuse prompt and tool code, but don't solve the state and branch visibility problem described."
+      }
+    ]
+  },
+  "bestCase": {
+    "title": "Picking the framework that matches the actual pain",
+    "example": "The team adopts a graph orchestrator, redraws the investigation flow as explicit nodes and edges, and a teammate can now point to exactly which state a stuck case is in, instead of reading through nested conditionals."
+  },
+  "worstCase": {
+    "title": "Framework shopping instead of diagnosing",
+    "example": "The team adopts a trending multi-agent framework because of its popularity, splits the single working agent into three roles that now need to coordinate, and spends a month debugging handoff bugs that didn't exist before."
+  },
+  "route": {
+    "travelling": "The complaint-investigating agent's growing control flow",
+    "lanes": [
+      {
+        "steps": [
+          { "label": "Name the actual pain", "goes": "Loops and branches are hard to trace in the current code." },
+          { "label": "Match the pain to a pattern", "goes": "State and transition visibility, not multiple roles, is needed.", "goesWrong": "The team picks a multi-agent framework because it's popular, not because roles are the actual problem." },
+          { "label": "Adopt a graph orchestrator", "goes": "States and transitions become explicit nodes and edges." },
+          { "label": "Redraw the existing flow", "goes": "Investigate, decide, escalate become visible, steppable nodes." },
+          { "label": "Debug a stuck case", "goes": "A teammate points to the exact stuck state in seconds." }
+        ]
+      }
+    ]
+  },
+  "takeaway": "Pick an agent framework for the specific plumbing problem you actually have, control-flow visibility, role separation, or reusable pieces, not for its popularity."
+}
